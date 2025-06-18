@@ -1,0 +1,9 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/pwdat"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_PWDAT_URL")
+}

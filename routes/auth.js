@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { poolConnect, pool, sql } = require('../db');
+const { poolConnect, pool, sql } = require('../db_user');
 
 const router = express.Router();
 
@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
   );
 
   const user = result.recordset[0];
-  console.log('user',user.KodePassword);
+  console.log('user',user);
   if (!user) return res.status(400).json({ error: 'User not found' });
 
   const hashedInputPassword = crypto.createHash('sha1').update(password).digest('hex');
