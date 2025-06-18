@@ -7,3 +7,610 @@ datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_PWDAT_URL")
 }
+
+model MigrationHistory {
+  MigrationId    String @db.NVarChar(150)
+  ContextKey     String @db.NVarChar(300)
+  Model          Bytes
+  ProductVersion String @db.NVarChar(32)
+
+  @@id([MigrationId, ContextKey], map: "PK_dbo.__MigrationHistory")
+  @@map("__MigrationHistory")
+}
+
+model InventoryStocks {
+  InventoryStockId String   @id(map: "PK_dbo.InventoryStocks") @db.UniqueIdentifier
+  InventoryId      String   @db.UniqueIdentifier
+  KodeItem         String?  @db.NVarChar(Max)
+  SatuanNs         String?  @db.NVarChar(Max)
+  KodeGudang       String?  @db.NVarChar(Max)
+  Qty              Float
+  TglEntry         DateTime @db.DateTime
+  StatusMas        Int
+  StatusSadix      Int
+  CompanyProfileId String   @db.UniqueIdentifier
+  CompanyCode      String?  @db.NVarChar(Max)
+}
+
+model SalesInvoiceHeaders {
+  SalesInvoiceHeaderId String              @id(map: "PK_dbo.SalesInvoiceHeaders") @db.UniqueIdentifier
+  INVOICE_ID           String?             @db.NVarChar(Max)
+  NoBukti              String?             @unique(map: "IX_NoBukti") @db.NVarChar(70)
+  AllSalesOrderId      String?             @db.NVarChar(Max)
+  NoFakturPajak        String?             @db.NVarChar(Max)
+  KodeSyarat           String?             @db.NVarChar(Max)
+  KodeCustomer         String?             @db.NVarChar(Max)
+  CustomerId           String              @db.UniqueIdentifier
+  Customer_Id          String?             @db.NVarChar(Max)
+  TglTrn               DateTime            @db.DateTime
+  TglJthtmp            DateTime            @db.DateTime
+  TglFakturP           DateTime?           @db.DateTime
+  NoSo                 String?             @db.NVarChar(Max)
+  DeliveryPermitId     String?             @db.NVarChar(Max)
+  NoSj                 String?             @db.NVarChar(Max)
+  KodeSales            String?             @db.NVarChar(Max)
+  Dpp                  String?             @db.NVarChar(Max)
+  ExtDisc              Decimal             @db.Decimal(18, 2)
+  UangMuka             Decimal             @db.Decimal(18, 2)
+  OngkosAngkut         Decimal             @db.Decimal(18, 2)
+  GrandTotal           Decimal             @db.Decimal(18, 2)
+  TypePpn              String?             @db.NVarChar(Max)
+  Tax                  Decimal             @db.Decimal(18, 2)
+  TYPE_DOC             String?             @db.NVarChar(Max)
+  TglEntry             DateTime            @db.DateTime
+  Keterangan           String?             @db.NVarChar(Max)
+  StatusMas            String?             @db.NVarChar(Max)
+  StatusSadix          String?             @db.NVarChar(Max)
+  CompanyProfileId     String              @db.UniqueIdentifier
+  CompanyCode          String?             @db.NVarChar(Max)
+  SalesInvoiceItems    SalesInvoiceItems[]
+}
+
+model SalesInvoiceItems {
+  SalesInvoiceItemId   String              @id(map: "PK_dbo.SalesInvoiceItems") @db.UniqueIdentifier
+  SalesInvoiceHeaderId String              @db.UniqueIdentifier
+  SalesOrderId         String?             @db.UniqueIdentifier
+  SalesOrderItemId     String?             @db.UniqueIdentifier
+  DeliveryPermitId     String?             @db.UniqueIdentifier
+  DeliveryPermitItemId String?             @db.UniqueIdentifier
+  KodeItem             String?             @db.NVarChar(Max)
+  Qty                  Float
+  SatuanNs             String?             @db.NVarChar(Max)
+  HargaJual            Decimal             @db.Decimal(18, 2)
+  AMount               Decimal             @db.Decimal(18, 2)
+  ItemDisc             Decimal             @db.Decimal(18, 2)
+  TotalDisc            Decimal             @db.Decimal(18, 2)
+  Total                Decimal             @db.Decimal(18, 2)
+  CompanyProfileId     String              @db.UniqueIdentifier
+  SalesInvoiceHeaders  SalesInvoiceHeaders @relation(fields: [SalesInvoiceHeaderId], references: [SalesInvoiceHeaderId], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.SalesInvoiceItems_dbo.SalesInvoiceHeaders_SalesInvoiceHeaderId")
+
+  @@index([SalesInvoiceHeaderId], map: "IX_SalesInvoiceHeaderId")
+}
+
+model SalesOrderItems {
+  SalesOrderItemId  String      @id(map: "PK_dbo.SalesOrderItems") @db.UniqueIdentifier
+  CUSTOMERORDER_SID String?     @db.NVarChar(Max)
+  SalesOrderId      String      @db.UniqueIdentifier
+  KodeItem          String?     @db.NVarChar(Max)
+  NamaBarang        String?     @db.NVarChar(Max)
+  Qty               Float
+  SatuanNs          String?     @db.NVarChar(Max)
+  KodeGudang        String?     @db.NVarChar(Max)
+  HargaJual1        Decimal     @db.Decimal(18, 2)
+  HargaJual2        Decimal     @db.Decimal(18, 2)
+  ItemDisPsn        Decimal     @db.Decimal(18, 2)
+  ItemDisc          Decimal     @db.Decimal(18, 2)
+  ItemDisPsn2       Decimal     @db.Decimal(18, 2)
+  ItemDisc2         Decimal     @db.Decimal(18, 2)
+  ItemDisPsn3       Decimal     @db.Decimal(18, 2)
+  ItemDisc3         Decimal     @db.Decimal(18, 2)
+  Keterangan        String?     @db.NVarChar(Max)
+  OrderItem_Sid     String?     @db.NVarChar(Max)
+  SalesOrders       SalesOrders @relation(fields: [SalesOrderId], references: [SalesOrderId], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.SalesOrderItems_dbo.SalesOrders_SalesOrderId")
+
+  @@index([SalesOrderId], map: "IX_SalesOrderId")
+}
+
+model SalesOrders {
+  SalesOrderId       String            @id(map: "PK_dbo.SalesOrders") @db.UniqueIdentifier
+  NoSo               String?           @db.NVarChar(Max)
+  CUSTOMERORDER_SID  String?           @db.NVarChar(Max)
+  TglSo              DateTime          @db.DateTime
+  CustomerId         String?           @db.UniqueIdentifier
+  KodeCustomer       String?           @db.NVarChar(Max)
+  KodeSales          String?           @db.NVarChar(Max)
+  ExtDisc            Decimal           @db.Decimal(18, 2)
+  GrandTotal         Decimal           @db.Decimal(18, 2)
+  Keterangan         String?           @db.NVarChar(Max)
+  TglEntry           DateTime          @db.DateTime
+  UserCreate         String?           @db.NVarChar(Max)
+  UserApprove        String?           @db.NVarChar(Max)
+  StatusMas          String?           @db.NVarChar(Max)
+  StatusApprovalMas  String?           @db.NVarChar(Max)
+  KeteranganApproval String?           @db.NVarChar(Max)
+  CompanyName        String?           @db.NVarChar(Max)
+  KeteranganSync     String?           @db.NVarChar(Max)
+  Customer_Address   String?           @db.NVarChar(Max)
+  SalesOrderItems    SalesOrderItems[]
+}
+
+model AdvertisementPicture {
+  AdvertisementPictureId     String  @id(map: "PK_dbo.AdvertisementPicture") @db.UniqueIdentifier
+  AdvertisementPictureNumber Int
+  CompanyCode                String? @db.NVarChar(Max)
+  Path                       String? @db.NVarChar(Max)
+  UrlLink                    String? @db.NVarChar(Max)
+}
+
+model BankCodeBnis {
+  Id       Int     @id(map: "PK_dbo.BankCodeBnis") @default(autoincrement())
+  KodeBank String? @db.NVarChar(Max)
+  KodeRtgs String? @db.NVarChar(Max)
+  NamaBank String? @db.NVarChar(Max)
+}
+
+model BankCodes {
+  Id       Int     @id(map: "PK_dbo.BankCodes") @default(autoincrement())
+  KodeBank String? @db.NVarChar(Max)
+  NamaBank String? @db.NVarChar(Max)
+  IsLLG    Boolean
+  IsRTG    Boolean
+  IsOnl    Boolean
+}
+
+model CompanyProfiles {
+  CompanyProfileId                  String                   @id(map: "PK_dbo.CompanyProfiles") @db.UniqueIdentifier
+  NamaProfil                        String?                  @db.NVarChar(Max)
+  AlamatProfil1                     String?                  @db.NVarChar(Max)
+  AlamatProfil2                     String?                  @db.NVarChar(Max)
+  KotaProfil                        String?                  @db.NVarChar(Max)
+  NegaraProfil                      String?                  @db.NVarChar(Max)
+  TeleponProfil                     String?                  @db.NVarChar(Max)
+  FaxProfil                         String?                  @db.NVarChar(Max)
+  TelexProfil                       String?                  @db.NVarChar(Max)
+  MottoProfil                       String?                  @db.NVarChar(Max)
+  LogoProfil                        Bytes?
+  EmailProfil                       String?                  @db.NVarChar(Max)
+  Pkp                               Boolean
+  NPWP                              String?                  @db.NVarChar(Max)
+  NPPKP                             String?                  @db.NVarChar(Max)
+  NoAwalFP                          String?                  @db.NVarChar(Max)
+  SKPengukuhan                      String?                  @db.NVarChar(Max)
+  TglPengukuhan                     DateTime                 @db.DateTime
+  TglAwalFiskal                     DateTime                 @db.DateTime
+  TglAkhirFiskal                    DateTime                 @db.DateTime
+  TglMinimumInput                   DateTime                 @db.DateTime
+  DirDataExt                        String?                  @db.NVarChar(Max)
+  GenerasiData                      String?                  @db.NVarChar(Max)
+  PostingLsg                        Boolean
+  TglMulaiPakai                     DateTime                 @db.DateTime
+  SystemKurs                        String?                  @db.NVarChar(Max)
+  WebProfil                         String?                  @db.NVarChar(Max)
+  NamaData                          String?                  @unique(map: "IX_NamaData") @db.NVarChar(10)
+  UseDepartments                    Boolean
+  UseCostCenter                     Boolean
+  UseAllInventoryUnits              Boolean
+  UsePartNumber                     Boolean
+  UseManufacturingModule            Boolean
+  UseProjectModule                  Boolean
+  UseInventoryBrand                 Boolean
+  UpdateInventoryCostFromPurchasing Boolean
+  UseSerialNumber                   Boolean
+  UseBatchNumber                    Boolean
+  UseInventoryPerpetual             Boolean
+  DontUseJournalGiroBackDate        Boolean
+  UseMultiWarehouse                 Boolean
+  UseMultiDepartment                Boolean
+  UseMultiProject                   Boolean
+  UseAccrualBasis                   Boolean
+  UseProjectFull                    Boolean
+  UseAddendum                       Boolean
+  QtyMinWarningInTrans              Boolean
+  MultiSelectSoItemInWo             Boolean
+  UseInventoryFifo                  Boolean
+  MultiSelectSo                     Boolean
+  UseDataRepairForInventory         Boolean
+  OneWarehouseOneDepartment         Boolean
+  ShowInsufficientStockBackOrderSo  Boolean
+  ShowOverDueReceivables            Boolean
+  ShowOverDuePayables               Boolean
+  UseSalesCommissionType2           Boolean
+  MustSelectInvoiceInArTransaction  Boolean
+  UseCreditNote                     Boolean
+  ManualImportFee                   Boolean
+  ProcessSiArInBilling              Boolean
+  IsSingleBankOnly                  Boolean
+  AutoFillQtyInGoodsReceive         Boolean
+  AutoFillQtyInDeliveryPermit       Boolean
+  BackupLocation                    String?                  @db.NVarChar(Max)
+  PriceDecimalDigits                Int
+  QtyDecimalDigits                  Int
+  AllCompanyProfileId               String?                  @db.NVarChar(Max)
+  IsAutoNumber2                     Boolean
+  UseMultiCurrency                  Boolean
+  UseNeracaDepartment               Boolean
+  UseInventorySubItem               Boolean
+  UseInventoryMultiCurrency         Boolean
+  UsePosInSalesInvoice              Boolean
+  UseInventoryColor                 Boolean
+  UseGlInCustomerAndSupplier        Boolean
+  InventoryJournalType              Int
+  IsHoldingCompany                  Boolean
+  Use10SupplierForImportFee         Boolean
+  UseEmployeeModule                 Boolean
+  UsePurchaseQuotation              Boolean
+  UseDiscItem2and3                  Boolean
+  CompareDueDate                    Int
+  UseTimeInInventoryTrn             Boolean
+  IpConnection                      String?                  @db.NVarChar(Max)
+  IpBackupLocation                  String?                  @db.NVarChar(Max)
+  UseMeterai                        Boolean
+  UseCostCenterInInventoryTrn       Boolean
+  UseEditPpn                        Boolean
+  UseEditDpp                        Boolean
+  UseDataRepairDiscount             Boolean
+  PathImportCsv                     String?                  @db.NVarChar(Max)
+  TkuId                             String?                  @db.NVarChar(Max)
+  CompanyProfileSettings            CompanyProfileSettings[]
+  SalesPricePriorities              SalesPricePriorities[]
+}
+
+model CompanyProfileSettings {
+  Id               Int             @id(map: "PK_dbo.CompanyProfileSettings") @default(autoincrement())
+  CompanyProfileId String          @db.UniqueIdentifier
+  SettingCode      String?         @db.NVarChar(Max)
+  ValueInt         Int
+  ValueString      String?         @db.NVarChar(Max)
+  CompanyProfiles  CompanyProfiles @relation(fields: [CompanyProfileId], references: [CompanyProfileId], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.CompanyProfileSettings_dbo.CompanyProfiles_CompanyProfileId")
+
+  @@index([CompanyProfileId], map: "IX_CompanyProfileId")
+}
+
+model CreditLimits {
+  CreditLimitId    String   @id(map: "PK_dbo.CreditLimits") @db.UniqueIdentifier
+  KodeCustomer     String?  @db.NVarChar(Max)
+  NamaCustomer     String?  @db.NVarChar(Max)
+  Limit_Amount     Decimal  @db.Decimal(18, 2)
+  RemainingInvoice Decimal  @db.Decimal(18, 2)
+  KodeSyarat       String?  @db.NVarChar(Max)
+  NonAktif         Boolean
+  TglEntry         DateTime @db.DateTime
+  StatusMas        Int
+  StatusSadix      Int
+  CompanyProfileId String   @db.UniqueIdentifier
+  CompanyCode      String?  @db.NVarChar(Max)
+  Tipe             String?  @db.NVarChar(Max)
+  Channel          String?  @db.NVarChar(Max)
+  Kecamatan        String?  @db.NVarChar(Max)
+  Kelurahan        String?  @db.NVarChar(Max)
+}
+
+model CustomFieldLists {
+  CustomFieldListId            String  @id(map: "PK_dbo.CustomFieldLists") @db.UniqueIdentifier
+  UserPreferenceId             String  @db.UniqueIdentifier
+  UserName                     String? @db.NVarChar(Max)
+  NamaField                    String? @db.NVarChar(Max)
+  KodeSumber                   String? @db.NVarChar(Max)
+  ShowKodeMerkInventoryList    Boolean
+  ShowMemoInventoryList        Boolean
+  ShowPartNumberInventoryList  Boolean
+  ShowQtyMinInventoryList      Boolean
+  ShowKodeMerkInventoryModal   Boolean
+  ShowMemoInventoryModal       Boolean
+  ShowPartNumberInventoryModal Boolean
+  ShowCustomField1             Boolean
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model CustomReportLayouts {
+  CustomReportLayoutId String   @db.UniqueIdentifier
+  ReportClassName      String?  @db.NVarChar(Max)
+  CompanyProfileId     String?  @db.UniqueIdentifier
+  RepxLayout           String?  @db.NVarChar(Max)
+  KodeUserEdit         String?  @db.NVarChar(Max)
+  TglEdit              DateTime @db.DateTime
+
+  @@ignore
+}
+
+model ErrorLogs {
+  ErrorLogId      String    @id(map: "PK_dbo.ErrorLogs") @db.UniqueIdentifier
+  RequestDate     DateTime  @db.DateTime
+  User            String?   @db.NVarChar(Max)
+  UserRole        String?   @db.NVarChar(Max)
+  CompanyCode     String?   @db.NVarChar(Max)
+  GenerasiData    String?   @db.NVarChar(Max)
+  Url             String?   @db.NVarChar(Max)
+  Method          String?   @db.NVarChar(Max)
+  ErrorTypeName   String?   @db.NVarChar(Max)
+  Payload         String?   @db.NVarChar(Max)
+  Exception       String?   @db.NVarChar(Max)
+  DataSourceType  String?   @db.NVarChar(Max)
+  HitUrlDate      DateTime? @db.DateTime
+  ResponseCode    Int
+  ResponseMessage String?   @db.NVarChar(Max)
+}
+
+model FndUsers {
+  FndUserId        String   @id(map: "PK_dbo.FndUsers") @db.UniqueIdentifier
+  UserName         String?  @db.NVarChar(Max)
+  SessionId        String   @db.UniqueIdentifier
+  CompanyProfileId String   @db.UniqueIdentifier
+  ExpiredDate      DateTime @db.DateTime
+  DatabaseName     String?  @db.NVarChar(Max)
+  DataGeneration   String?  @db.NVarChar(Max)
+  UpdatedDate      DateTime @db.DateTime
+  UserDtoJson      String?  @db.NVarChar(Max)
+}
+
+model IntegrationSettings {
+  IntegrationSettingId   String  @id(map: "PK_dbo.IntegrationSettings") @db.UniqueIdentifier
+  IntegrationType        String? @db.NVarChar(Max)
+  LokasiDatabase         String? @db.NVarChar(Max)
+  UserName               String? @db.NVarChar(Max)
+  UserNamePartnerEncrypt String? @db.NVarChar(Max)
+  PasswordPartnerEncrypt String? @db.NVarChar(Max)
+  NamaPwdat              String? @db.NVarChar(Max)
+  KodeData               String? @db.NVarChar(Max)
+  AccessToken            String? @db.NVarChar(Max)
+  ResourceUrl            String? @db.NVarChar(Max)
+  VendorCode             String? @db.NVarChar(Max)
+  WarehouseReturCode     String? @db.NVarChar(Max)
+  TokenUrl               String? @db.NVarChar(Max)
+}
+
+model MemberPointSettings {
+  MemberPointSettingId   String   @id(map: "PK_dbo.MemberPointSettings") @db.UniqueIdentifier
+  MemberPointSettingCode String?  @db.NVarChar(Max)
+  StartDate              DateTime @db.DateTime
+  EndDate                DateTime @db.DateTime
+  Nominal                Decimal  @db.Decimal(18, 2)
+  NonActive              Boolean
+}
+
+model MultiLanguages {
+  MultiLanguageId String   @id(map: "PK_dbo.MultiLanguages") @db.UniqueIdentifier
+  LanguageFile    String?  @db.NVarChar(Max)
+  Language        String?  @db.NVarChar(Max)
+  Username        String?  @db.NVarChar(Max)
+  Tanggal         DateTime @db.DateTime
+}
+
+model PosDevices {
+  Id         String   @id(map: "PK_dbo.PosDevices") @db.NVarChar(100)
+  DeviceName String?  @db.NVarChar(Max)
+  LastLogin  DateTime @db.DateTime
+}
+
+model PrintQueues {
+  PrintQueueId        String  @id(map: "PK_dbo.PrintQueues") @db.UniqueIdentifier
+  ParentTransactionId String  @db.UniqueIdentifier
+  ParentTransaction   String? @db.NVarChar(Max)
+  KodePrinter         String? @db.NVarChar(Max)
+  ReportClassName     String? @db.NVarChar(Max)
+  CompanyProfileId    String  @db.UniqueIdentifier
+  RepxLayout          Bytes?
+}
+
+model SalesInvoiceDetails {
+  SalesInvoiceDetailId String    @id(map: "PK_dbo.SalesInvoiceDetails") @db.UniqueIdentifier
+  NoBukti              String?   @db.NVarChar(Max)
+  KodeCustomer         String?   @db.NVarChar(Max)
+  KodeSales            String?   @db.NVarChar(Max)
+  TglTrn               DateTime  @db.DateTime
+  TglJthTmp            DateTime  @db.DateTime
+  GrandTotal           Decimal   @db.Decimal(18, 2)
+  SisaPiutang          Decimal   @db.Decimal(18, 2)
+  TglEntry             DateTime  @db.DateTime
+  StatusMas            Int
+  StatusSadix          Int
+  CompanyProfileId     String    @db.UniqueIdentifier
+  CompanyCode          String?   @db.NVarChar(Max)
+  COLLECTION_DATE      DateTime? @db.DateTime
+  COLLECTION_ID        String?   @db.NVarChar(Max)
+}
+
+model SalesPricePriorities {
+  SalesPricePriorityId String          @id(map: "PK_dbo.SalesPricePriorities") @db.UniqueIdentifier
+  CompanyProfileId     String          @db.UniqueIdentifier
+  NoUrut               Int
+  PricingRuleType      String?         @db.NVarChar(Max)
+  CompanyProfiles      CompanyProfiles @relation(fields: [CompanyProfileId], references: [CompanyProfileId], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.SalesPricePriorities_dbo.CompanyProfiles_CompanyProfileId")
+
+  @@index([CompanyProfileId], map: "IX_CompanyProfileId")
+}
+
+model SharedPrinters {
+  SharedPrinterId String  @id(map: "PK_dbo.SharedPrinters") @db.UniqueIdentifier
+  KodePrinter     String? @db.NVarChar(Max)
+  PrinterName     String? @db.NVarChar(Max)
+  PrinterLocation String? @db.NVarChar(Max)
+  Path            String? @db.NVarChar(Max)
+}
+
+model Smartlinks {
+  SmartlinkId      String   @id(map: "PK_dbo.Smartlinks") @db.UniqueIdentifier
+  SmartlinkCode    String?  @unique(map: "IX_SmartlinkCode") @db.NVarChar(20)
+  BankId           String   @db.UniqueIdentifier
+  ApiKey           String?  @db.NVarChar(Max)
+  ApiSecret        String?  @db.NVarChar(Max)
+  ClientId         String?  @db.NVarChar(Max)
+  ClientSecret     String?  @db.NVarChar(Max)
+  CorporateId      String?  @db.NVarChar(Max)
+  CompanyCode      String?  @db.NVarChar(Max)
+  CustomerNumber   String?  @db.NVarChar(Max)
+  TglEntry         DateTime @db.DateTime
+  TglUpdate        DateTime @db.DateTime
+  PublicKey        String?  @db.NVarChar(Max)
+  Domain           String?  @db.NVarChar(Max)
+  CompanyProfileId String   @db.UniqueIdentifier
+  smartlinkType    Int
+  ChannelId        String?  @db.NVarChar(Max)
+  CredentialId     String?  @db.NVarChar(Max)
+}
+
+model UserCompanyWarehouses {
+  UserCompanyWarehouseId String  @id(map: "PK_dbo.UserCompanyWarehouses") @db.UniqueIdentifier
+  CompanyProfileId       String  @db.UniqueIdentifier
+  UserName               String? @db.NVarChar(100)
+  AllKodeGudang          String? @db.NVarChar(Max)
+
+  @@index([UserName], map: "IX_UserName")
+}
+
+model UserComputers {
+  ComputerId   String  @id(map: "PK_dbo.UserComputers") @db.UniqueIdentifier
+  OwnerName    String? @db.NVarChar(Max)
+  ComputerName String? @db.NVarChar(Max)
+  ComputerIP   String? @db.NVarChar(Max)
+}
+
+model UserPermissions {
+  UserPermissionId String  @id(map: "PK_dbo.UserPermissions") @db.UniqueIdentifier
+  UserName         String? @db.NVarChar(Max)
+  CompanyProfileId String  @db.UniqueIdentifier
+  KodeBanks        String? @db.NVarChar(Max)
+}
+
+model UserPos {
+  Id           String  @id(map: "PK_dbo.UserPos") @db.UniqueIdentifier
+  Username     String? @db.NVarChar(Max)
+  KodePassword String? @db.NVarChar(Max)
+  FullName     String? @db.NVarChar(Max)
+  KodeDept     String? @db.NVarChar(Max)
+  NamaDept     String? @db.NVarChar(Max)
+  KodeGudang   String? @db.NVarChar(Max)
+  LoginDevice  String? @db.NVarChar(Max)
+  UserRoleCode String? @db.NVarChar(Max)
+}
+
+model UserPreferences {
+  UserPreferenceId                       String  @id(map: "PK_dbo.UserPreferences") @db.UniqueIdentifier
+  UserName                               String? @db.NVarChar(Max)
+  DefaultAutoNumberPurchaseOrder         String? @db.NVarChar(Max)
+  DefaultAutoNumberSalesOrder            String? @db.NVarChar(Max)
+  DefaultAutoNumberProofOfReceipt        String? @db.NVarChar(Max)
+  DefaultAutoNumberDeliveryPermit        String? @db.NVarChar(Max)
+  DefaultAutoNumberSalesInvoices         String? @db.NVarChar(Max)
+  DefaultAutoNumberPurchaseBill          String? @db.NVarChar(Max)
+  DefaultAutoNumberPayBill               String? @db.NVarChar(Max)
+  DefaultAutoNumberCollectPayment        String? @db.NVarChar(Max)
+  DefaultAutoNumberInventoryTransaction  String? @db.NVarChar(Max)
+  DefaultAutoNumberGlTransaction         String? @db.NVarChar(Max)
+  DefaultAutoNumberBillOfMaterial        String? @db.NVarChar(Max)
+  DefaultAutoNumberArTransaction         String? @db.NVarChar(Max)
+  DefaultAutoNumberApTransaction         String? @db.NVarChar(Max)
+  DefaultAutoNumberCashTransaction       String? @db.NVarChar(Max)
+  DefaultAutoNumberPurchaseRequest       String? @db.NVarChar(Max)
+  DefaultAutoNumberReorderingSheet       String? @db.NVarChar(Max)
+  DefaultAutoNumberClaimBonusItem        String? @db.NVarChar(Max)
+  DefaultAutoNumberReceiptClaimBonusItem String? @db.NVarChar(Max)
+  DefaultAutoNumberStockRequest          String? @db.NVarChar(Max)
+  DefaultAutoNumberDraftReceipt          String? @db.NVarChar(Max)
+  DefaultAutoNumberProformaDr            String? @db.NVarChar(Max)
+  DefaultAutoNumberDeliveryRequest       String? @db.NVarChar(Max)
+  DefaultAutoNumberDraftReceiptDr        String? @db.NVarChar(Max)
+  DefaultAutoNumberProofOfReceiptDr      String? @db.NVarChar(Max)
+  DefaultAutoNumberSalesQuotation        String? @db.NVarChar(Max)
+  DefaultAutoNumberArSspTransaction      String? @db.NVarChar(Max)
+  DefaultAutoNumberPickingList           String? @db.NVarChar(Max)
+  DefaultAutoNumberPacking               String? @db.NVarChar(Max)
+  DefaultAutoNumberPurchaseRefund        String? @db.NVarChar(Max)
+  DefaultAutoNumberSalesRefund           String? @db.NVarChar(Max)
+  DefaultPrintPurchaseOrder              String? @db.NVarChar(Max)
+  DefaultPrintProofOfReceipt             String? @db.NVarChar(Max)
+  DefaultPrintPurchaseBill               String? @db.NVarChar(Max)
+  DefaultPrintPayBill                    String? @db.NVarChar(Max)
+  DefaultPrintSalesQuotation             String? @db.NVarChar(Max)
+  DefaultPrintSalesOrder                 String? @db.NVarChar(Max)
+  DefaultPrintDeliveryPermit             String? @db.NVarChar(Max)
+  DefaultPrintSalesInvoices              String? @db.NVarChar(Max)
+  DefaultPrintCollectPayment             String? @db.NVarChar(Max)
+  DefaultPrintWorkOrder                  String? @db.NVarChar(Max)
+  DefaultPrintRawMaterialUseTransaction  String? @db.NVarChar(Max)
+  DefaultPrintFinishedGood               String? @db.NVarChar(Max)
+  DefaultPrintProjectBillingTransaction  String? @db.NVarChar(Max)
+  DefaultAutoNumberProjectAddendum       String? @db.NVarChar(Max)
+  DefaultPrintAdjustProductionCost       String? @db.NVarChar(Max)
+  DefaultUILanguage                      String? @db.NVarChar(Max)
+  DefaultReportLanguage                  String? @db.NVarChar(Max)
+  DefaultScannerTypeDeliveryOrder        String? @db.NVarChar(Max)
+  DefaultScannerTypeSIbySO               String? @db.NVarChar(Max)
+  DefaultScannerTypePacking              String? @db.NVarChar(Max)
+  ShowToolTip                            Boolean
+  TooltipHistory                         String? @db.NVarChar(Max)
+  DefaultPrinter                         String? @db.NVarChar(Max)
+  DefaultSearchInventory                 String? @db.NVarChar(Max)
+  DefaultAutoNumberTransferIn            String? @db.NVarChar(Max)
+  DefaultAutoNumberTransferOut           String? @db.NVarChar(Max)
+  DefaultAutoNumberPemasukkan            String? @db.NVarChar(Max)
+  DefaultAutoNumberPengeluaran           String? @db.NVarChar(Max)
+  DefaultAutoNumberAdjustment            String? @db.NVarChar(Max)
+  DefaultAutoNumberReturJual             String? @db.NVarChar(Max)
+  DefaultAutoNumberTransferProdukBonus   String? @db.NVarChar(Max)
+  DefaultAutoNumberAdjustmentHargaPokok  String? @db.NVarChar(Max)
+  DefaultAutoNumberStockOpname           String? @db.NVarChar(Max)
+  DefaultAutoTandaTerimaTukarFaktur      String? @db.NVarChar(Max)
+  DefaultAutoDaftarTagihPiutang          String? @db.NVarChar(Max)
+  DefaultAutoNumberGenerateConsignment   String? @db.NVarChar(Max)
+}
+
+model UserRolePermissions {
+  UserRolePermissionId String  @id(map: "PK_dbo.UserRolePermissions") @db.UniqueIdentifier
+  PermissionCode       String? @db.NVarChar(Max)
+  KodeUserRole         String? @db.NVarChar(Max)
+}
+
+model UserRoles {
+  UserRoleCode     String  @id(map: "PK_dbo.UserRoles") @db.NVarChar(25)
+  Name             String? @db.NVarChar(Max)
+  Description      String? @db.NVarChar(Max)
+  WarehouseAllowed String? @db.NVarChar(Max)
+  IsAdministrator  Boolean
+}
+
+model Users {
+  MasErpUserProfileId String  @id(map: "PK_dbo.Users") @db.UniqueIdentifier
+  UserName            String? @db.NVarChar(100)
+  KodePassword        String? @db.NVarChar(Max)
+  FullName            String? @db.NVarChar(Max)
+  HomeAddress         String? @db.NVarChar(Max)
+  MobilePhone         String? @db.NVarChar(Max)
+  Email               String? @db.NVarChar(Max)
+  UserRoleCode        String? @db.NVarChar(Max)
+  CompanyAllowed      String? @db.NVarChar(Max)
+  KodeDept            String? @db.NVarChar(Max)
+  DepartmentName      String? @db.NVarChar(Max)
+  KodeWorkstation     String? @db.NVarChar(Max)
+  IpAddress           String? @db.NVarChar(Max)
+  KodeSales           String? @db.NVarChar(Max)
+  Signature           Bytes?
+  TokenFirebase       String? @db.NVarChar(Max)
+  AllKodeWil          String? @db.NVarChar(Max)
+  KodeSalesAreas      String? @db.NVarChar(Max)
+  IsUserBerno         Boolean
+  RayonCode           String? @db.NVarChar(Max)
+
+  @@index([UserName], map: "IX_UserName")
+}
+
+model UserWms {
+  Id                          String  @id(map: "PK_dbo.UserWms") @db.UniqueIdentifier
+  KodeDept                    String? @db.NVarChar(Max)
+  NamaDept                    String? @db.NVarChar(Max)
+  Username                    String? @db.NVarChar(Max)
+  KodePassword                String? @db.NVarChar(Max)
+  FullName                    String? @db.NVarChar(Max)
+  LoginDevice                 String? @db.NVarChar(Max)
+  UserRoleCode                String? @db.NVarChar(Max)
+  KodeKonterInvTransaction    String? @db.NVarChar(Max)
+  KodeKonterPicking           String? @db.NVarChar(Max)
+  KodeKonterPacking           String? @db.NVarChar(Max)
+  KodeGudangTargetPickingList String? @db.NVarChar(Max)
+}
+
+model WmsDevices {
+  Id         String   @id(map: "PK_dbo.WmsDevices") @db.NVarChar(100)
+  DeviceName String?  @db.NVarChar(Max)
+  LastLogin  DateTime @db.DateTime
+}

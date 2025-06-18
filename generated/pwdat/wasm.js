@@ -121,9 +121,624 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Snapshot: 'Snapshot'
 });
 
+exports.Prisma.MigrationHistoryScalarFieldEnum = {
+  MigrationId: 'MigrationId',
+  ContextKey: 'ContextKey',
+  Model: 'Model',
+  ProductVersion: 'ProductVersion'
+};
+
+exports.Prisma.InventoryStocksScalarFieldEnum = {
+  InventoryStockId: 'InventoryStockId',
+  InventoryId: 'InventoryId',
+  KodeItem: 'KodeItem',
+  SatuanNs: 'SatuanNs',
+  KodeGudang: 'KodeGudang',
+  Qty: 'Qty',
+  TglEntry: 'TglEntry',
+  StatusMas: 'StatusMas',
+  StatusSadix: 'StatusSadix',
+  CompanyProfileId: 'CompanyProfileId',
+  CompanyCode: 'CompanyCode'
+};
+
+exports.Prisma.SalesInvoiceHeadersScalarFieldEnum = {
+  SalesInvoiceHeaderId: 'SalesInvoiceHeaderId',
+  INVOICE_ID: 'INVOICE_ID',
+  NoBukti: 'NoBukti',
+  AllSalesOrderId: 'AllSalesOrderId',
+  NoFakturPajak: 'NoFakturPajak',
+  KodeSyarat: 'KodeSyarat',
+  KodeCustomer: 'KodeCustomer',
+  CustomerId: 'CustomerId',
+  Customer_Id: 'Customer_Id',
+  TglTrn: 'TglTrn',
+  TglJthtmp: 'TglJthtmp',
+  TglFakturP: 'TglFakturP',
+  NoSo: 'NoSo',
+  DeliveryPermitId: 'DeliveryPermitId',
+  NoSj: 'NoSj',
+  KodeSales: 'KodeSales',
+  Dpp: 'Dpp',
+  ExtDisc: 'ExtDisc',
+  UangMuka: 'UangMuka',
+  OngkosAngkut: 'OngkosAngkut',
+  GrandTotal: 'GrandTotal',
+  TypePpn: 'TypePpn',
+  Tax: 'Tax',
+  TYPE_DOC: 'TYPE_DOC',
+  TglEntry: 'TglEntry',
+  Keterangan: 'Keterangan',
+  StatusMas: 'StatusMas',
+  StatusSadix: 'StatusSadix',
+  CompanyProfileId: 'CompanyProfileId',
+  CompanyCode: 'CompanyCode'
+};
+
+exports.Prisma.SalesInvoiceItemsScalarFieldEnum = {
+  SalesInvoiceItemId: 'SalesInvoiceItemId',
+  SalesInvoiceHeaderId: 'SalesInvoiceHeaderId',
+  SalesOrderId: 'SalesOrderId',
+  SalesOrderItemId: 'SalesOrderItemId',
+  DeliveryPermitId: 'DeliveryPermitId',
+  DeliveryPermitItemId: 'DeliveryPermitItemId',
+  KodeItem: 'KodeItem',
+  Qty: 'Qty',
+  SatuanNs: 'SatuanNs',
+  HargaJual: 'HargaJual',
+  AMount: 'AMount',
+  ItemDisc: 'ItemDisc',
+  TotalDisc: 'TotalDisc',
+  Total: 'Total',
+  CompanyProfileId: 'CompanyProfileId'
+};
+
+exports.Prisma.SalesOrderItemsScalarFieldEnum = {
+  SalesOrderItemId: 'SalesOrderItemId',
+  CUSTOMERORDER_SID: 'CUSTOMERORDER_SID',
+  SalesOrderId: 'SalesOrderId',
+  KodeItem: 'KodeItem',
+  NamaBarang: 'NamaBarang',
+  Qty: 'Qty',
+  SatuanNs: 'SatuanNs',
+  KodeGudang: 'KodeGudang',
+  HargaJual1: 'HargaJual1',
+  HargaJual2: 'HargaJual2',
+  ItemDisPsn: 'ItemDisPsn',
+  ItemDisc: 'ItemDisc',
+  ItemDisPsn2: 'ItemDisPsn2',
+  ItemDisc2: 'ItemDisc2',
+  ItemDisPsn3: 'ItemDisPsn3',
+  ItemDisc3: 'ItemDisc3',
+  Keterangan: 'Keterangan',
+  OrderItem_Sid: 'OrderItem_Sid'
+};
+
+exports.Prisma.SalesOrdersScalarFieldEnum = {
+  SalesOrderId: 'SalesOrderId',
+  NoSo: 'NoSo',
+  CUSTOMERORDER_SID: 'CUSTOMERORDER_SID',
+  TglSo: 'TglSo',
+  CustomerId: 'CustomerId',
+  KodeCustomer: 'KodeCustomer',
+  KodeSales: 'KodeSales',
+  ExtDisc: 'ExtDisc',
+  GrandTotal: 'GrandTotal',
+  Keterangan: 'Keterangan',
+  TglEntry: 'TglEntry',
+  UserCreate: 'UserCreate',
+  UserApprove: 'UserApprove',
+  StatusMas: 'StatusMas',
+  StatusApprovalMas: 'StatusApprovalMas',
+  KeteranganApproval: 'KeteranganApproval',
+  CompanyName: 'CompanyName',
+  KeteranganSync: 'KeteranganSync',
+  Customer_Address: 'Customer_Address'
+};
+
+exports.Prisma.AdvertisementPictureScalarFieldEnum = {
+  AdvertisementPictureId: 'AdvertisementPictureId',
+  AdvertisementPictureNumber: 'AdvertisementPictureNumber',
+  CompanyCode: 'CompanyCode',
+  Path: 'Path',
+  UrlLink: 'UrlLink'
+};
+
+exports.Prisma.BankCodeBnisScalarFieldEnum = {
+  Id: 'Id',
+  KodeBank: 'KodeBank',
+  KodeRtgs: 'KodeRtgs',
+  NamaBank: 'NamaBank'
+};
+
+exports.Prisma.BankCodesScalarFieldEnum = {
+  Id: 'Id',
+  KodeBank: 'KodeBank',
+  NamaBank: 'NamaBank',
+  IsLLG: 'IsLLG',
+  IsRTG: 'IsRTG',
+  IsOnl: 'IsOnl'
+};
+
+exports.Prisma.CompanyProfilesScalarFieldEnum = {
+  CompanyProfileId: 'CompanyProfileId',
+  NamaProfil: 'NamaProfil',
+  AlamatProfil1: 'AlamatProfil1',
+  AlamatProfil2: 'AlamatProfil2',
+  KotaProfil: 'KotaProfil',
+  NegaraProfil: 'NegaraProfil',
+  TeleponProfil: 'TeleponProfil',
+  FaxProfil: 'FaxProfil',
+  TelexProfil: 'TelexProfil',
+  MottoProfil: 'MottoProfil',
+  LogoProfil: 'LogoProfil',
+  EmailProfil: 'EmailProfil',
+  Pkp: 'Pkp',
+  NPWP: 'NPWP',
+  NPPKP: 'NPPKP',
+  NoAwalFP: 'NoAwalFP',
+  SKPengukuhan: 'SKPengukuhan',
+  TglPengukuhan: 'TglPengukuhan',
+  TglAwalFiskal: 'TglAwalFiskal',
+  TglAkhirFiskal: 'TglAkhirFiskal',
+  TglMinimumInput: 'TglMinimumInput',
+  DirDataExt: 'DirDataExt',
+  GenerasiData: 'GenerasiData',
+  PostingLsg: 'PostingLsg',
+  TglMulaiPakai: 'TglMulaiPakai',
+  SystemKurs: 'SystemKurs',
+  WebProfil: 'WebProfil',
+  NamaData: 'NamaData',
+  UseDepartments: 'UseDepartments',
+  UseCostCenter: 'UseCostCenter',
+  UseAllInventoryUnits: 'UseAllInventoryUnits',
+  UsePartNumber: 'UsePartNumber',
+  UseManufacturingModule: 'UseManufacturingModule',
+  UseProjectModule: 'UseProjectModule',
+  UseInventoryBrand: 'UseInventoryBrand',
+  UpdateInventoryCostFromPurchasing: 'UpdateInventoryCostFromPurchasing',
+  UseSerialNumber: 'UseSerialNumber',
+  UseBatchNumber: 'UseBatchNumber',
+  UseInventoryPerpetual: 'UseInventoryPerpetual',
+  DontUseJournalGiroBackDate: 'DontUseJournalGiroBackDate',
+  UseMultiWarehouse: 'UseMultiWarehouse',
+  UseMultiDepartment: 'UseMultiDepartment',
+  UseMultiProject: 'UseMultiProject',
+  UseAccrualBasis: 'UseAccrualBasis',
+  UseProjectFull: 'UseProjectFull',
+  UseAddendum: 'UseAddendum',
+  QtyMinWarningInTrans: 'QtyMinWarningInTrans',
+  MultiSelectSoItemInWo: 'MultiSelectSoItemInWo',
+  UseInventoryFifo: 'UseInventoryFifo',
+  MultiSelectSo: 'MultiSelectSo',
+  UseDataRepairForInventory: 'UseDataRepairForInventory',
+  OneWarehouseOneDepartment: 'OneWarehouseOneDepartment',
+  ShowInsufficientStockBackOrderSo: 'ShowInsufficientStockBackOrderSo',
+  ShowOverDueReceivables: 'ShowOverDueReceivables',
+  ShowOverDuePayables: 'ShowOverDuePayables',
+  UseSalesCommissionType2: 'UseSalesCommissionType2',
+  MustSelectInvoiceInArTransaction: 'MustSelectInvoiceInArTransaction',
+  UseCreditNote: 'UseCreditNote',
+  ManualImportFee: 'ManualImportFee',
+  ProcessSiArInBilling: 'ProcessSiArInBilling',
+  IsSingleBankOnly: 'IsSingleBankOnly',
+  AutoFillQtyInGoodsReceive: 'AutoFillQtyInGoodsReceive',
+  AutoFillQtyInDeliveryPermit: 'AutoFillQtyInDeliveryPermit',
+  BackupLocation: 'BackupLocation',
+  PriceDecimalDigits: 'PriceDecimalDigits',
+  QtyDecimalDigits: 'QtyDecimalDigits',
+  AllCompanyProfileId: 'AllCompanyProfileId',
+  IsAutoNumber2: 'IsAutoNumber2',
+  UseMultiCurrency: 'UseMultiCurrency',
+  UseNeracaDepartment: 'UseNeracaDepartment',
+  UseInventorySubItem: 'UseInventorySubItem',
+  UseInventoryMultiCurrency: 'UseInventoryMultiCurrency',
+  UsePosInSalesInvoice: 'UsePosInSalesInvoice',
+  UseInventoryColor: 'UseInventoryColor',
+  UseGlInCustomerAndSupplier: 'UseGlInCustomerAndSupplier',
+  InventoryJournalType: 'InventoryJournalType',
+  IsHoldingCompany: 'IsHoldingCompany',
+  Use10SupplierForImportFee: 'Use10SupplierForImportFee',
+  UseEmployeeModule: 'UseEmployeeModule',
+  UsePurchaseQuotation: 'UsePurchaseQuotation',
+  UseDiscItem2and3: 'UseDiscItem2and3',
+  CompareDueDate: 'CompareDueDate',
+  UseTimeInInventoryTrn: 'UseTimeInInventoryTrn',
+  IpConnection: 'IpConnection',
+  IpBackupLocation: 'IpBackupLocation',
+  UseMeterai: 'UseMeterai',
+  UseCostCenterInInventoryTrn: 'UseCostCenterInInventoryTrn',
+  UseEditPpn: 'UseEditPpn',
+  UseEditDpp: 'UseEditDpp',
+  UseDataRepairDiscount: 'UseDataRepairDiscount',
+  PathImportCsv: 'PathImportCsv',
+  TkuId: 'TkuId'
+};
+
+exports.Prisma.CompanyProfileSettingsScalarFieldEnum = {
+  Id: 'Id',
+  CompanyProfileId: 'CompanyProfileId',
+  SettingCode: 'SettingCode',
+  ValueInt: 'ValueInt',
+  ValueString: 'ValueString'
+};
+
+exports.Prisma.CreditLimitsScalarFieldEnum = {
+  CreditLimitId: 'CreditLimitId',
+  KodeCustomer: 'KodeCustomer',
+  NamaCustomer: 'NamaCustomer',
+  Limit_Amount: 'Limit_Amount',
+  RemainingInvoice: 'RemainingInvoice',
+  KodeSyarat: 'KodeSyarat',
+  NonAktif: 'NonAktif',
+  TglEntry: 'TglEntry',
+  StatusMas: 'StatusMas',
+  StatusSadix: 'StatusSadix',
+  CompanyProfileId: 'CompanyProfileId',
+  CompanyCode: 'CompanyCode',
+  Tipe: 'Tipe',
+  Channel: 'Channel',
+  Kecamatan: 'Kecamatan',
+  Kelurahan: 'Kelurahan'
+};
+
+exports.Prisma.CustomFieldListsScalarFieldEnum = {
+  CustomFieldListId: 'CustomFieldListId',
+  UserPreferenceId: 'UserPreferenceId',
+  UserName: 'UserName',
+  NamaField: 'NamaField',
+  KodeSumber: 'KodeSumber',
+  ShowKodeMerkInventoryList: 'ShowKodeMerkInventoryList',
+  ShowMemoInventoryList: 'ShowMemoInventoryList',
+  ShowPartNumberInventoryList: 'ShowPartNumberInventoryList',
+  ShowQtyMinInventoryList: 'ShowQtyMinInventoryList',
+  ShowKodeMerkInventoryModal: 'ShowKodeMerkInventoryModal',
+  ShowMemoInventoryModal: 'ShowMemoInventoryModal',
+  ShowPartNumberInventoryModal: 'ShowPartNumberInventoryModal',
+  ShowCustomField1: 'ShowCustomField1'
+};
+
+exports.Prisma.ErrorLogsScalarFieldEnum = {
+  ErrorLogId: 'ErrorLogId',
+  RequestDate: 'RequestDate',
+  User: 'User',
+  UserRole: 'UserRole',
+  CompanyCode: 'CompanyCode',
+  GenerasiData: 'GenerasiData',
+  Url: 'Url',
+  Method: 'Method',
+  ErrorTypeName: 'ErrorTypeName',
+  Payload: 'Payload',
+  Exception: 'Exception',
+  DataSourceType: 'DataSourceType',
+  HitUrlDate: 'HitUrlDate',
+  ResponseCode: 'ResponseCode',
+  ResponseMessage: 'ResponseMessage'
+};
+
+exports.Prisma.FndUsersScalarFieldEnum = {
+  FndUserId: 'FndUserId',
+  UserName: 'UserName',
+  SessionId: 'SessionId',
+  CompanyProfileId: 'CompanyProfileId',
+  ExpiredDate: 'ExpiredDate',
+  DatabaseName: 'DatabaseName',
+  DataGeneration: 'DataGeneration',
+  UpdatedDate: 'UpdatedDate',
+  UserDtoJson: 'UserDtoJson'
+};
+
+exports.Prisma.IntegrationSettingsScalarFieldEnum = {
+  IntegrationSettingId: 'IntegrationSettingId',
+  IntegrationType: 'IntegrationType',
+  LokasiDatabase: 'LokasiDatabase',
+  UserName: 'UserName',
+  UserNamePartnerEncrypt: 'UserNamePartnerEncrypt',
+  PasswordPartnerEncrypt: 'PasswordPartnerEncrypt',
+  NamaPwdat: 'NamaPwdat',
+  KodeData: 'KodeData',
+  AccessToken: 'AccessToken',
+  ResourceUrl: 'ResourceUrl',
+  VendorCode: 'VendorCode',
+  WarehouseReturCode: 'WarehouseReturCode',
+  TokenUrl: 'TokenUrl'
+};
+
+exports.Prisma.MemberPointSettingsScalarFieldEnum = {
+  MemberPointSettingId: 'MemberPointSettingId',
+  MemberPointSettingCode: 'MemberPointSettingCode',
+  StartDate: 'StartDate',
+  EndDate: 'EndDate',
+  Nominal: 'Nominal',
+  NonActive: 'NonActive'
+};
+
+exports.Prisma.MultiLanguagesScalarFieldEnum = {
+  MultiLanguageId: 'MultiLanguageId',
+  LanguageFile: 'LanguageFile',
+  Language: 'Language',
+  Username: 'Username',
+  Tanggal: 'Tanggal'
+};
+
+exports.Prisma.PosDevicesScalarFieldEnum = {
+  Id: 'Id',
+  DeviceName: 'DeviceName',
+  LastLogin: 'LastLogin'
+};
+
+exports.Prisma.PrintQueuesScalarFieldEnum = {
+  PrintQueueId: 'PrintQueueId',
+  ParentTransactionId: 'ParentTransactionId',
+  ParentTransaction: 'ParentTransaction',
+  KodePrinter: 'KodePrinter',
+  ReportClassName: 'ReportClassName',
+  CompanyProfileId: 'CompanyProfileId',
+  RepxLayout: 'RepxLayout'
+};
+
+exports.Prisma.SalesInvoiceDetailsScalarFieldEnum = {
+  SalesInvoiceDetailId: 'SalesInvoiceDetailId',
+  NoBukti: 'NoBukti',
+  KodeCustomer: 'KodeCustomer',
+  KodeSales: 'KodeSales',
+  TglTrn: 'TglTrn',
+  TglJthTmp: 'TglJthTmp',
+  GrandTotal: 'GrandTotal',
+  SisaPiutang: 'SisaPiutang',
+  TglEntry: 'TglEntry',
+  StatusMas: 'StatusMas',
+  StatusSadix: 'StatusSadix',
+  CompanyProfileId: 'CompanyProfileId',
+  CompanyCode: 'CompanyCode',
+  COLLECTION_DATE: 'COLLECTION_DATE',
+  COLLECTION_ID: 'COLLECTION_ID'
+};
+
+exports.Prisma.SalesPricePrioritiesScalarFieldEnum = {
+  SalesPricePriorityId: 'SalesPricePriorityId',
+  CompanyProfileId: 'CompanyProfileId',
+  NoUrut: 'NoUrut',
+  PricingRuleType: 'PricingRuleType'
+};
+
+exports.Prisma.SharedPrintersScalarFieldEnum = {
+  SharedPrinterId: 'SharedPrinterId',
+  KodePrinter: 'KodePrinter',
+  PrinterName: 'PrinterName',
+  PrinterLocation: 'PrinterLocation',
+  Path: 'Path'
+};
+
+exports.Prisma.SmartlinksScalarFieldEnum = {
+  SmartlinkId: 'SmartlinkId',
+  SmartlinkCode: 'SmartlinkCode',
+  BankId: 'BankId',
+  ApiKey: 'ApiKey',
+  ApiSecret: 'ApiSecret',
+  ClientId: 'ClientId',
+  ClientSecret: 'ClientSecret',
+  CorporateId: 'CorporateId',
+  CompanyCode: 'CompanyCode',
+  CustomerNumber: 'CustomerNumber',
+  TglEntry: 'TglEntry',
+  TglUpdate: 'TglUpdate',
+  PublicKey: 'PublicKey',
+  Domain: 'Domain',
+  CompanyProfileId: 'CompanyProfileId',
+  smartlinkType: 'smartlinkType',
+  ChannelId: 'ChannelId',
+  CredentialId: 'CredentialId'
+};
+
+exports.Prisma.UserCompanyWarehousesScalarFieldEnum = {
+  UserCompanyWarehouseId: 'UserCompanyWarehouseId',
+  CompanyProfileId: 'CompanyProfileId',
+  UserName: 'UserName',
+  AllKodeGudang: 'AllKodeGudang'
+};
+
+exports.Prisma.UserComputersScalarFieldEnum = {
+  ComputerId: 'ComputerId',
+  OwnerName: 'OwnerName',
+  ComputerName: 'ComputerName',
+  ComputerIP: 'ComputerIP'
+};
+
+exports.Prisma.UserPermissionsScalarFieldEnum = {
+  UserPermissionId: 'UserPermissionId',
+  UserName: 'UserName',
+  CompanyProfileId: 'CompanyProfileId',
+  KodeBanks: 'KodeBanks'
+};
+
+exports.Prisma.UserPosScalarFieldEnum = {
+  Id: 'Id',
+  Username: 'Username',
+  KodePassword: 'KodePassword',
+  FullName: 'FullName',
+  KodeDept: 'KodeDept',
+  NamaDept: 'NamaDept',
+  KodeGudang: 'KodeGudang',
+  LoginDevice: 'LoginDevice',
+  UserRoleCode: 'UserRoleCode'
+};
+
+exports.Prisma.UserPreferencesScalarFieldEnum = {
+  UserPreferenceId: 'UserPreferenceId',
+  UserName: 'UserName',
+  DefaultAutoNumberPurchaseOrder: 'DefaultAutoNumberPurchaseOrder',
+  DefaultAutoNumberSalesOrder: 'DefaultAutoNumberSalesOrder',
+  DefaultAutoNumberProofOfReceipt: 'DefaultAutoNumberProofOfReceipt',
+  DefaultAutoNumberDeliveryPermit: 'DefaultAutoNumberDeliveryPermit',
+  DefaultAutoNumberSalesInvoices: 'DefaultAutoNumberSalesInvoices',
+  DefaultAutoNumberPurchaseBill: 'DefaultAutoNumberPurchaseBill',
+  DefaultAutoNumberPayBill: 'DefaultAutoNumberPayBill',
+  DefaultAutoNumberCollectPayment: 'DefaultAutoNumberCollectPayment',
+  DefaultAutoNumberInventoryTransaction: 'DefaultAutoNumberInventoryTransaction',
+  DefaultAutoNumberGlTransaction: 'DefaultAutoNumberGlTransaction',
+  DefaultAutoNumberBillOfMaterial: 'DefaultAutoNumberBillOfMaterial',
+  DefaultAutoNumberArTransaction: 'DefaultAutoNumberArTransaction',
+  DefaultAutoNumberApTransaction: 'DefaultAutoNumberApTransaction',
+  DefaultAutoNumberCashTransaction: 'DefaultAutoNumberCashTransaction',
+  DefaultAutoNumberPurchaseRequest: 'DefaultAutoNumberPurchaseRequest',
+  DefaultAutoNumberReorderingSheet: 'DefaultAutoNumberReorderingSheet',
+  DefaultAutoNumberClaimBonusItem: 'DefaultAutoNumberClaimBonusItem',
+  DefaultAutoNumberReceiptClaimBonusItem: 'DefaultAutoNumberReceiptClaimBonusItem',
+  DefaultAutoNumberStockRequest: 'DefaultAutoNumberStockRequest',
+  DefaultAutoNumberDraftReceipt: 'DefaultAutoNumberDraftReceipt',
+  DefaultAutoNumberProformaDr: 'DefaultAutoNumberProformaDr',
+  DefaultAutoNumberDeliveryRequest: 'DefaultAutoNumberDeliveryRequest',
+  DefaultAutoNumberDraftReceiptDr: 'DefaultAutoNumberDraftReceiptDr',
+  DefaultAutoNumberProofOfReceiptDr: 'DefaultAutoNumberProofOfReceiptDr',
+  DefaultAutoNumberSalesQuotation: 'DefaultAutoNumberSalesQuotation',
+  DefaultAutoNumberArSspTransaction: 'DefaultAutoNumberArSspTransaction',
+  DefaultAutoNumberPickingList: 'DefaultAutoNumberPickingList',
+  DefaultAutoNumberPacking: 'DefaultAutoNumberPacking',
+  DefaultAutoNumberPurchaseRefund: 'DefaultAutoNumberPurchaseRefund',
+  DefaultAutoNumberSalesRefund: 'DefaultAutoNumberSalesRefund',
+  DefaultPrintPurchaseOrder: 'DefaultPrintPurchaseOrder',
+  DefaultPrintProofOfReceipt: 'DefaultPrintProofOfReceipt',
+  DefaultPrintPurchaseBill: 'DefaultPrintPurchaseBill',
+  DefaultPrintPayBill: 'DefaultPrintPayBill',
+  DefaultPrintSalesQuotation: 'DefaultPrintSalesQuotation',
+  DefaultPrintSalesOrder: 'DefaultPrintSalesOrder',
+  DefaultPrintDeliveryPermit: 'DefaultPrintDeliveryPermit',
+  DefaultPrintSalesInvoices: 'DefaultPrintSalesInvoices',
+  DefaultPrintCollectPayment: 'DefaultPrintCollectPayment',
+  DefaultPrintWorkOrder: 'DefaultPrintWorkOrder',
+  DefaultPrintRawMaterialUseTransaction: 'DefaultPrintRawMaterialUseTransaction',
+  DefaultPrintFinishedGood: 'DefaultPrintFinishedGood',
+  DefaultPrintProjectBillingTransaction: 'DefaultPrintProjectBillingTransaction',
+  DefaultAutoNumberProjectAddendum: 'DefaultAutoNumberProjectAddendum',
+  DefaultPrintAdjustProductionCost: 'DefaultPrintAdjustProductionCost',
+  DefaultUILanguage: 'DefaultUILanguage',
+  DefaultReportLanguage: 'DefaultReportLanguage',
+  DefaultScannerTypeDeliveryOrder: 'DefaultScannerTypeDeliveryOrder',
+  DefaultScannerTypeSIbySO: 'DefaultScannerTypeSIbySO',
+  DefaultScannerTypePacking: 'DefaultScannerTypePacking',
+  ShowToolTip: 'ShowToolTip',
+  TooltipHistory: 'TooltipHistory',
+  DefaultPrinter: 'DefaultPrinter',
+  DefaultSearchInventory: 'DefaultSearchInventory',
+  DefaultAutoNumberTransferIn: 'DefaultAutoNumberTransferIn',
+  DefaultAutoNumberTransferOut: 'DefaultAutoNumberTransferOut',
+  DefaultAutoNumberPemasukkan: 'DefaultAutoNumberPemasukkan',
+  DefaultAutoNumberPengeluaran: 'DefaultAutoNumberPengeluaran',
+  DefaultAutoNumberAdjustment: 'DefaultAutoNumberAdjustment',
+  DefaultAutoNumberReturJual: 'DefaultAutoNumberReturJual',
+  DefaultAutoNumberTransferProdukBonus: 'DefaultAutoNumberTransferProdukBonus',
+  DefaultAutoNumberAdjustmentHargaPokok: 'DefaultAutoNumberAdjustmentHargaPokok',
+  DefaultAutoNumberStockOpname: 'DefaultAutoNumberStockOpname',
+  DefaultAutoTandaTerimaTukarFaktur: 'DefaultAutoTandaTerimaTukarFaktur',
+  DefaultAutoDaftarTagihPiutang: 'DefaultAutoDaftarTagihPiutang',
+  DefaultAutoNumberGenerateConsignment: 'DefaultAutoNumberGenerateConsignment'
+};
+
+exports.Prisma.UserRolePermissionsScalarFieldEnum = {
+  UserRolePermissionId: 'UserRolePermissionId',
+  PermissionCode: 'PermissionCode',
+  KodeUserRole: 'KodeUserRole'
+};
+
+exports.Prisma.UserRolesScalarFieldEnum = {
+  UserRoleCode: 'UserRoleCode',
+  Name: 'Name',
+  Description: 'Description',
+  WarehouseAllowed: 'WarehouseAllowed',
+  IsAdministrator: 'IsAdministrator'
+};
+
+exports.Prisma.UsersScalarFieldEnum = {
+  MasErpUserProfileId: 'MasErpUserProfileId',
+  UserName: 'UserName',
+  KodePassword: 'KodePassword',
+  FullName: 'FullName',
+  HomeAddress: 'HomeAddress',
+  MobilePhone: 'MobilePhone',
+  Email: 'Email',
+  UserRoleCode: 'UserRoleCode',
+  CompanyAllowed: 'CompanyAllowed',
+  KodeDept: 'KodeDept',
+  DepartmentName: 'DepartmentName',
+  KodeWorkstation: 'KodeWorkstation',
+  IpAddress: 'IpAddress',
+  KodeSales: 'KodeSales',
+  Signature: 'Signature',
+  TokenFirebase: 'TokenFirebase',
+  AllKodeWil: 'AllKodeWil',
+  KodeSalesAreas: 'KodeSalesAreas',
+  IsUserBerno: 'IsUserBerno',
+  RayonCode: 'RayonCode'
+};
+
+exports.Prisma.UserWmsScalarFieldEnum = {
+  Id: 'Id',
+  KodeDept: 'KodeDept',
+  NamaDept: 'NamaDept',
+  Username: 'Username',
+  KodePassword: 'KodePassword',
+  FullName: 'FullName',
+  LoginDevice: 'LoginDevice',
+  UserRoleCode: 'UserRoleCode',
+  KodeKonterInvTransaction: 'KodeKonterInvTransaction',
+  KodeKonterPicking: 'KodeKonterPicking',
+  KodeKonterPacking: 'KodeKonterPacking',
+  KodeGudangTargetPickingList: 'KodeGudangTargetPickingList'
+};
+
+exports.Prisma.WmsDevicesScalarFieldEnum = {
+  Id: 'Id',
+  DeviceName: 'DeviceName',
+  LastLogin: 'LastLogin'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
-
+  MigrationHistory: 'MigrationHistory',
+  InventoryStocks: 'InventoryStocks',
+  SalesInvoiceHeaders: 'SalesInvoiceHeaders',
+  SalesInvoiceItems: 'SalesInvoiceItems',
+  SalesOrderItems: 'SalesOrderItems',
+  SalesOrders: 'SalesOrders',
+  AdvertisementPicture: 'AdvertisementPicture',
+  BankCodeBnis: 'BankCodeBnis',
+  BankCodes: 'BankCodes',
+  CompanyProfiles: 'CompanyProfiles',
+  CompanyProfileSettings: 'CompanyProfileSettings',
+  CreditLimits: 'CreditLimits',
+  CustomFieldLists: 'CustomFieldLists',
+  ErrorLogs: 'ErrorLogs',
+  FndUsers: 'FndUsers',
+  IntegrationSettings: 'IntegrationSettings',
+  MemberPointSettings: 'MemberPointSettings',
+  MultiLanguages: 'MultiLanguages',
+  PosDevices: 'PosDevices',
+  PrintQueues: 'PrintQueues',
+  SalesInvoiceDetails: 'SalesInvoiceDetails',
+  SalesPricePriorities: 'SalesPricePriorities',
+  SharedPrinters: 'SharedPrinters',
+  Smartlinks: 'Smartlinks',
+  UserCompanyWarehouses: 'UserCompanyWarehouses',
+  UserComputers: 'UserComputers',
+  UserPermissions: 'UserPermissions',
+  UserPos: 'UserPos',
+  UserPreferences: 'UserPreferences',
+  UserRolePermissions: 'UserRolePermissions',
+  UserRoles: 'UserRoles',
+  Users: 'Users',
+  UserWms: 'UserWms',
+  WmsDevices: 'WmsDevices'
 };
 
 /**

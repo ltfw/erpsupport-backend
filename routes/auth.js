@@ -1,7 +1,10 @@
 const express = require('express');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const { poolConnect, pool, sql } = require('../db_user');
+
+const { PrismaClient: PwdatClient } = require('../generated/pwdat');
+const pwdat = new PwdatClient();
+
 
 const router = express.Router();
 
@@ -27,23 +30,17 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   console.log(req.body);
   
+  const pwUsers = await pwdat.users.findFirst({
+    where: { UserName:username }
+  });
 
-  await poolConnect;
-  const request = pool.request();
-  request.input('username', sql.VarChar, username);
-
-  const result = await request.query(
-    'SELECT * FROM Users WHERE UserName = @username'
-  );
-
-  const user = result.recordset[0];
-  console.log('user',user);
-  if (!user) return res.status(400).json({ error: 'User not found' });
+  console.log('user',pwUsers);
+  if (!pwUsers) return res.status(400).json({ error: 'User not found' });
 
   const hashedInputPassword = crypto.createHash('sha1').update(password).digest('hex');
-  console.log(hashedInputPassword, user.kodepassword);
+  console.log(hashedInputPassword, pwUsers.KodePassword);
   
-  if (hashedInputPassword !== user.KodePassword) {
+  if (hashedInputPassword !== pwUsers.KodePassword) {
     return res.status(403).json({ error: 'Invalid credentials' });
   }
 
