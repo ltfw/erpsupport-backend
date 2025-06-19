@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
-  // try {
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
-  const skip = (page - 1) * pageSize;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const skip = (page - 1) * pageSize;
 
-  const [customers, total] = await Promise.all([
-    prisma.$queryRaw`
-      select c.KodeLgn, c.NamaLgn, cg.CustomerGroupName, be.BusinessEntityName, d.NamaDept, s.NamaSales, c.Alamat1
+    const [customers, total] = await Promise.all([
+      prisma.$queryRaw`
+      select c.CustomerId, c.KodeLgn, c.NamaLgn, cg.CustomerGroupName, be.BusinessEntityName, d.NamaDept, s.NamaSales, c.Alamat1 
       from customers c
       join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
       join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
@@ -23,35 +23,39 @@ router.get("/", async (req, res) => {
       offset ${skip} rows
       fetch next ${pageSize} rows only;
     `,
-    prisma.customers.count(),
-  ]);
+      prisma.customers.count(),
+    ]);
 
-  return res.json({
-    data: customers,
-    pagination: {
-      page,
-      pageSize,
-      total,
-      totalPages: Math.ceil(total / pageSize),
-    },
-  });
-  // } catch (error) {
-  //   return res.status(500).json({ error: "Failed to fetch customers" });
-  // }
+    return res.json({
+      data: customers,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to fetch customers" });
+  }
 });
 
 // Get customer by ID
 router.get("/:id", async (req, res) => {
   try {
-    const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(req.params.id) },
-    });
+    const customer = await prisma.$queryRaw`
+      select c.*,rd.RayonCode,cg.CustomerGroupName from customers c 
+      join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
+      join RayonDistricts rd on c.DistrictId = rd.DistrictId
+      where CustomerId=${req.params.id};
+    `;
+
     if (!customer) {
       return res.status(404).json({ error: "Customer not found" });
     }
-    return res.json(customer);
+    return res.json(customer[0]);
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch customer" });
+    return res.status(500).json({ error });
   }
 });
 
