@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({log: ['query', 'info', 'warn', 'error'],});
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
@@ -48,12 +48,45 @@ router.get("/:id", async (req, res) => {
       join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
       join RayonDistricts rd on c.DistrictId = rd.DistrictId
       where CustomerId=${req.params.id};
+    `
+
+    const rayonCustomer = await prisma.$queryRaw`
+      select rd.* from rayondistricts rd
+      join customers c on rd.DistrictId = c.DistrictId
+      where c.CustomerId=${req.params.id};
+    `
+
+    const customerGroup = await prisma.$queryRaw`
+      select cg.* from customergroups cg
+      join customers c on cg.CustomerGroupId = c.CustomerGroupId
+      where c.CustomerId=${req.params.id};
+    `
+
+    const legalitasOutlet = await prisma.$queryRaw`
+      select cgmp.*,cgvp.*,format(cgvp.ExpiredDate,'yyyy-MM-dd') as tglExpired from CustomerGroupValuePermissions cgvp 
+      join CustomerGroupMasterPermissions cgmp on cgvp.CustomerGroupMasterPermissionCode = cgmp.CustomerGroupMasterPermissionCode
+      join customers c on cgvp.CustomerId = c.CustomerId
+      where c.CustomerId=${req.params.id}
+      order by cgvp.PermissionTitleCode, cgvp.Nomor;
     `;
 
+    // const legalitasOutlet = await prisma.$queryRaw`
+    //   select cgmp.*,cgvp.* from CustomerGroupValuePermissions cgvp 
+    //   join CustomerGroupMasterPermissions cgmp on cgvp.CustomerGroupMasterPermissionCode = cgmp.CustomerGroupMasterPermissionCode
+    //   join customers c on cgvp.CustomerId = c.CustomerId
+    //   where c.CustomerId=${req.params.id}
+    //   order by cgvp.PermissionTitleCode,cgvp.Nomor;
+    // `
     if (!customer) {
       return res.status(404).json({ error: "Customer not found" });
     }
-    return res.json(customer[0]);
+    return res.json({ 
+      id: req.params.id,
+      customer: customer[0], 
+      rayonCustomer: rayonCustomer[0],
+      customerGroup: customerGroup[0],
+      legalitasOutlet: legalitasOutlet,
+    });
   } catch (error) {
     return res.status(500).json({ error });
   }
