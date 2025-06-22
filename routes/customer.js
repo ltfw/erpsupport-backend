@@ -9,9 +9,12 @@ router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
+    const search = req.query.search?.trim() || ''
     const skip = (page - 1) * pageSize;
 
-    const [customers, total] = await Promise.all([
+    const searchQuery = `%${search}%`
+
+    const [customers, totalResult] = await Promise.all([
       prisma.$queryRaw`
       select c.CustomerId, c.KodeLgn, c.NamaLgn, cg.CustomerGroupName, be.BusinessEntityName, d.NamaDept, s.NamaSales, c.Alamat1 
       from customers c
@@ -19,12 +22,19 @@ router.get("/", async (req, res) => {
       join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
       join salesmen s on c.KodeSales = s.KodeSales
       join Departments d on c.KodeDept = d.KodeDept
+      where c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery}
       order by c.KodeLgn
       offset ${skip} rows
       fetch next ${pageSize} rows only;
     `,
-      prisma.customers.count(),
+      prisma.$queryRawUnsafe(`
+        select count(*) as total 
+        from customers c
+        where c.KodeLgn like '${searchQuery}' or c.NamaLgn like '${searchQuery}'
+      `),
     ]);
+
+    const total = Number(totalResult[0]?.total || 0)
 
     return res.json({
       data: customers,
