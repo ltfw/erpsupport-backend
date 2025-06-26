@@ -111,49 +111,5 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create new customer
-router.post("/", async (req, res) => {
-  try {
-    const validatedData = CustomerSchema.parse(req.body);
-    const customer = await prisma.customer.create({
-      data: validatedData,
-    });
-    return res.status(201).json(customer);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    return res.status(500).json({ error: "Failed to create customer" });
-  }
-});
-
-// Update customer
-router.put("/:id", async (req, res) => {
-  try {
-    const validatedData = CustomerSchema.parse(req.body);
-    const customer = await prisma.customer.update({
-      where: { id: parseInt(req.params.id) },
-      data: validatedData,
-    });
-    return res.json(customer);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    return res.status(500).json({ error: "Failed to update customer" });
-  }
-});
-
-// Delete customer
-router.delete("/:id", async (req, res) => {
-  try {
-    await prisma.customer.delete({
-      where: { id: parseInt(req.params.id) },
-    });
-    return res.status(204).send();
-  } catch (error) {
-    return res.status(500).json({ error: "Failed to delete customer" });
-  }
-});
 
 module.exports = router;
