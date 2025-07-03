@@ -2,41 +2,46 @@ const express = require("express");
 const { PrismaClient } = require("../generated/pwdat");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'] });
+const prisma = new PrismaClient({ log: ["query", "warn", "error"] });
 
-// GET all vendors with optional pagination and search
 router.get("/", async (req, res) => {
-  const isAdmin = req.user.UserRoleCode === 'ADM';
+  const search = req.query.search?.trim() || "";
+  console.log('req.user ',req.user)
+  const isAdmin = req.user.role === "ADM";
+  const username = req.user.username;
 
-  const userFilter = isAdmin ? '' : `where us.UserName = ${req.user.UserName}`;
+  const searchQuery = `'%${search}%'`;
+  const usernameQuery = isAdmin ? `` : ` and us.UserName = ${username}`
 
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
-    const searchQuery = `%${search}%`;
 
     const [vendors, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-        select v.VendorId,v.KodeLgn,v.NamaLgn from PwdatBackup.dbo.UserSupplier us 
-        join SDUdb001.dbo.Vendors v on us.VendorId = v.VendorId
-        ${userFilter}
-        ORDER BY KodeLgn
-        OFFSET ${skip} ROWS
-        FETCH NEXT ${pageSize} ROWS ONLY;
-      `,
       prisma.$queryRawUnsafe(`
-        SELECT COUNT(*) as total 
-        FROM Vendors 
-        WHERE NamaLgn LIKE '${searchQuery}' OR KodeLgn LIKE '${searchQuery}';
+        SELECT v.VendorId, v.KodeLgn, v.NamaLgn
+        FROM PwdatBackup.dbo.UserSupplier us
+        JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
+        where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
+        ${usernameQuery}
+        ORDER BY v.KodeLgn
+        OFFSET ${skip} ROWS
+        FETCH NEXT ${pageSize} ROWS ONLY
+      `),
+      prisma.$queryRawUnsafe(`
+        SELECT COUNT(*) AS total
+        FROM PwdatBackup.dbo.UserSupplier us
+        JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
+        where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
+        ${usernameQuery}
       `),
     ]);
 
     const total = Number(totalResult[0]?.total || 0);
 
     res.json({
-      data: vendors,
+      data: vendors ?? [],
       pagination: {
         page,
         pageSize,
@@ -46,7 +51,10 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching vendors:", error);
-    res.status(500).json({ error: "Failed to fetch vendors" });
+    res.status(500).json({
+      error: "Failed to fetch vendors",
+      details: error,
+    });
   }
 });
 

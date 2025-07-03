@@ -47,9 +47,9 @@ router.post("/login", async (req, res) => {
   }
 
   const token = jwt.sign(
-    { userId: pwUsers.UserId, username: pwUsers.UserName },
+    { userId: pwUsers.UserId, username: pwUsers.UserName,role:pwUsers.UserRoleCode },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "8h" }
   );
 
   const { KodePassword, ...safeUser } = pwUsers;
@@ -57,4 +57,4 @@ router.post("/login", async (req, res) => {
   res.json({ token, user: safeUser });
 });
 
-module.exports = router;
+module.exports = router

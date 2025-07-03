@@ -1,34 +1,32 @@
 const express = require("express");
 const { PrismaClient } = require("../generated/dbtrans");
+const { Prisma } = require("@prisma/client");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'] });
+const prisma = new PrismaClient({ log: [ 'info', 'warn', 'error'] });
 
 // GET all departments with pagination and optional search
 router.get("/", async (req, res) => {
   const isAdmin = req.user.UserRoleCode === 'ADM';
 
-
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || '';
+    // const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
-    const searchQuery = `%${search}%`;
-    const userFilter = isAdmin ? '' : `WHERE NamaDept LIKE ${searchQuery} OR KodeDept LIKE ${searchQuery}`;
+    // const searchQuery = `%${search}%`;
+    // const userFilter = isAdmin ? '' : `WHERE NamaDept LIKE ${searchQuery} OR KodeDept LIKE ${searchQuery}`;
 
     const [departments, totalResult] = await Promise.all([
       prisma.$queryRaw`
-        SELECT KodeDept, NamaDept FROM Departments 
-        ${userFilter}
+        SELECT KodeDept, NamaDept FROM Departments
         ORDER BY KodeDept
         OFFSET ${skip} ROWS
         FETCH NEXT ${pageSize} ROWS ONLY;
       `,
       prisma.$queryRawUnsafe(`
-        SELECT COUNT(*) as total 
-        FROM Departments 
-        ${userFilter}
+        SELECT COUNT(*) as total
+        FROM Departments
       `)
     ]);
 
@@ -45,7 +43,7 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch departments" });
+    res.status(500).json({ error: "Failed to fetch departments",errors:error });
   }
 });
 
