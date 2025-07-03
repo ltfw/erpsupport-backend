@@ -3,6 +3,8 @@ const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
 const persediaanRoutes = require('./routes/persediaan');
 const penjualanRoutes = require('./routes/penjualan');
+const departmentsRoutes = require('./routes/departments');
+const vendorsRoutes = require('./routes/vendors');
 const authenticateToken = require('./middleware/auth');
 const cors = require('cors');
 require('dotenv').config();
@@ -39,6 +41,8 @@ app.use('/auth', authRoutes);
 app.use('/customers',customerRoutes)
 app.use('/sales', penjualanRoutes);
 app.use('/stocks',persediaanRoutes);
+app.use('/departments',authenticateToken, departmentsRoutes);
+app.use('/principals', authenticateToken, vendorsRoutes);
 
 // Example protected route
 app.get('/protected', authenticateToken, (req, res) => {
@@ -48,7 +52,6 @@ app.get('/protected', authenticateToken, (req, res) => {
 app.get('/', (req, res) => {
   res.send('API is running');
 });
-
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || '0.0.0.0'; 

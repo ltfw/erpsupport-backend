@@ -3,10 +3,12 @@ const { PrismaClient } = require("../generated/dbtrans");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
-const currentMonth = (new Date()).getMonth() + 1;
+// const currentMonth = (new Date()).getMonth() + 1;
+const currentMonth = 3;
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
+  
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
@@ -58,7 +60,8 @@ router.get("/", async (req, res) => {
           else ''
         end as TipeJual,
         sih.PoLanggan,
-        sii.PromotionCode
+        sii.PromotionCode,
+        p.PromotionName 
       from
         SalesInvoiceHeaders sih
       join salesinvoiceitems sii on
@@ -88,6 +91,8 @@ router.get("/", async (req, res) => {
         is3.InventoryId = i.InventoryId
       join BusinessCentres bc on
         bc.BusinessCentreCode = is3.BusinessCentreCode
+      join promotions p on
+      	p.PromotionCode = sii.PromotionCode
       where
         month(sih.tglfaktur) = ${currentMonth}
       order by 
@@ -126,6 +131,8 @@ router.get("/", async (req, res) => {
           is3.InventoryId = i.InventoryId
         join BusinessCentres bc on
           bc.BusinessCentreCode = is3.BusinessCentreCode
+        join promotions p on
+          p.PromotionCode = sii.PromotionCode
         where
           month(sih.tglfaktur) = ${currentMonth}
       `),
