@@ -1,12 +1,12 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/pwdat");
+const { PrismaClient } = require("../generated/dbtrans");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ["query", "warn", "error"] });
 
 router.get("/", async (req, res) => {
   const search = req.query.search?.trim() || "";
-  console.log('req.user ',req.user)
+  console.log('req.user ', req.user)
   const isAdmin = req.user.role === "ADM";
   const username = req.user.username;
 
@@ -15,11 +15,32 @@ router.get("/", async (req, res) => {
 
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 10;
+    const pageSize = parseInt(req.query.per_page) || 100;
     const skip = (page - 1) * pageSize;
 
-    const [vendors, totalResult] = await Promise.all([
-      prisma.$queryRawUnsafe(`
+    let vendors = [];
+    let totalResult = 0;
+
+    if (isAdmin) {
+      [vendors, totalResult] = await Promise.all([
+        prisma.$queryRawUnsafe(`
+        SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
+        FROM Vendors v 
+        join Inventorysuppliers is2 on is2.VendorId = v.VendorId 
+        order by v.kodelgn
+        OFFSET ${skip} ROWS
+        FETCH NEXT ${pageSize} ROWS ONLY
+      `),
+        prisma.$queryRawUnsafe(`
+        SELECT COUNT(*) AS total
+        FROM Vendors v
+        join Inventorysuppliers is2 on is2.VendorId = v.VendorId 
+        ${usernameQuery}
+      `),
+      ]);
+    } else {
+      [vendors, totalResult] = await Promise.all([
+        prisma.$queryRawUnsafe(`
         SELECT v.VendorId, v.KodeLgn, v.NamaLgn
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
@@ -29,14 +50,17 @@ router.get("/", async (req, res) => {
         OFFSET ${skip} ROWS
         FETCH NEXT ${pageSize} ROWS ONLY
       `),
-      prisma.$queryRawUnsafe(`
+        prisma.$queryRawUnsafe(`
         SELECT COUNT(*) AS total
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
         where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
         ${usernameQuery}
       `),
-    ]);
+      ]);
+    }
+
+
 
     const total = Number(totalResult[0]?.total || 0);
 

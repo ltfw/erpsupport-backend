@@ -8,25 +8,26 @@ const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || ''
+    const pageSize = parseInt(req.query.per_page) || 200;
     const skip = (page - 1) * pageSize;
-
-    const searchQuery = `%${search}%`
+    
 
     const [customers, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-      select c.CustomerId, c.KodeLgn, c.NamaLgn, cg.CustomerGroupName, be.BusinessEntityName, d.NamaDept, s.NamaSales, c.Alamat1 
-      from customers c
-      join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
-      join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
-      join salesmen s on c.KodeSales = s.KodeSales
-      join Departments d on c.KodeDept = d.KodeDept
-      where c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery}
-      order by c.KodeLgn
+      prisma.$queryRawUnsafe(`
+      select
+        i.KodeItem,
+        i.NamaBarang,
+        case when i.IsConsignmentIn = 1 then 'Konsinyasi'
+        when i.isbonus = 1 then 'Bonus'
+        else 'Reguler' end as Keterangan
+      from
+        Inventories i
+      where
+        i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
+      order by i.kodeitem,i.NamaBarang
       offset ${skip} rows
       fetch next ${pageSize} rows only;
-    `,
+    `),
       prisma.$queryRawUnsafe(`
         select count(*) as total 
         from customers c
