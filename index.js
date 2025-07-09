@@ -4,7 +4,7 @@ const customerRoutes = require('./routes/customer');
 const persediaanRoutes = require('./routes/persediaan');
 const penjualanRoutes = require('./routes/penjualan');
 const departmentsRoutes = require('./routes/department');
-const vendorsRoutes = require('./routes/vendors');
+const supplierRoutes = require('./routes/supplier');
 const authenticateToken = require('./middleware/auth');
 const cors = require('cors');
 require('dotenv').config();
@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 const allowedOrigins = [
   'http://localhost:3000', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
+  'https://0c4bd92a549f.ngrok-free.app',
 ];
 
 app.use(cors({
@@ -42,7 +43,7 @@ app.use('/customers',customerRoutes)
 app.use('/sales', penjualanRoutes);
 app.use('/stocks',persediaanRoutes);
 app.use('/departments',authenticateToken, departmentsRoutes);
-app.use('/principals', authenticateToken, vendorsRoutes);
+app.use('/suppliers', authenticateToken, supplierRoutes);
 
 // Example protected route
 app.get('/protected', authenticateToken, (req, res) => {

@@ -1,21 +1,28 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: [ 'info', 'warn', 'error'], });
+const prisma = new PrismaClient({ log: [ 'warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
-  
+
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
     const search = req.query.search?.trim() || ''
     const skip = (page - 1) * pageSize;
-
+    const cabangParam = req.query.cabang || ''
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : []
+    const barangParam = req.query.barang || ''
+    const barangArray = barangParam ? barangParam.split(',').map(s => s.trim()) : []
     const searchQuery = `%${search}%`
+
+    // const kodeItemFilter = barangArray.length > 0 
+    //   ? prisma.sql`and i.KodeItem in (${prisma.join(barangArray)})`
+    //   : prisma.empty
 
     const [sales, totalResult] = await Promise.all([
       prisma.$queryRaw`
@@ -95,12 +102,24 @@ router.get("/", async (req, res) => {
       	p.PromotionCode = sii.PromotionCode
       where
         month(sih.tglfaktur) = ${currentMonth}
+        ${cabangArray.length > 0
+          ? Prisma.sql`and sih.KodeCc in (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+        ${barangArray.length > 0
+          ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
+          : Prisma.sql``}
+        and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
+        and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
+        and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
+        and (sih.KodeWil like ${searchQuery} or s.KodeSales like ${searchQuery} or s2.KodeSales like ${searchQuery})
+        and (sih.PoLanggan like ${searchQuery} or p.PromotionCode like ${searchQuery})
+
       order by 
         sih.NoBukti
       offset ${skip} rows
       fetch next ${pageSize} rows only;
     `,
-      prisma.$queryRawUnsafe(`
+      prisma.$queryRaw`
         select count(*) as total 
         from
           SalesInvoiceHeaders sih
@@ -135,7 +154,19 @@ router.get("/", async (req, res) => {
           p.PromotionCode = sii.PromotionCode
         where
           month(sih.tglfaktur) = ${currentMonth}
-      `),
+          ${barangArray.length > 0
+          ? Prisma.sql`and sih.KodeCc in (${Prisma.join(barangArray)})`
+          : Prisma.sql``}
+          ${barangArray.length > 0
+          ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
+          : Prisma.sql``}
+          and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
+          and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
+          and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
+          and (sih.KodeWil like ${searchQuery} or s.KodeSales like ${searchQuery} or s2.KodeSales like ${searchQuery})
+          and (sih.PoLanggan like ${searchQuery} or p.PromotionCode like ${searchQuery})
+        
+      `,
     ]);
 
     const total = Number(totalResult[0]?.total || 0)
@@ -150,7 +181,7 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch sales" });
+    return res.status(500).json({ error: "Failed to fetch sales", details: error });
   }
 });
 

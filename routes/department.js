@@ -1,33 +1,35 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/dbtrans");
-const { Prisma } = require("@prisma/client");
+const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: [ 'info', 'warn', 'error'] });
+const prisma = new PrismaClient({ log: [ 'warn', 'error'] });
+const { sql } = Prisma;
 
-// GET all departments with pagination and optional search
 router.get("/", async (req, res) => {
-  const isAdmin = req.user.UserRoleCode === 'ADM';
+  const isAdmin = req.user.role === 'ADM';
 
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
-    // const search = req.query.search?.trim() || '';
+    const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
-    // const searchQuery = `%${search}%`;
-    // const userFilter = isAdmin ? '' : `WHERE NamaDept LIKE ${searchQuery} OR KodeDept LIKE ${searchQuery}`;
+    const searchQuery = `%${search}%`;
+
+    const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
     const [departments, totalResult] = await Promise.all([
       prisma.$queryRaw`
-        SELECT KodeDept, NamaDept FROM Departments
+        SELECT KodeDept, NamaDept 
+        FROM Departments
+        WHERE NamaDept LIKE ${searchQuery} OR KodeDept LIKE ${searchQuery}
         ORDER BY KodeDept
-        OFFSET ${skip} ROWS
-        FETCH NEXT ${pageSize} ROWS ONLY;
+        ${offsetClause}
       `,
-      prisma.$queryRawUnsafe(`
+      prisma.$queryRaw`
         SELECT COUNT(*) as total
         FROM Departments
-      `)
+        WHERE NamaDept LIKE ${searchQuery} OR KodeDept LIKE ${searchQuery}
+      `
     ]);
 
     const total = Number(totalResult[0]?.total || 0);
@@ -43,7 +45,7 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch departments",errors:error });
+    res.status(500).json({ error: "Failed to fetch departments", errors: error });
   }
 });
 

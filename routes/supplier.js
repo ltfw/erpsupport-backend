@@ -1,66 +1,65 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ["query", "warn", "error"] });
+const prisma = new PrismaClient({ log: ["query","warn", "error"] });
+const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
-  const search = req.query.search?.trim() || "";
-  console.log('req.user ', req.user)
-  const isAdmin = req.user.role === "ADM";
-  const username = req.user.username;
-
-  const searchQuery = `'%${search}%'`;
-  const usernameQuery = isAdmin ? `` : ` and us.UserName = ${username}`
-
   try {
+    const search = req.query.search?.trim() || "";
+    const isAdmin = req.user.role;
+    const username = req.user.username;
+    console.log("User Role:", isAdmin, "Username:", username);
+
+    const searchQuery = `'%${search}%'`;
+    const usernameQuery = isAdmin ? sql`` : sql` and us.UserName = ${sql(username)}`
+
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 100;
     const skip = (page - 1) * pageSize;
 
     let vendors = [];
     let totalResult = 0;
+    const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
     if (isAdmin) {
       [vendors, totalResult] = await Promise.all([
-        prisma.$queryRawUnsafe(`
+        prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
         FROM Vendors v 
         join Inventorysuppliers is2 on is2.VendorId = v.VendorId 
+        WHERE v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
         order by v.kodelgn
-        OFFSET ${skip} ROWS
-        FETCH NEXT ${pageSize} ROWS ONLY
-      `),
-        prisma.$queryRawUnsafe(`
+        ${offsetClause}
+      `,
+        prisma.$queryRaw`
         SELECT COUNT(*) AS total
         FROM Vendors v
         join Inventorysuppliers is2 on is2.VendorId = v.VendorId 
-        ${usernameQuery}
-      `),
+        WHERE v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
+      `,
       ]);
     } else {
       [vendors, totalResult] = await Promise.all([
-        prisma.$queryRawUnsafe(`
+        prisma.$queryRaw`
         SELECT v.VendorId, v.KodeLgn, v.NamaLgn
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
         where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
         ${usernameQuery}
         ORDER BY v.KodeLgn
-        OFFSET ${skip} ROWS
-        FETCH NEXT ${pageSize} ROWS ONLY
-      `),
-        prisma.$queryRawUnsafe(`
+        ${offsetClause}
+      `,
+        prisma.$queryRaw`
         SELECT COUNT(*) AS total
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
         where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
         ${usernameQuery}
-      `),
+      `,
       ]);
     }
-
-
 
     const total = Number(totalResult[0]?.total || 0);
 

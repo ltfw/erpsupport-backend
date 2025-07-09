@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
+const prisma = new PrismaClient({ log: ['warn', 'error'], });
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
@@ -10,7 +10,9 @@ router.get("/", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 200;
     const skip = (page - 1) * pageSize;
+    const search = req.query.search?.trim() || ''
     
+    const searchQuery = `%${search}%`
 
     const [customers, totalResult] = await Promise.all([
       prisma.$queryRawUnsafe(`
@@ -24,14 +26,16 @@ router.get("/", async (req, res) => {
         Inventories i
       where
         i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
+        and (i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
       order by i.kodeitem,i.NamaBarang
       offset ${skip} rows
       fetch next ${pageSize} rows only;
     `),
       prisma.$queryRawUnsafe(`
         select count(*) as total 
-        from customers c
-        where c.KodeLgn like '${searchQuery}' or c.NamaLgn like '${searchQuery}'
+        from Inventories i
+        where i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
+        and (i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
       `),
     ]);
 
@@ -47,7 +51,7 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch customers" });
+    return res.status(500).json({ error: "Failed to fetch stocks" });
   }
 });
 

@@ -91,6 +91,7 @@ router.get("/:id", async (req, res) => {
       join customergrouppermissions cgp on c.CustomerGroupId = cgp.customergroupid
       join CustomerGroupMasterPermissions cgmp on cgmp.customergroupmasterpermissioncode = cgp.customergroupmasterpermissioncode
       left join CustomerGroupValuePermissions cgvp on cgp.customergroupmasterpermissioncode = cgvp.customergroupmasterpermissioncode and c.customerid = cgvp.customerid
+      and cgp.PermissionTitleCode = cgvp.PermissionTitleCode 
       where c.CustomerId=${req.params.id}
       order by cgvp.PermissionTitleCode, cgvp.Nomor;
     `;
