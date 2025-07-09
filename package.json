@@ -11,7 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@prisma/client": "^6.10.0",
+    "@prisma/client": "^6.11.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -21,6 +21,6 @@
     "mssql": "^11.0.1"
   },
   "devDependencies": {
-    "prisma": "^6.10.0"
+    "prisma": "^6.11.1"
   }
 }

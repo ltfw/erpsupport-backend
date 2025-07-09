@@ -21,6 +21,7 @@ const allowedOrigins = [
   'http://localhost:3000', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
   'https://0c4bd92a549f.ngrok-free.app',
+  'http://localhost'
 ];
 
 app.use(cors({
@@ -54,7 +55,7 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const host = process.env.HOST || '0.0.0.0'; 
 
 app.listen(port, host, () => {
