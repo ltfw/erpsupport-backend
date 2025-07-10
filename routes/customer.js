@@ -86,7 +86,9 @@ router.get("/:id", async (req, res) => {
       cgvp.PermissionValue,
       cgvp.FilePath,
       cgvp.Nomor,
-      isnull(format(cgvp.ExpiredDate,'yyyy-MM-dd'),'') as tglExpired 
+      isnull(format(cgvp.ExpiredDate,'yyyy-MM-dd'),'') as tglExpired,
+      cgmp.IsUploadFile,
+      cgmp.IsUseExpiredDate
       from customers c
       join customergrouppermissions cgp on c.CustomerGroupId = cgp.customergroupid
       join CustomerGroupMasterPermissions cgmp on cgmp.customergroupmasterpermissioncode = cgp.customergroupmasterpermissioncode
