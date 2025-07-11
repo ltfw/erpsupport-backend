@@ -18,7 +18,13 @@ router.get("/", async (req, res) => {
     const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : []
     const barangParam = req.query.barang || ''
     const barangArray = barangParam ? barangParam.split(',').map(s => s.trim()) : []
+    const startDate = req.query.start_date || null;
+    const endDate = req.query.end_date || null;
     const searchQuery = `%${search}%`
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "Start date and end date are required" });
+    }
 
     // const kodeItemFilter = barangArray.length > 0 
     //   ? prisma.sql`and i.KodeItem in (${prisma.join(barangArray)})`
@@ -101,7 +107,7 @@ router.get("/", async (req, res) => {
       join promotions p on
       	p.PromotionCode = sii.PromotionCode
       where
-        month(sih.tglfaktur) = ${currentMonth}
+        sih.TglFaktur between ${startDate} and ${endDate}
         ${cabangArray.length > 0
           ? Prisma.sql`and sih.KodeCc in (${Prisma.join(cabangArray)})`
           : Prisma.sql``}
