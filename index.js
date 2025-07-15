@@ -5,6 +5,7 @@ const persediaanRoutes = require('./routes/persediaan');
 const penjualanRoutes = require('./routes/penjualan');
 const departmentsRoutes = require('./routes/department');
 const supplierRoutes = require('./routes/supplier');
+const lainLainRoutes = require('./routes/tools/others');
 const authenticateToken = require('./middleware/auth');
 const cors = require('cors');
 require('dotenv').config();
@@ -41,11 +42,13 @@ app.use(cors({
 }));
 
 app.use('/auth', authRoutes);
-app.use('/customers',customerRoutes)
-app.use('/sales', penjualanRoutes);
-app.use('/stocks',persediaanRoutes);
+app.use('/customers',authenticateToken, customerRoutes)
+app.use('/sales', authenticateToken, penjualanRoutes);
+app.use('/stocks',authenticateToken, persediaanRoutes);
 app.use('/departments',authenticateToken, departmentsRoutes);
 app.use('/suppliers', authenticateToken, supplierRoutes);
+app.use('/others', lainLainRoutes);
+
 
 // Example protected route
 app.get('/protected', authenticateToken, (req, res) => {
