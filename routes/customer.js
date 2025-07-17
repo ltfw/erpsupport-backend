@@ -1,5 +1,5 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
@@ -47,6 +47,56 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ error: "Failed to fetch customers" });
+  }
+});
+
+router.get("/rayoncustomer", async (req, res) => {
+  try {
+    const rayon = req.query.rayon?.trim() || ''
+    const group = req.query.group?.trim() || ''
+
+    const conditions = []
+    const params = []
+
+    // Only build WHERE if we have values
+    if (rayon) {
+      conditions.push(Prisma.sql`rd.RayonCode = ${rayon}`)
+    }
+    if (group) {
+      conditions.push(Prisma.sql`c.CustomerGroupId = ${group}`)
+    }
+
+    // Require at least rayon
+    if (!rayon) {
+      return res.status(400).json({ error: "Rayon is required." })
+    }
+
+    // Build WHERE clause
+    let whereClause = Prisma.empty
+    if (conditions.length > 0) {
+      // join with AND
+      whereClause = Prisma.sql`WHERE ${Prisma.join(conditions, Prisma.raw(' AND '))}`
+    }
+
+    // Final query
+    const query = Prisma.sql`
+      SELECT d.NamaDept, r.RayonName, s.NamaSales, c.KodeLgn, c.NamaLgn, 
+             be.BusinessEntityName, cg.CustomerGroupName
+      FROM customers c
+      JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
+      JOIN Rayons r ON rd.RayonCode = r.RayonCode
+      JOIN Departments d ON c.KodeDept = d.KodeDept
+      JOIN Salesmen s ON c.KodeSales = s.KodeSales
+      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+      JOIN CustomerGroups cg ON cg.CustomerGroupId = c.CustomerGroupId
+      ${whereClause}
+    `
+
+    const rayonCustomer = await prisma.$queryRaw(query)
+    res.json({ data: rayonCustomer })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Get Rayon Customer Error", details: error.message })
   }
 });
 
@@ -158,5 +208,6 @@ router.delete("/:id", async (req, res) => {
     return res.status(500).json({ error: "Failed to delete customer" });
   }
 });
+
 
 module.exports = router;

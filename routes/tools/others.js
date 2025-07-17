@@ -37,25 +37,28 @@ router.post("/importcoretax", async (req, res) => {
   }
 });
 
-router.get("/test-importcoretax", async (req, res) => {
+router.get("/rayonsalesman", async (req, res) => {
   try {
-    // Test single update
-    const item = {
-      TaxInvoiceNumber: "04002500192756685",
-      TaxReference: "25/SI/TGR/07/00006"
-    }
+    const rayonSalesmen = await prisma.$queryRaw`
+      select r.RayonCode,s.NamaSales from Rayons r 
+        join Salesmen s on r.KodeSales = s.KodeSales
+        order by r.RayonCode,s.NamaSales;
+      `;
+    res.json({ data: rayonSalesmen });
 
-    const result = await prisma.$executeRaw`
-      UPDATE SalesInvoiceHeaders
-      SET NoFakturP = ${item.TaxInvoiceNumber}
-      WHERE Nobukti = ${item.TaxReference}
-    `;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Test failed", details: error.message });
+  }
+});
 
-    if (result > 0) {
-      res.json({ message: "Test OK: data updated", rowsAffected: result });
-    } else {
-      res.json({ message: "Test OK: but no rows matched (nothing updated)", rowsAffected: result });
-    }
+router.get("/customergroups", async (req, res) => {
+  try {
+    const customerGroups = await prisma.customerGroups.findMany({
+      orderBy: { CustomerGroupName: 'asc' }
+    })
+    res.json({ data: customerGroups });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Test failed", details: error.message });
