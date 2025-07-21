@@ -16,11 +16,17 @@ router.get("/", async (req, res) => {
     const skip = (page - 1) * pageSize;
     const cabangParam = req.query.cabang || ''
     const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : []
+    const vendorParam = req.query.vendor || ''
+    const vendorArray = vendorParam ? vendorParam.split(',').map(s => s.trim()) : []
     const barangParam = req.query.barang || ''
     const barangArray = barangParam ? barangParam.split(',').map(s => s.trim()) : []
     const startDate = req.query.start_date || null;
     const endDate = req.query.end_date || null;
     const searchQuery = `%${search}%`
+
+    const isAdmin = req.user.role;
+    const username = req.user.username;
+    // const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: "Start date and end date are required" });
@@ -106,6 +112,8 @@ router.get("/", async (req, res) => {
         bc.BusinessCentreCode = is3.BusinessCentreCode
       join promotions p on
       	p.PromotionCode = sii.PromotionCode
+      join PwdatSATORIA.dbo.UserSupplier us 
+      	on us.VendorId = is3.VendorId
       where
         sih.TglFaktur between ${startDate} and ${endDate}
         ${cabangArray.length > 0
@@ -114,12 +122,17 @@ router.get("/", async (req, res) => {
         ${barangArray.length > 0
           ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
           : Prisma.sql``}
+        ${vendorArray.length > 0
+          ? Prisma.sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})`
+          : Prisma.sql``}
+        ${isAdmin === 'ADM' 
+          ? Prisma.sql``
+          : Prisma.sql`and us.UserName = ${username}`}
         and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
         and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
         and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
         and (sih.KodeWil like ${searchQuery} or s.KodeSales like ${searchQuery} or s2.KodeSales like ${searchQuery})
         and (sih.PoLanggan like ${searchQuery} or p.PromotionCode like ${searchQuery})
-
       order by 
         sih.NoBukti
       offset ${skip} rows

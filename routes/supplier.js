@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ["query","warn", "error"] });
+const prisma = new PrismaClient({ log: ["warn", "error"] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
@@ -10,10 +10,10 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || "";
     const isAdmin = req.user.role;
     const username = req.user.username;
-    console.log("User Role:", isAdmin, "Username:", username);
 
-    const searchQuery = `'%${search}%'`;
-    const usernameQuery = isAdmin ? sql`` : sql` and us.UserName = ${sql(username)}`
+    const searchQuery = `%${search}%`;
+    const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
+    console.log("User Role:", isAdmin, "Username:", username, "usernameQuery:", usernameQuery);
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 100;
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     let totalResult = 0;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
-    if (isAdmin) {
+    if (isAdmin=='ADM') {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
@@ -34,7 +34,7 @@ router.get("/", async (req, res) => {
         ${offsetClause}
       `,
         prisma.$queryRaw`
-        SELECT COUNT(*) AS total
+        SELECT count(distinct v.kodelgn) as total
         FROM Vendors v
         join Inventorysuppliers is2 on is2.VendorId = v.VendorId 
         WHERE v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
@@ -43,11 +43,10 @@ router.get("/", async (req, res) => {
     } else {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
-        SELECT v.VendorId, v.KodeLgn, v.NamaLgn
+        SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
-        where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
-        ${usernameQuery}
+        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}) AND us.UserName = ${username}
         ORDER BY v.KodeLgn
         ${offsetClause}
       `,
@@ -55,8 +54,7 @@ router.get("/", async (req, res) => {
         SELECT COUNT(*) AS total
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
-        where v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}
-        ${usernameQuery}
+        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}) AND us.UserName = ${username}
       `,
       ]);
     }
