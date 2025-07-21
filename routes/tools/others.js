@@ -6,26 +6,37 @@ const prisma = new PrismaClient({ log: ['warn', 'error'] });
 
 router.post("/importcoretax", async (req, res) => {
   try {
-    const { data } = req.body;
+    const { tipe, data } = req.body;
 
     if (!Array.isArray(data)) {
       return res.status(400).json({ error: "Data must be an array." });
     }
 
-    // Prepare promises
-    const updatePromises = data.map(item =>
-      prisma.$executeRaw`
+    let updatedCount = 0
+
+    if (tipe === "penjualan") {
+      const updatePromises = data.map(item =>
+        prisma.$executeRaw`
         UPDATE SalesInvoiceHeaders
         SET NoFakturP = ${item.TaxInvoiceNumber}
         WHERE Nobukti = ${item.TaxReference}
       `
-    )
-
-    // Execute all in parallel
-    const results = await Promise.all(updatePromises);
-
-    // Calculate total updated rows
-    const updatedCount = results.reduce((sum, r) => sum + r, 0);
+      )
+      const results = await Promise.all(updatePromises);
+      updatedCount = results.reduce((sum, r) => sum + r, 0);
+    } else if (tipe === "retur") {
+      const updatePromises = data.map(item =>
+        prisma.$executeRaw`
+          UPDATE sih
+          SET sih.NoFakturP = ${item.TaxReturNumber}
+          FROM SalesInvoiceHeaders sih
+          JOIN SalesInvoiceHeaders sih2 ON sih.NoFjDulu = sih2.NoBukti
+          WHERE sih2.NoFakturP = ${item.TaxInvoiceNumber};
+      `
+      )
+      const results = await Promise.all(updatePromises);
+      updatedCount = results.reduce((sum, r) => sum + r, 0);
+    }
 
     res.json({
       message: "Update successful",

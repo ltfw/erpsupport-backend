@@ -52,34 +52,29 @@ router.get("/", async (req, res) => {
 
 router.get("/rayoncustomer", async (req, res) => {
   try {
-    const rayon = req.query.rayon?.trim() || ''
-    const group = req.query.group?.trim() || ''
+    const rayon = req.query.rayon?.trim()
+    const group = req.query.group?.trim()
 
-    const conditions = []
-    const params = []
-
-    // Only build WHERE if we have values
-    if (rayon) {
-      conditions.push(Prisma.sql`rd.RayonCode = ${rayon}`)
-    }
-    if (group) {
-      conditions.push(Prisma.sql`c.CustomerGroupId = ${group}`)
-    }
-
-    // Require at least rayon
     if (!rayon) {
       return res.status(400).json({ error: "Rayon is required." })
     }
 
-    // Build WHERE clause
-    let whereClause = Prisma.empty
-    if (conditions.length > 0) {
-      // join with AND
-      whereClause = Prisma.sql`WHERE ${Prisma.join(conditions, Prisma.raw(' AND '))}`
+    // Prepare conditions separately
+    const conditions = []
+    if (rayon) {
+      conditions.push(`rd.RayonCode = '${rayon}'`)
+    }
+    if (group) {
+      conditions.push(`c.CustomerGroupId = '${group}'`)
     }
 
-    // Final query
-    const query = Prisma.sql`
+    // Build WHERE clause manually
+    const whereClause = conditions.length > 0
+      ? `WHERE ${conditions.join(' AND ')}`
+      : ''
+
+    // Final raw SQL string (safe only if you control the input)
+    const rawQuery = `
       SELECT d.NamaDept, r.RayonName, s.NamaSales, c.KodeLgn, c.NamaLgn, 
              be.BusinessEntityName, cg.CustomerGroupName
       FROM customers c
@@ -92,13 +87,18 @@ router.get("/rayoncustomer", async (req, res) => {
       ${whereClause}
     `
 
-    const rayonCustomer = await prisma.$queryRaw(query)
+    // Use $queryRawUnsafe since we're building raw SQL manually
+    const rayonCustomer = await prisma.$queryRawUnsafe(rawQuery)
     res.json({ data: rayonCustomer })
+
   } catch (error) {
     console.error(error)
-    res.status(500).json({ error: "Get Rayon Customer Error", details: error.message })
+    res.status(500).json({
+      error: "Get Rayon Customer Error",
+      details: error.message
+    })
   }
-});
+})
 
 // Get customer by ID
 router.get("/:id", async (req, res) => {
