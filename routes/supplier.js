@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
     const searchQuery = `%${search}%`;
     const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
-    console.log("User Role:", isAdmin, "Username:", username, "usernameQuery:", usernameQuery);
+    // console.log("User Role:", isAdmin, "Username:", username, "usernameQuery:", usernameQuery);
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 100;

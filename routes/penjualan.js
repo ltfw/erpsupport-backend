@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: [ 'warn', 'error'], });
+const prisma = new PrismaClient({ log: ['query', 'warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 
@@ -24,17 +24,23 @@ router.get("/", async (req, res) => {
     const endDate = req.query.end_date || null;
     const searchQuery = `%${search}%`
 
-    const isAdmin = req.user.role;
-    const username = req.user.username;
+    const userRole = req.user.role;
+    const userName = req.user.username;
+    const userCabang = req.user.cabang;
+    console.log("User Role:", userRole, "Username:", userName, "Cabang:", userCabang);
+
     // const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: "Start date and end date are required" });
     }
 
-    // const kodeItemFilter = barangArray.length > 0 
-    //   ? prisma.sql`and i.KodeItem in (${prisma.join(barangArray)})`
-    //   : prisma.empty
+    if (userRole != 'ADM') {
+      if (cabangArray.length === 0) {
+        cabangArray.push(userCabang);
+      }
+    }
+    console.log("Cabang Array:", cabangArray);
 
     const [sales, totalResult] = await Promise.all([
       prisma.$queryRaw`
@@ -125,9 +131,6 @@ router.get("/", async (req, res) => {
         ${vendorArray.length > 0
           ? Prisma.sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})`
           : Prisma.sql``}
-        ${isAdmin === 'ADM' 
-          ? Prisma.sql``
-          : Prisma.sql`and us.UserName = ${username}`}
         and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
         and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
         and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
@@ -172,13 +175,16 @@ router.get("/", async (req, res) => {
         join promotions p on
           p.PromotionCode = sii.PromotionCode
         where
-          month(sih.tglfaktur) = ${currentMonth}
+          sih.TglFaktur between ${startDate} and ${endDate}
+          ${cabangArray.length > 0
+            ? Prisma.sql`and sih.KodeCc in (${Prisma.join(cabangArray)})`
+            : Prisma.sql``}
           ${barangArray.length > 0
-          ? Prisma.sql`and sih.KodeCc in (${Prisma.join(barangArray)})`
-          : Prisma.sql``}
-          ${barangArray.length > 0
-          ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
-          : Prisma.sql``}
+            ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
+            : Prisma.sql``}
+          ${vendorArray.length > 0
+            ? Prisma.sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})`
+            : Prisma.sql``}
           and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
           and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
           and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
