@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query', 'warn', 'error'], });
+const prisma = new PrismaClient({ log: ['warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 

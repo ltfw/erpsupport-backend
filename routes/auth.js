@@ -29,9 +29,12 @@ router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   console.log(req.body);
 
-  const pwUsers = await pwdat.users.findFirst({
-    where: { UserName: username },
-  });
+  const queryUsers = await pwdat.$queryRaw`
+    SELECT top 1 * FROM Users u
+    left join UserSupplier us on us.UserName = u.UserName
+    WHERE u.UserName = ${username};
+  `;
+  const pwUsers = queryUsers[0];
 
   console.log("user", pwUsers);
   if (!pwUsers) return res.status(400).json({ error: "User not found" });
@@ -45,17 +48,25 @@ router.post("/login", async (req, res) => {
   if (hashedInputPassword !== pwUsers.KodePassword) {
     return res.status(403).json({ error: "Invalid credentials" });
   }
-
+  
   const token = jwt.sign(
-    { 
-      userId: pwUsers.UserId, 
-      username: pwUsers.UserName, 
+    {
+      userId: pwUsers.UserId,
+      username: pwUsers.UserName,
       role: pwUsers.UserRoleCode,
-      cabang: pwUsers.KodeDept, 
+      cabang: pwUsers.KodeDept,
+      vendor: pwUsers.VendorId,
     },
     process.env.JWT_SECRET,
     { expiresIn: "8h" }
   );
+  console.log('jwt',{
+      userId: pwUsers.UserId,
+      username: pwUsers.UserName,
+      role: pwUsers.UserRoleCode,
+      cabang: pwUsers.KodeDept,
+      vendor: pwUsers.VendorId,
+    })
 
   const { KodePassword, ...safeUser } = pwUsers;
   delete KodePassword

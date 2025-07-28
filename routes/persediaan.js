@@ -1,8 +1,184 @@
 const express = require("express");
-const { PrismaClient } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['warn', 'error'], });
+const prisma = new PrismaClient({ log: ['query', 'warn', 'error'], });
+
+router.get("/perbatch", async (req, res) => {
+  try {
+    console.log("Fetching per batch stocks...");
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.per_page) || 200;
+    const skip = (page - 1) * pageSize;
+    const search = req.query.search?.trim() || '';
+    const endDate = req.query.date || getCurrentDateFormatted();
+    const cabangParam = req.query.cabang || '';
+    const vendorParam = req.query.vendor || '';
+    const barangParam = req.query.barang || '';
+    const userRole = req.user.role;
+    const userCabang = req.user.cabang || '';
+    const userVendor = req.user.vendor || '';
+    console.log("User Role:", userRole, "Cabang:", userCabang, "Vendor:", userVendor);
+
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : [];
+    const vendorArray = vendorParam ? vendorParam.split(',').map(v => v.trim()) : [];
+    const barangArray = barangParam ? barangParam.split(',').map(b => b.trim()) : [];
+
+    const searchQuery = `%${search}%`;
+
+    const whereFragments = [];
+
+    // Search
+    if (search) {
+      whereFragments.push(Prisma.sql`i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}`);
+    }
+
+    // Cabang filter
+    if (userRole !== 'ADM') {
+      const cabangList = cabangArray.length > 0 ? cabangArray : [userCabang];
+      whereFragments.push(Prisma.sql`w.KodeDept IN (${Prisma.join(cabangList)})`);
+    }
+
+    // Vendor filter
+    if (userRole !== 'ADM') {
+      const vendorList = vendorArray.length > 0 ? vendorArray : [userVendor];
+      whereFragments.push(Prisma.sql`is3.VendorId IN (${Prisma.join(vendorList)})`);
+    }
+
+    // Barang filter
+    if (barangArray.length > 0) {
+      whereFragments.push(Prisma.sql`i.KodeItem IN (${Prisma.join(barangArray)})`);
+    }
+
+    // Build WHERE clause safely
+    let whereClause;
+
+    if (whereFragments.length === 0) {
+      whereClause = Prisma.empty;
+    } else if (whereFragments.length === 1) {
+      // Single condition: no AND needed
+      whereClause = Prisma.sql`WHERE ${whereFragments[0]}`;
+    } else {
+      // Multiple conditions: join with AND
+      let combined = whereFragments.reduce((acc, curr) => {
+        return Prisma.sql`${acc} AND ${curr}`;
+      });
+      whereClause = Prisma.sql`WHERE ${combined}`;
+    }
+
+    const query = Prisma.sql`
+      SELECT
+        bc.BusinessCentreName,
+        is2.KodeGudang,
+        w.NamaGudang,
+        i.KodeItem,
+        i.NamaBarang,
+        sumBatchNumber.BatchNumber,
+        FORMAT(sumBatchNumber.TglExpired, 'dd/MM/yyyy') AS TglExpired,
+        sumBatchNumber.Qty
+      FROM
+        inventories i
+      JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
+      JOIN inventorysuppliers is3 ON is3.InventoryId = is2.InventoryId
+      JOIN businesscentres bc ON bc.businessCentreCode = is3.businessCentreCode
+      JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
+      JOIN (
+        SELECT
+          bnt.InventoryStockId,
+          bnt.BatchNumber,
+          bnt.TglExpired,
+          SUM(bnt.Qty) AS Qty
+        FROM BatchNumberTransactions bnt
+        WHERE CAST(bnt.tanggaltransaksi AS DATE) <= ${endDate}
+        GROUP BY bnt.InventoryStockId, bnt.BatchNumber, bnt.TglExpired
+        HAVING SUM(bnt.Qty) > 0
+      ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
+      ${whereClause}
+      ORDER BY is2.KodeGudang, sumBatchNumber.BatchNumber
+      OFFSET ${skip} ROWS
+      FETCH NEXT ${pageSize} ROWS ONLY;
+    `;
+
+    // 🔥 DEBUG: Log the query
+    console.log("Final SQL Query:", query);
+
+    const customers = await prisma.$queryRaw`
+      SELECT
+        bc.BusinessCentreName,
+        is2.KodeGudang,
+        w.NamaGudang,
+        i.KodeItem,
+        i.NamaBarang,
+        sumBatchNumber.BatchNumber,
+        FORMAT(sumBatchNumber.TglExpired, 'dd/MM/yyyy') AS TglExpired,
+        sumBatchNumber.Qty
+      FROM
+        inventories i
+      JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
+      JOIN inventorysuppliers is3 ON is3.InventoryId = is2.InventoryId
+      JOIN businesscentres bc ON bc.businessCentreCode = is3.businessCentreCode
+      JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
+      JOIN (
+        SELECT
+          bnt.InventoryStockId,
+          bnt.BatchNumber,
+          bnt.TglExpired,
+          SUM(bnt.Qty) AS Qty
+        FROM
+          BatchNumberTransactions bnt
+        WHERE
+          CAST(bnt.tanggaltransaksi AS DATE) <= ${endDate}
+        GROUP BY
+          bnt.InventoryStockId,
+          bnt.BatchNumber,
+          bnt.TglExpired
+        HAVING
+          SUM(bnt.Qty) > 0
+      ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
+      ${whereClause}
+      ORDER BY
+        is2.KodeGudang,
+        sumBatchNumber.BatchNumber
+      OFFSET ${skip} ROWS
+      FETCH NEXT ${pageSize} ROWS ONLY;
+    `;
+
+    // Count query
+    const countResult = await prisma.$queryRaw`
+      SELECT COUNT(*) AS total
+      FROM inventories i
+      JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
+      JOIN inventorysuppliers is3 ON is3.InventoryId = is2.InventoryId
+      JOIN businesscentres bc ON bc.businessCentreCode = is3.businessCentreCode
+      JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
+      JOIN (
+        SELECT DISTINCT InventoryStockId
+        FROM BatchNumberTransactions
+        WHERE CAST(tanggaltransaksi AS DATE) <= ${endDate}
+      ) AS bnt ON is2.InventoryStockId = bnt.InventoryStockId
+      ${whereClause}
+    `;
+
+    const total = Number(countResult[0]?.total || 0);
+
+    return res.json({
+      data: customers,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Error in /perbatch:", error); // Log full error
+    return res.status(500).json({
+      message: "Failed to fetch per batch",
+      details: error.message || error,
+    });
+  }
+});
+
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
@@ -11,7 +187,7 @@ router.get("/", async (req, res) => {
     const pageSize = parseInt(req.query.per_page) || 200;
     const skip = (page - 1) * pageSize;
     const search = req.query.search?.trim() || ''
-    
+
     const searchQuery = `%${search}%`
 
     const [customers, totalResult] = await Promise.all([
