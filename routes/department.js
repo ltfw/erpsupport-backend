@@ -6,8 +6,8 @@ const prisma = new PrismaClient({ log: ['warn', 'error'] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
-  const isAdmin = req.user.role === '';
-  // console.log("Cabang: ", req.user.cabang);
+  const userRole = req.user.role;
+  console.log("data user", req.user.role, req.user.username, req.user.cabang);
 
   try {
     const page = parseInt(req.query.page) || 1;
@@ -18,11 +18,14 @@ router.get("/", async (req, res) => {
     const cabang = req.query.cabang?.trim() || '';
 
     let cabangArray = [];
-    if(isAdmin && !cabang) {
+    if(userRole=='ADM' && cabang) {
       cabangArray = cabang ? cabang.split(',').map(s => s.trim()) : [];
-    }else {
+    }else if(userRole=='ADM' && !cabang) {
+      cabangArray = [];
+    }else{
       cabangArray = [req.user.cabang];
     }
+    console.log("user role:",userRole, "Cabang Array: ", cabangArray);
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
     const [departments, totalResult] = await Promise.all([

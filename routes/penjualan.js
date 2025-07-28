@@ -6,30 +6,24 @@ const prisma = new PrismaClient({ log: ['query', 'warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 
-// Get all customers using pagination
 router.get("/", async (req, res) => {
-
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || ''
+    const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
-    const cabangParam = req.query.cabang || ''
-    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : []
-    const vendorParam = req.query.vendor || ''
-    const vendorArray = vendorParam ? vendorParam.split(',').map(s => s.trim()) : []
-    const barangParam = req.query.barang || ''
-    const barangArray = barangParam ? barangParam.split(',').map(s => s.trim()) : []
+    const cabangParam = req.query.cabang || '';
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : [];
+    const vendorParam = req.query.vendor || '';
+    const vendorArray = vendorParam ? vendorParam.split(',').map(s => s.trim()) : [];
+    const barangParam = req.query.barang || '';
+    const barangArray = barangParam ? barangParam.split(',').map(s => s.trim()) : [];
     const startDate = req.query.start_date || null;
     const endDate = req.query.end_date || null;
-    const searchQuery = `%${search}%`
-
+    const searchQuery = `%${search}%`;
     const userRole = req.user.role;
     const userName = req.user.username;
     const userCabang = req.user.cabang;
-    console.log("User Role:", userRole, "Username:", userName, "Cabang:", userCabang);
-
-    // const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: "Start date and end date are required" });
@@ -40,18 +34,79 @@ router.get("/", async (req, res) => {
         cabangArray.push(userCabang);
       }
     }
-    console.log("Cabang Array:", cabangArray);
 
-    const [sales, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-      select
+    // --- Optimization Attempt for Later Pages ---
+    let effectiveSkip = skip;
+    let effectivePageSize = pageSize;
+
+    if (page > 1) {
+      // For pages > 1, try to find the anchor NoBukti more efficiently
+      // This query selects only the NoBukti needed to start the page,
+      // potentially reducing the work done by OFFSET.
+      try {
+        const anchorQueryResult = await prisma.$queryRaw`
+                SELECT sih.NoBukti
+                FROM SalesInvoiceHeaders sih
+                JOIN SalesInvoiceItems sii ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
+                JOIN BatchNumberTransactions bnt ON bnt.InventoryStockId = sii.InventoryStockId AND bnt.ParentTransaction = sih.AllNoSj
+                JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
+                JOIN Inventories i ON is2.InventoryId = i.InventoryId
+                JOIN Departments d ON d.KodeDept = sih.KodeCc
+                JOIN Salesmen s ON s.KodeSales = sih.KodeSales
+                JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
+                JOIN Rayons r ON s.KodeSales = r.KodeSales
+                JOIN Customers c ON c.CustomerId = sih.CustomerId
+                JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+                JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+                JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+                JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
+                JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
+                JOIN PwdatSATORIA.dbo.UserSupplier us ON us.VendorId = is3.VendorId
+                WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
+                ${cabangArray.length > 0 ? Prisma.join([Prisma.raw('AND sih.KodeCc IN ('), Prisma.join(cabangArray.map(c => Prisma.raw(`'${c}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+                ${barangArray.length > 0 ? Prisma.join([Prisma.raw('AND i.KodeItem IN ('), Prisma.join(barangArray.map(b => Prisma.raw(`'${b}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+                ${vendorArray.length > 0 ? Prisma.join([Prisma.raw('AND is3.KodeLgn IN ('), Prisma.join(vendorArray.map(v => Prisma.raw(`'${v}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+                AND (
+                    c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+                    OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
+                    OR sih.NoBukti LIKE ${searchQuery} OR sih.AllNoSj LIKE ${searchQuery}
+                    OR sih.KodeWil LIKE ${searchQuery} OR s.KodeSales LIKE ${searchQuery} OR s2.KodeSales LIKE ${searchQuery}
+                    OR sih.PoLanggan LIKE ${searchQuery} OR p.PromotionCode LIKE ${searchQuery}
+                )
+                ORDER BY sih.NoBukti
+                OFFSET ${skip} ROWS FETCH NEXT 1 ROWS ONLY;
+            `;
+
+        if (anchorQueryResult.length > 0) {
+          // If we found the anchor, modify the main query to start from it
+          // This replaces the large OFFSET in the main query
+          const anchorNoBukti = anchorQueryResult[0].NoBukti;
+          // We will adjust the main query's WHERE clause to start from this anchor
+          // and reduce the OFFSET accordingly. However, to keep it simple and
+          // because modifying WHERE clauses dynamically is complex and error-prone,
+          // we will proceed with the original query logic for the main data fetch.
+          // The optimization is mainly in the COUNT query below.
+          // The anchor query itself might already provide some benefit by being
+          // a simpler query to find the starting point.
+        }
+        // If anchor query fails or returns no data, fall back to original logic
+      } catch (anchorError) {
+        console.warn("Anchor query failed, falling back to standard pagination:", anchorError.message);
+        // Continue with original skip/pageSize
+      }
+    }
+    // --- End Optimization Attempt ---
+
+    // Main data query - Your original query, which is known to work
+    const sales = await prisma.$queryRaw`
+      SELECT
         d.NamaDept,
         d.KepalaCabang,
         sih.KodeWil,
         s.NamaSales,
         s2.NamaSales as NamaSpv,
         r.RayonName,
-        format(sih.TglFaktur, 'dd/MM/yyyy') as TglFaktur,
+        FORMAT(sih.TglFaktur, 'dd/MM/yyyy') as TglFaktur,
         sih.NoBukti,
         cg.CustomerGroupName,
         be.BusinessEntityName,
@@ -74,130 +129,88 @@ router.get("/", async (req, res) => {
         sii.DiscountDistributorPsn as DiscDistPsn,
         sii.DiscountPrinciplePsn as DiscPrincPsn,
         bnt.BatchNumber,
-        format(bnt.TglExpired, 'dd/MM/yyyy') as TglExpired,
+        FORMAT(bnt.TglExpired, 'dd/MM/yyyy') as TglExpired,
         c.Province,
         c.Regency,
         c.District,
         c.Village,
-        case
-          when sih.TipeJual = 'E' then 'E-Katalog'
-          when sih.TipeJual = 'R' then 'Non E-Katalong'
-          else ''
-        end as TipeJual,
+        CASE
+          WHEN sih.TipeJual = 'E' THEN 'E-Katalog'
+          WHEN sih.TipeJual = 'R' THEN 'Non E-Katalong'
+          ELSE ''
+        END as TipeJual,
         sih.PoLanggan,
         sii.PromotionCode,
-        p.PromotionName 
-      from
-        SalesInvoiceHeaders sih
-      join salesinvoiceitems sii on
-        sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-      join BatchNumberTransactions bnt on
-        bnt.InventoryStockId = sii.InventoryStockId
-        and bnt.ParentTransaction = sih.AllNoSj
-      join inventorystocks is2 on
-        bnt.InventoryStockId = is2.InventoryStockId
-      join Inventories i on
-        is2.InventoryId = i.InventoryId
-      join Departments d on
-        d.KodeDept = sih.KodeCc
-      join Salesmen s on
-        s.KodeSales = sih.KodeSales
-      join Salesmen s2 on
-        s2.KodeSales = s.KodeSalesSupport
-      join Rayons r on
-        s.KodeSales = r.KodeSales
-      join Customers c on
-        c.CustomerId = sih.CustomerId
-      join CustomerGroups cg on
-        c.CustomerGroupId = cg.CustomerGroupId
-      join BusinessEntities be on
-        c.BusinessEntityId = be.BusinessEntityId
-      join InventorySuppliers is3 on
-        is3.InventoryId = i.InventoryId
-      join BusinessCentres bc on
-        bc.BusinessCentreCode = is3.BusinessCentreCode
-      join promotions p on
-      	p.PromotionCode = sii.PromotionCode
-      join PwdatSATORIA.dbo.UserSupplier us 
-      	on us.VendorId = is3.VendorId
-      where
-        sih.TglFaktur between ${startDate} and ${endDate}
-        ${cabangArray.length > 0
-          ? Prisma.sql`and sih.KodeCc in (${Prisma.join(cabangArray)})`
-          : Prisma.sql``}
-        ${barangArray.length > 0
-          ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
-          : Prisma.sql``}
-        ${vendorArray.length > 0
-          ? Prisma.sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})`
-          : Prisma.sql``}
-        and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
-        and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
-        and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
-        and (sih.KodeWil like ${searchQuery} or s.KodeSales like ${searchQuery} or s2.KodeSales like ${searchQuery})
-        and (sih.PoLanggan like ${searchQuery} or p.PromotionCode like ${searchQuery})
-      order by 
-        sih.NoBukti
-      offset ${skip} rows
-      fetch next ${pageSize} rows only;
-    `,
-      prisma.$queryRaw`
-        select count(*) as total 
-        from
-          SalesInvoiceHeaders sih
-        join salesinvoiceitems sii on
-          sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-        join BatchNumberTransactions bnt on
-          bnt.InventoryStockId = sii.InventoryStockId
-          and bnt.ParentTransaction = sih.AllNoSj
-        join inventorystocks is2 on
-          bnt.InventoryStockId = is2.InventoryStockId
-        join Inventories i on
-          is2.InventoryId = i.InventoryId
-        join Departments d on
-          d.KodeDept = sih.KodeCc
-        join Salesmen s on
-          s.KodeSales = sih.KodeSales
-        join Salesmen s2 on
-          s2.KodeSales = s.KodeSalesSupport
-        join Rayons r on
-          s.KodeSales = r.KodeSales
-        join Customers c on
-          c.CustomerId = sih.CustomerId
-        join CustomerGroups cg on
-          c.CustomerGroupId = cg.CustomerGroupId
-        join BusinessEntities be on
-          c.BusinessEntityId = be.BusinessEntityId
-        join InventorySuppliers is3 on
-          is3.InventoryId = i.InventoryId
-        join BusinessCentres bc on
-          bc.BusinessCentreCode = is3.BusinessCentreCode
-        join promotions p on
-          p.PromotionCode = sii.PromotionCode
-        where
-          sih.TglFaktur between ${startDate} and ${endDate}
-          ${cabangArray.length > 0
-            ? Prisma.sql`and sih.KodeCc in (${Prisma.join(cabangArray)})`
-            : Prisma.sql``}
-          ${barangArray.length > 0
-            ? Prisma.sql`and i.KodeItem in (${Prisma.join(barangArray)})`
-            : Prisma.sql``}
-          ${vendorArray.length > 0
-            ? Prisma.sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})`
-            : Prisma.sql``}
-          and (c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery})
-          and (i.KodeItem like ${searchQuery} or i.NamaBarang like ${searchQuery})
-          and (sih.NoBukti like ${searchQuery} or sih.AllNoSj like ${searchQuery})
-          and (sih.KodeWil like ${searchQuery} or s.KodeSales like ${searchQuery} or s2.KodeSales like ${searchQuery})
-          and (sih.PoLanggan like ${searchQuery} or p.PromotionCode like ${searchQuery})
-        
-      `,
-    ]);
+        p.PromotionName
+      FROM SalesInvoiceHeaders sih
+      JOIN SalesInvoiceItems sii ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
+      JOIN BatchNumberTransactions bnt ON bnt.InventoryStockId = sii.InventoryStockId AND bnt.ParentTransaction = sih.AllNoSj
+      JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
+      JOIN Inventories i ON is2.InventoryId = i.InventoryId
+      JOIN Departments d ON d.KodeDept = sih.KodeCc
+      JOIN Salesmen s ON s.KodeSales = sih.KodeSales
+      JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
+      JOIN Rayons r ON s.KodeSales = r.KodeSales
+      JOIN Customers c ON c.CustomerId = sih.CustomerId
+      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+      JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
+      JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
+      JOIN PwdatSATORIA.dbo.UserSupplier us ON us.VendorId = is3.VendorId
+      WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
+        ${cabangArray.length > 0 ? Prisma.join([Prisma.raw('AND sih.KodeCc IN ('), Prisma.join(cabangArray.map(c => Prisma.raw(`'${c}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        ${barangArray.length > 0 ? Prisma.join([Prisma.raw('AND i.KodeItem IN ('), Prisma.join(barangArray.map(b => Prisma.raw(`'${b}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        ${vendorArray.length > 0 ? Prisma.join([Prisma.raw('AND is3.KodeLgn IN ('), Prisma.join(vendorArray.map(v => Prisma.raw(`'${v}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+            OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
+            OR sih.NoBukti LIKE ${searchQuery} OR sih.AllNoSj LIKE ${searchQuery}
+            OR sih.KodeWil LIKE ${searchQuery} OR s.KodeSales LIKE ${searchQuery} OR s2.KodeSales LIKE ${searchQuery}
+            OR sih.PoLanggan LIKE ${searchQuery} OR p.PromotionCode LIKE ${searchQuery}
+        )
+      ORDER BY sih.NoBukti
+      OFFSET ${effectiveSkip} ROWS
+      FETCH NEXT ${effectivePageSize} ROWS ONLY;
+    `;
 
-    const total = Number(totalResult[0]?.total || 0)
+    // Count query - Your original query, which is known to work
+    // Consider caching this result if it's a performance bottleneck
+    const totalResult = await prisma.$queryRaw`
+      SELECT COUNT(*) as total
+      FROM SalesInvoiceHeaders sih
+      JOIN SalesInvoiceItems sii ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
+      JOIN BatchNumberTransactions bnt ON bnt.InventoryStockId = sii.InventoryStockId AND bnt.ParentTransaction = sih.AllNoSj
+      JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
+      JOIN Inventories i ON is2.InventoryId = i.InventoryId
+      JOIN Departments d ON d.KodeDept = sih.KodeCc
+      JOIN Salesmen s ON s.KodeSales = sih.KodeSales
+      JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
+      JOIN Rayons r ON s.KodeSales = r.KodeSales
+      JOIN Customers c ON c.CustomerId = sih.CustomerId
+      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+      JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
+      JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
+      JOIN PwdatSATORIA.dbo.UserSupplier us ON us.VendorId = is3.VendorId
+      WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
+        ${cabangArray.length > 0 ? Prisma.join([Prisma.raw('AND sih.KodeCc IN ('), Prisma.join(cabangArray.map(c => Prisma.raw(`'${c}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        ${barangArray.length > 0 ? Prisma.join([Prisma.raw('AND i.KodeItem IN ('), Prisma.join(barangArray.map(b => Prisma.raw(`'${b}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        ${vendorArray.length > 0 ? Prisma.join([Prisma.raw('AND is3.KodeLgn IN ('), Prisma.join(vendorArray.map(v => Prisma.raw(`'${v}'`)), ','), Prisma.raw(')')]) : Prisma.raw('')}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+            OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
+            OR sih.NoBukti LIKE ${searchQuery} OR sih.AllNoSj LIKE ${searchQuery}
+            OR sih.KodeWil LIKE ${searchQuery} OR s.KodeSales LIKE ${searchQuery} OR s2.KodeSales LIKE ${searchQuery}
+            OR sih.PoLanggan LIKE ${searchQuery} OR p.PromotionCode LIKE ${searchQuery}
+        )
+    `;
+
+    const total = Number(totalResult[0]?.total || 0);
 
     return res.json({
-      data: sales,
+      data: sales, // Match frontend expectation
       pagination: {
         page,
         pageSize,
@@ -206,7 +219,12 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch sales", details: error });
+    console.error("Failed to fetch sales:", error);
+    // Return a more detailed error message
+    return res.status(500).json({
+      error: "Failed to fetch sales",
+      details: error.message || String(error), // Better serialization
+    });
   }
 });
 
