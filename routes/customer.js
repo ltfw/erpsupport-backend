@@ -17,7 +17,7 @@ router.get("/export", async (req, res) => {
         c.KodeSyarat as "TOP",
         isnull(c.NomorLgnBpom,'') as "Kode Customer BPOM",
         isnull(c.NamaLgnBpom,'')  as "Nama Customer BPOM",
-        isnull(c.NomorLgnKemenkes,'') as "Nama Customer KEMENKES",
+        isnull(c.NomorLgnKemenkes,'') as "Kode Customer KEMENKES",
         isnull(c.NamaLgnKemenkes,'') as "Nama Customer KEMENKES",
         be.BusinessEntityName as "Badan Usaha",
         cg.CustomerGroupName as "Customer Group",
