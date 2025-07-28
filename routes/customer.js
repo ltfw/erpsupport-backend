@@ -5,101 +5,138 @@ const router = express.Router();
 const prisma = new PrismaClient({ log: ['info', 'warn', 'error'], });
 
 // Get all customers using pagination
-
 router.get("/export", async (req, res) => {
   try {
-    const customers = await prisma.$queryRaw`
-      select
-        d.namaDept as "Nama Cabang",
-        c.kodelgn as "Kode Customer",
-        c.NamaLgn as "Nama Customer",
-        c.BatasKredit as "Kredit Limit",
-        c.KodeSyarat as "TOP",
-        isnull(c.NomorLgnBpom,'') as "Kode Customer BPOM",
-        isnull(c.NamaLgnBpom,'')  as "Nama Customer BPOM",
-        isnull(c.NomorLgnKemenkes,'') as "Kode Customer KEMENKES",
-        isnull(c.NamaLgnKemenkes,'') as "Nama Customer KEMENKES",
-        be.BusinessEntityName as "Badan Usaha",
-        cg.CustomerGroupName as "Customer Group",
-        format(c.tglregistrasi,'dd/MM/yyyy') as "Tgl Registrasi",
-        format(c.tglentry,'dd/MM/yyyy') as "Tgl Update",
-        isnull(c.NamaPemilik,'') as "Nama Pemilik",
-        isnull(c.HubungDengan,'') as "CP",
-        isnull(c.TypeIdentitas,'') as "Tipe Identitas",
-        isnull(c.NoIdentitas,'') as "No Identitas",
-        isnull(c.TkuId,'') as TKUId,
-        isnull(c.TaxTransactionCode,'') as "Kode Pajak",
-        case when c.nonAktif=0 then 'Aktif' else 'Non Aktif' end as "Status Customer",
-        c.Alamat1 as "Alamat",
-        r.RayonName as Rayon,
-        c.Province as "Provinsi",
-        c.Regency as "Kota/Kabupaten",
-        c.District as "Kecamatan",
-        c.Village as "Desa/Kelurahan",
-        c.KodePos as "Kode Pos",
-        s.NamaSales as "Salesman",
+    const userCabang = req.user.cabang;
+    const userRole = req.user.role;
+
+    // Build WHERE clause and params
+    let whereClause = '';
+    const params = [];
+
+    if (userRole !== 'ADM') {
+      whereClause = 'WHERE c.KodeDept = @P1';
+      params.push(userCabang);
+    }
+
+    const customers = await prisma.$queryRawUnsafe(`
+      SELECT
+        d.NamaDept AS "Nama Cabang",
+        c.KodeLgn AS "Kode Customer",
+        c.NamaLgn AS "Nama Customer",
+        c.BatasKredit AS "Kredit Limit",
+        c.KodeSyarat AS "TOP",
+        ISNULL(c.NomorLgnBpom, '') AS "Kode Customer BPOM",
+        ISNULL(c.NamaLgnBpom, '') AS "Nama Customer BPOM",
+        ISNULL(c.NomorLgnKemenkes, '') AS "Kode Customer KEMENKES",
+        ISNULL(c.NamaLgnKemenkes, '') AS "Nama Customer KEMENKES",
+        be.BusinessEntityName AS "Badan Usaha",
+        cg.CustomerGroupName AS "Customer Group",
+        FORMAT(c.TglRegistrasi, 'dd/MM/yyyy') AS "Tgl Registrasi",
+        FORMAT(c.TglEntry, 'dd/MM/yyyy') AS "Tgl Update",
+        ISNULL(c.NamaPemilik, '') AS "Nama Pemilik",
+        ISNULL(c.HubungDengan, '') AS "CP",
+        ISNULL(c.TypeIdentitas, '') AS "Tipe Identitas",
+        ISNULL(c.NoIdentitas, '') AS "No Identitas",
+        ISNULL(c.TkuId, '') AS "TKUId",
+        ISNULL(c.TaxTransactionCode, '') AS "Kode Pajak",
+        CASE WHEN c.NonAktif = 0 THEN 'Aktif' ELSE 'Non Aktif' END AS "Status Customer",
+        c.Alamat1 AS "Alamat",
+        r.RayonName AS "Rayon",
+        c.Province AS "Provinsi",
+        c.Regency AS "Kota/Kabupaten",
+        c.District AS "Kecamatan",
+        c.Village AS "Desa/Kelurahan",
+        c.KodePos AS "Kode Pos",
+        s.NamaSales AS "Salesman",
         c.Latitude,
         c.Longitude,
-        CONCAT('https://www.google.com/maps/search/?api=1&query=',c.Latitude,',',c.Longitude) as 'Lokasi Customer',
+        CONCAT('https://www.google.com/maps/search/?api=1&query=', c.Latitude, ',', c.Longitude) AS "Lokasi Customer",
         c.Npwp,
         c.NpwpOwner,
-        case when c.Pkp = 1 then 'PKP' else 'NON-PKP' end,
-        c.AlamatPajak,
-        case when c.TypePpn = 'E' then 'PPN Eksklusif'
-          when c.TypePpn = 'I' then 'PPN Inklusif'
-          when c.TypePpn = 'K' then 'PPN Tidak Dipungut Pajak'
-          when c.TypePpn = 'T' then 'Tidak Ada PPN' end
-        as "Tipe PPn",
-        concat('https://erp.sdlindonesia.com/#/customer/edit/',c.customerid) as "URL"
-      from Customers c
-      join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
-      join Areas a on c.KodeWil = a.KodeWil
-      join Departments d on a.KodeDept = d.KodeDept
-      join customergroups cg on c.customergroupid = cg.customergroupid
-      join Salesmen s on c.KodeSales = s.KodeSales
-      join rayondistricts rd on c.DistrictId = rd.DistrictId
-      join Rayons r on rd.RayonCode = r.RayonCode
-      order by c.kodelgn`;
+        CASE WHEN c.Pkp = 1 THEN 'PKP' ELSE 'NON-PKP' END AS "Status Pajak",
+        c.AlamatPajak AS "Alamat Pajak",
+        CASE 
+          WHEN c.TypePpn = 'E' THEN 'PPN Eksklusif'
+          WHEN c.TypePpn = 'I' THEN 'PPN Inklusif'
+          WHEN c.TypePpn = 'K' THEN 'PPN Tidak Dipungut Pajak'
+          WHEN c.TypePpn = 'T' THEN 'Tidak Ada PPN'
+        END AS "Tipe PPn",
+        CONCAT('https://erp.sdlindonesia.com/#/customer/edit/', c.CustomerId) AS "URL"
+      FROM Customers c
+      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+      JOIN Areas a ON c.KodeWil = a.KodeWil
+      JOIN Departments d ON a.KodeDept = d.KodeDept
+      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+      JOIN Salesmen s ON c.KodeSales = s.KodeSales
+      JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
+      JOIN Rayons r ON rd.RayonCode = r.RayonCode
+      ${whereClause}
+      ORDER BY c.KodeLgn
+    `, ...params);
 
     return res.json({
-      data: customers
+      data: customers,
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch customers", details: error });
+    console.error("Export customer error:", error);
+    return res.status(500).json({
+      error: "Failed to fetch customers",
+      details: error.message,
+    });
   }
 });
 
 
 router.get("/", async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || ''
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const pageSize = Math.min(Math.max(parseInt(req.query.per_page) || 10, 1), 100);
+    const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
 
-    const searchQuery = `%${search}%`
+    const userCabang = req.user.cabang;
+    const userRole = req.user.role;
+
+    // Build WHERE clause with @P1, @P2, etc.
+    let whereClause = `(c.KodeLgn LIKE @P1 OR c.NamaLgn LIKE @P2)`;
+    const params = [`%${search}%`, `%${search}%`]; // P1 and P2
+
+    if (userRole !== 'ADM') {
+      whereClause += ` AND c.KodeDept = @P3`;
+      params.push(userCabang); // P3
+    }
 
     const [customers, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-      select c.CustomerId, c.KodeLgn, c.NamaLgn, cg.CustomerGroupName, be.BusinessEntityName, d.NamaDept, s.NamaSales, c.Alamat1 
-      from customers c
-      join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
-      join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
-      join salesmen s on c.KodeSales = s.KodeSales
-      join Departments d on c.KodeDept = d.KodeDept
-      where c.KodeLgn like ${searchQuery} or c.NamaLgn like ${searchQuery}
-      order by c.KodeLgn
-      offset ${skip} rows
-      fetch next ${pageSize} rows only;
-    `,
       prisma.$queryRawUnsafe(`
-        select count(*) as total 
-        from customers c
-        where c.KodeLgn like '${searchQuery}' or c.NamaLgn like '${searchQuery}'
-      `),
+        SELECT 
+          c.CustomerId,
+          c.KodeLgn,
+          c.NamaLgn,
+          cg.CustomerGroupName,
+          be.BusinessEntityName,
+          d.NamaDept,
+          s.NamaSales,
+          c.Alamat1
+        FROM customers c
+        JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+        JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+        JOIN salesmen s ON c.KodeSales = s.KodeSales
+        JOIN Departments d ON c.KodeDept = d.KodeDept
+        WHERE ${whereClause}
+        ORDER BY c.KodeLgn
+        OFFSET ${skip} ROWS
+        FETCH NEXT ${pageSize} ROWS ONLY;
+      `, ...params),
+
+      prisma.$queryRawUnsafe(`
+        SELECT COUNT(*) AS total
+        FROM customers c
+        WHERE ${whereClause}
+      `, ...params),
     ]);
 
-    const total = Number(totalResult[0]?.total || 0)
+    const total = Number(totalResult[0]?.total || 0);
 
     return res.json({
       data: customers,
@@ -111,7 +148,11 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch customers" });
+    console.error("Error fetching customers:", error);
+    return res.status(500).json({
+      message: "Failed to fetch customers",
+      details: error.message,
+    });
   }
 });
 
