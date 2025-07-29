@@ -96,8 +96,7 @@ router.get("/", async (req, res) => {
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
       JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
       JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
-      JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      JOIN PwdatSATORIA.dbo.UserSupplier us ON us.VendorId = is3.VendorId
+      LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
       WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
         ${cabangArray.length > 0
           ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
@@ -139,8 +138,7 @@ router.get("/", async (req, res) => {
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
       JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
       JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
-      JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      JOIN PwdatSATORIA.dbo.UserSupplier us ON us.VendorId = is3.VendorId
+      LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
       WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
         ${cabangArray.length > 0
           ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`

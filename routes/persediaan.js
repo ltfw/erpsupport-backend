@@ -42,7 +42,10 @@ router.get("/perbatch", async (req, res) => {
     // Vendor filter
     if (userRole !== 'ADM') {
       const vendorList = vendorArray.length > 0 ? vendorArray : [userVendor];
-      whereFragments.push(Prisma.sql`is3.VendorId IN (${Prisma.join(vendorList)})`);
+      whereFragments.push(Prisma.sql`is3.KodeLgn IN (${Prisma.join(vendorList)})`);
+    }else if(vendorArray.length > 0) {
+      console.log("Vendor Array:", vendorArray);
+      whereFragments.push(Prisma.sql`is3.KodeLgn IN (${Prisma.join(vendorArray)})`);
     }
 
     // Barang filter
@@ -94,13 +97,14 @@ router.get("/perbatch", async (req, res) => {
         HAVING SUM(bnt.Qty) > 0
       ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
       ${whereClause}
+      and is2.KodeGudang <> '00-GUU-03'
       ORDER BY is2.KodeGudang, sumBatchNumber.BatchNumber
       OFFSET ${skip} ROWS
       FETCH NEXT ${pageSize} ROWS ONLY;
     `;
 
     // 🔥 DEBUG: Log the query
-    console.log("Final SQL Query:", query);
+    // console.log("Final SQL Query:", query);
 
     const customers = await prisma.$queryRaw`
       SELECT
@@ -136,6 +140,7 @@ router.get("/perbatch", async (req, res) => {
           SUM(bnt.Qty) > 0
       ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
       ${whereClause}
+      and is2.KodeGudang <> '00-GUU-03'
       ORDER BY
         is2.KodeGudang,
         sumBatchNumber.BatchNumber
@@ -157,6 +162,7 @@ router.get("/perbatch", async (req, res) => {
         WHERE CAST(tanggaltransaksi AS DATE) <= ${endDate}
       ) AS bnt ON is2.InventoryStockId = bnt.InventoryStockId
       ${whereClause}
+      and is2.KodeGudang <> '00-GUU-03'
     `;
 
     const total = Number(countResult[0]?.total || 0);
