@@ -9,6 +9,7 @@ router.get("/export", async (req, res) => {
   try {
     const userCabang = req.user.cabang;
     const userRole = req.user.role;
+    console.log("User Role:", userRole, "User Cabang:", userCabang);
 
     // Build WHERE clause and params
     let whereClause = '';
@@ -42,7 +43,8 @@ router.get("/export", async (req, res) => {
         ISNULL(c.TaxTransactionCode, '') AS "Kode Pajak",
         CASE WHEN c.NonAktif = 0 THEN 'Aktif' ELSE 'Non Aktif' END AS "Status Customer",
         c.Alamat1 AS "Alamat",
-        r.RayonName AS "Rayon",
+        r.RayonCode AS "Kode Rayon",
+        r.RayonName AS "Nama Rayon",
         c.Province AS "Provinsi",
         c.Regency AS "Kota/Kabupaten",
         c.District AS "Kecamatan",
@@ -97,6 +99,7 @@ router.get("/", async (req, res) => {
 
     const userCabang = req.user.cabang;
     const userRole = req.user.role;
+    console.log("User Role:", userRole, "User Cabang:", userCabang,"user:", req.user);
 
     // Build WHERE clause with @P1, @P2, etc.
     let whereClause = `(c.KodeLgn LIKE @P1 OR c.NamaLgn LIKE @P2)`;

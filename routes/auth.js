@@ -30,13 +30,14 @@ router.post("/login", async (req, res) => {
   console.log(req.body);
 
   const queryUsers = await pwdat.$queryRaw`
-    SELECT top 1 * FROM Users u
+    SELECT top 1 u.UserName,u.KodePassword,u.FullName,u.UserRoleCode,u.KodeDept,us.VendorId
+    FROM Users u
     left join UserSupplier us on us.UserName = u.UserName
     WHERE u.UserName = ${username};
   `;
+  // console.log("user", queryUsers);
   const pwUsers = queryUsers[0];
 
-  console.log("user", pwUsers);
   if (!pwUsers) return res.status(400).json({ error: "User not found" });
 
   const hashedInputPassword = crypto
