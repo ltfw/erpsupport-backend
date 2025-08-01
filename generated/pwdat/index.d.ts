@@ -183,6 +183,21 @@ export type UserWms = $Result.DefaultSelection<Prisma.$UserWmsPayload>
  * 
  */
 export type WmsDevices = $Result.DefaultSelection<Prisma.$WmsDevicesPayload>
+/**
+ * Model ERPSupportMenuDefinitions
+ * 
+ */
+export type ERPSupportMenuDefinitions = $Result.DefaultSelection<Prisma.$ERPSupportMenuDefinitionsPayload>
+/**
+ * Model ERPSupportMenuItems
+ * 
+ */
+export type ERPSupportMenuItems = $Result.DefaultSelection<Prisma.$ERPSupportMenuItemsPayload>
+/**
+ * Model ERPSupportRoleMenuAccess
+ * 
+ */
+export type ERPSupportRoleMenuAccess = $Result.DefaultSelection<Prisma.$ERPSupportRoleMenuAccessPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -648,6 +663,36 @@ export class PrismaClient<
     * ```
     */
   get wmsDevices(): Prisma.WmsDevicesDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eRPSupportMenuDefinitions`: Exposes CRUD operations for the **ERPSupportMenuDefinitions** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ERPSupportMenuDefinitions
+    * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findMany()
+    * ```
+    */
+  get eRPSupportMenuDefinitions(): Prisma.ERPSupportMenuDefinitionsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eRPSupportMenuItems`: Exposes CRUD operations for the **ERPSupportMenuItems** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ERPSupportMenuItems
+    * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findMany()
+    * ```
+    */
+  get eRPSupportMenuItems(): Prisma.ERPSupportMenuItemsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eRPSupportRoleMenuAccess`: Exposes CRUD operations for the **ERPSupportRoleMenuAccess** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ERPSupportRoleMenuAccesses
+    * const eRPSupportRoleMenuAccesses = await prisma.eRPSupportRoleMenuAccess.findMany()
+    * ```
+    */
+  get eRPSupportRoleMenuAccess(): Prisma.ERPSupportRoleMenuAccessDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -706,8 +751,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.11.1
-   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+   * Prisma Client JS version: 6.10.0
+   * Query Engine version: aee10d5a411e4360c6d3445ce4810ca65adbf3e8
    */
   export type PrismaVersion = {
     client: string
@@ -1121,7 +1166,10 @@ export namespace Prisma {
     UserRoles: 'UserRoles',
     Users: 'Users',
     UserWms: 'UserWms',
-    WmsDevices: 'WmsDevices'
+    WmsDevices: 'WmsDevices',
+    ERPSupportMenuDefinitions: 'ERPSupportMenuDefinitions',
+    ERPSupportMenuItems: 'ERPSupportMenuItems',
+    ERPSupportRoleMenuAccess: 'ERPSupportRoleMenuAccess'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1140,7 +1188,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "migrationHistory" | "inventoryStocks" | "salesInvoiceHeaders" | "salesInvoiceItems" | "salesOrderItems" | "salesOrders" | "advertisementPicture" | "bankCodeBnis" | "bankCodes" | "companyProfiles" | "companyProfileSettings" | "creditLimits" | "customFieldLists" | "errorLogs" | "fndUsers" | "integrationSettings" | "memberPointSettings" | "multiLanguages" | "posDevices" | "printQueues" | "salesInvoiceDetails" | "salesPricePriorities" | "sharedPrinters" | "smartlinks" | "userCompanyWarehouses" | "userComputers" | "userPermissions" | "userPos" | "userPreferences" | "userRolePermissions" | "userRoles" | "users" | "userWms" | "wmsDevices"
+      modelProps: "migrationHistory" | "inventoryStocks" | "salesInvoiceHeaders" | "salesInvoiceItems" | "salesOrderItems" | "salesOrders" | "advertisementPicture" | "bankCodeBnis" | "bankCodes" | "companyProfiles" | "companyProfileSettings" | "creditLimits" | "customFieldLists" | "errorLogs" | "fndUsers" | "integrationSettings" | "memberPointSettings" | "multiLanguages" | "posDevices" | "printQueues" | "salesInvoiceDetails" | "salesPricePriorities" | "sharedPrinters" | "smartlinks" | "userCompanyWarehouses" | "userComputers" | "userPermissions" | "userPos" | "userPreferences" | "userRolePermissions" | "userRoles" | "users" | "userWms" | "wmsDevices" | "eRPSupportMenuDefinitions" | "eRPSupportMenuItems" | "eRPSupportRoleMenuAccess"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3388,6 +3436,204 @@ export namespace Prisma {
           }
         }
       }
+      ERPSupportMenuDefinitions: {
+        payload: Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>
+        fields: Prisma.ERPSupportMenuDefinitionsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ERPSupportMenuDefinitionsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ERPSupportMenuDefinitionsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          findFirst: {
+            args: Prisma.ERPSupportMenuDefinitionsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ERPSupportMenuDefinitionsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          findMany: {
+            args: Prisma.ERPSupportMenuDefinitionsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>[]
+          }
+          create: {
+            args: Prisma.ERPSupportMenuDefinitionsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          createMany: {
+            args: Prisma.ERPSupportMenuDefinitionsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ERPSupportMenuDefinitionsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          update: {
+            args: Prisma.ERPSupportMenuDefinitionsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          deleteMany: {
+            args: Prisma.ERPSupportMenuDefinitionsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ERPSupportMenuDefinitionsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ERPSupportMenuDefinitionsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuDefinitionsPayload>
+          }
+          aggregate: {
+            args: Prisma.ERPSupportMenuDefinitionsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateERPSupportMenuDefinitions>
+          }
+          groupBy: {
+            args: Prisma.ERPSupportMenuDefinitionsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportMenuDefinitionsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ERPSupportMenuDefinitionsCountArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportMenuDefinitionsCountAggregateOutputType> | number
+          }
+        }
+      }
+      ERPSupportMenuItems: {
+        payload: Prisma.$ERPSupportMenuItemsPayload<ExtArgs>
+        fields: Prisma.ERPSupportMenuItemsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ERPSupportMenuItemsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ERPSupportMenuItemsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          findFirst: {
+            args: Prisma.ERPSupportMenuItemsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ERPSupportMenuItemsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          findMany: {
+            args: Prisma.ERPSupportMenuItemsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>[]
+          }
+          create: {
+            args: Prisma.ERPSupportMenuItemsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          createMany: {
+            args: Prisma.ERPSupportMenuItemsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ERPSupportMenuItemsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          update: {
+            args: Prisma.ERPSupportMenuItemsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          deleteMany: {
+            args: Prisma.ERPSupportMenuItemsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ERPSupportMenuItemsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ERPSupportMenuItemsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportMenuItemsPayload>
+          }
+          aggregate: {
+            args: Prisma.ERPSupportMenuItemsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateERPSupportMenuItems>
+          }
+          groupBy: {
+            args: Prisma.ERPSupportMenuItemsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportMenuItemsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ERPSupportMenuItemsCountArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportMenuItemsCountAggregateOutputType> | number
+          }
+        }
+      }
+      ERPSupportRoleMenuAccess: {
+        payload: Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>
+        fields: Prisma.ERPSupportRoleMenuAccessFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ERPSupportRoleMenuAccessFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ERPSupportRoleMenuAccessFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          findFirst: {
+            args: Prisma.ERPSupportRoleMenuAccessFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ERPSupportRoleMenuAccessFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          findMany: {
+            args: Prisma.ERPSupportRoleMenuAccessFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>[]
+          }
+          create: {
+            args: Prisma.ERPSupportRoleMenuAccessCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          createMany: {
+            args: Prisma.ERPSupportRoleMenuAccessCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.ERPSupportRoleMenuAccessDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          update: {
+            args: Prisma.ERPSupportRoleMenuAccessUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          deleteMany: {
+            args: Prisma.ERPSupportRoleMenuAccessDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ERPSupportRoleMenuAccessUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ERPSupportRoleMenuAccessUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ERPSupportRoleMenuAccessPayload>
+          }
+          aggregate: {
+            args: Prisma.ERPSupportRoleMenuAccessAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateERPSupportRoleMenuAccess>
+          }
+          groupBy: {
+            args: Prisma.ERPSupportRoleMenuAccessGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportRoleMenuAccessGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ERPSupportRoleMenuAccessCountArgs<ExtArgs>
+            result: $Utils.Optional<ERPSupportRoleMenuAccessCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3506,6 +3752,9 @@ export namespace Prisma {
     users?: UsersOmit
     userWms?: UserWmsOmit
     wmsDevices?: WmsDevicesOmit
+    eRPSupportMenuDefinitions?: ERPSupportMenuDefinitionsOmit
+    eRPSupportMenuItems?: ERPSupportMenuItemsOmit
+    eRPSupportRoleMenuAccess?: ERPSupportRoleMenuAccessOmit
   }
 
   /* Types for Logging */
@@ -3694,6 +3943,77 @@ export namespace Prisma {
    */
   export type CompanyProfilesCountOutputTypeCountSalesPricePrioritiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SalesPricePrioritiesWhereInput
+  }
+
+
+  /**
+   * Count Type ERPSupportMenuDefinitionsCountOutputType
+   */
+
+  export type ERPSupportMenuDefinitionsCountOutputType = {
+    roleAccess: number
+    items: number
+  }
+
+  export type ERPSupportMenuDefinitionsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roleAccess?: boolean | ERPSupportMenuDefinitionsCountOutputTypeCountRoleAccessArgs
+    items?: boolean | ERPSupportMenuDefinitionsCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ERPSupportMenuDefinitionsCountOutputType without action
+   */
+  export type ERPSupportMenuDefinitionsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitionsCountOutputType
+     */
+    select?: ERPSupportMenuDefinitionsCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ERPSupportMenuDefinitionsCountOutputType without action
+   */
+  export type ERPSupportMenuDefinitionsCountOutputTypeCountRoleAccessArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportRoleMenuAccessWhereInput
+  }
+
+  /**
+   * ERPSupportMenuDefinitionsCountOutputType without action
+   */
+  export type ERPSupportMenuDefinitionsCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportMenuItemsWhereInput
+  }
+
+
+  /**
+   * Count Type ERPSupportMenuItemsCountOutputType
+   */
+
+  export type ERPSupportMenuItemsCountOutputType = {
+    roleAccess: number
+  }
+
+  export type ERPSupportMenuItemsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roleAccess?: boolean | ERPSupportMenuItemsCountOutputTypeCountRoleAccessArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ERPSupportMenuItemsCountOutputType without action
+   */
+  export type ERPSupportMenuItemsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItemsCountOutputType
+     */
+    select?: ERPSupportMenuItemsCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ERPSupportMenuItemsCountOutputType without action
+   */
+  export type ERPSupportMenuItemsCountOutputTypeCountRoleAccessArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportRoleMenuAccessWhereInput
   }
 
 
@@ -38055,6 +38375,3044 @@ export namespace Prisma {
 
 
   /**
+   * Model ERPSupportMenuDefinitions
+   */
+
+  export type AggregateERPSupportMenuDefinitions = {
+    _count: ERPSupportMenuDefinitionsCountAggregateOutputType | null
+    _avg: ERPSupportMenuDefinitionsAvgAggregateOutputType | null
+    _sum: ERPSupportMenuDefinitionsSumAggregateOutputType | null
+    _min: ERPSupportMenuDefinitionsMinAggregateOutputType | null
+    _max: ERPSupportMenuDefinitionsMaxAggregateOutputType | null
+  }
+
+  export type ERPSupportMenuDefinitionsAvgAggregateOutputType = {
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuDefinitionsSumAggregateOutputType = {
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuDefinitionsMinAggregateOutputType = {
+    MenuKey: string | null
+    DisplayName: string | null
+    IconClass: string | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuDefinitionsMaxAggregateOutputType = {
+    MenuKey: string | null
+    DisplayName: string | null
+    IconClass: string | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuDefinitionsCountAggregateOutputType = {
+    MenuKey: number
+    DisplayName: number
+    IconClass: number
+    SortOrder: number
+    _all: number
+  }
+
+
+  export type ERPSupportMenuDefinitionsAvgAggregateInputType = {
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuDefinitionsSumAggregateInputType = {
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuDefinitionsMinAggregateInputType = {
+    MenuKey?: true
+    DisplayName?: true
+    IconClass?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuDefinitionsMaxAggregateInputType = {
+    MenuKey?: true
+    DisplayName?: true
+    IconClass?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuDefinitionsCountAggregateInputType = {
+    MenuKey?: true
+    DisplayName?: true
+    IconClass?: true
+    SortOrder?: true
+    _all?: true
+  }
+
+  export type ERPSupportMenuDefinitionsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportMenuDefinitions to aggregate.
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuDefinitions to fetch.
+     */
+    orderBy?: ERPSupportMenuDefinitionsOrderByWithRelationInput | ERPSupportMenuDefinitionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ERPSupportMenuDefinitionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuDefinitions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuDefinitions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ERPSupportMenuDefinitions
+    **/
+    _count?: true | ERPSupportMenuDefinitionsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ERPSupportMenuDefinitionsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ERPSupportMenuDefinitionsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ERPSupportMenuDefinitionsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ERPSupportMenuDefinitionsMaxAggregateInputType
+  }
+
+  export type GetERPSupportMenuDefinitionsAggregateType<T extends ERPSupportMenuDefinitionsAggregateArgs> = {
+        [P in keyof T & keyof AggregateERPSupportMenuDefinitions]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateERPSupportMenuDefinitions[P]>
+      : GetScalarType<T[P], AggregateERPSupportMenuDefinitions[P]>
+  }
+
+
+
+
+  export type ERPSupportMenuDefinitionsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportMenuDefinitionsWhereInput
+    orderBy?: ERPSupportMenuDefinitionsOrderByWithAggregationInput | ERPSupportMenuDefinitionsOrderByWithAggregationInput[]
+    by: ERPSupportMenuDefinitionsScalarFieldEnum[] | ERPSupportMenuDefinitionsScalarFieldEnum
+    having?: ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ERPSupportMenuDefinitionsCountAggregateInputType | true
+    _avg?: ERPSupportMenuDefinitionsAvgAggregateInputType
+    _sum?: ERPSupportMenuDefinitionsSumAggregateInputType
+    _min?: ERPSupportMenuDefinitionsMinAggregateInputType
+    _max?: ERPSupportMenuDefinitionsMaxAggregateInputType
+  }
+
+  export type ERPSupportMenuDefinitionsGroupByOutputType = {
+    MenuKey: string
+    DisplayName: string
+    IconClass: string | null
+    SortOrder: number | null
+    _count: ERPSupportMenuDefinitionsCountAggregateOutputType | null
+    _avg: ERPSupportMenuDefinitionsAvgAggregateOutputType | null
+    _sum: ERPSupportMenuDefinitionsSumAggregateOutputType | null
+    _min: ERPSupportMenuDefinitionsMinAggregateOutputType | null
+    _max: ERPSupportMenuDefinitionsMaxAggregateOutputType | null
+  }
+
+  type GetERPSupportMenuDefinitionsGroupByPayload<T extends ERPSupportMenuDefinitionsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ERPSupportMenuDefinitionsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ERPSupportMenuDefinitionsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ERPSupportMenuDefinitionsGroupByOutputType[P]>
+            : GetScalarType<T[P], ERPSupportMenuDefinitionsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ERPSupportMenuDefinitionsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    MenuKey?: boolean
+    DisplayName?: boolean
+    IconClass?: boolean
+    SortOrder?: boolean
+    roleAccess?: boolean | ERPSupportMenuDefinitions$roleAccessArgs<ExtArgs>
+    items?: boolean | ERPSupportMenuDefinitions$itemsArgs<ExtArgs>
+    _count?: boolean | ERPSupportMenuDefinitionsCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eRPSupportMenuDefinitions"]>
+
+
+
+  export type ERPSupportMenuDefinitionsSelectScalar = {
+    MenuKey?: boolean
+    DisplayName?: boolean
+    IconClass?: boolean
+    SortOrder?: boolean
+  }
+
+  export type ERPSupportMenuDefinitionsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"MenuKey" | "DisplayName" | "IconClass" | "SortOrder", ExtArgs["result"]["eRPSupportMenuDefinitions"]>
+  export type ERPSupportMenuDefinitionsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    roleAccess?: boolean | ERPSupportMenuDefinitions$roleAccessArgs<ExtArgs>
+    items?: boolean | ERPSupportMenuDefinitions$itemsArgs<ExtArgs>
+    _count?: boolean | ERPSupportMenuDefinitionsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+
+  export type $ERPSupportMenuDefinitionsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ERPSupportMenuDefinitions"
+    objects: {
+      roleAccess: Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>[]
+      items: Prisma.$ERPSupportMenuItemsPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      MenuKey: string
+      DisplayName: string
+      IconClass: string | null
+      SortOrder: number | null
+    }, ExtArgs["result"]["eRPSupportMenuDefinitions"]>
+    composites: {}
+  }
+
+  type ERPSupportMenuDefinitionsGetPayload<S extends boolean | null | undefined | ERPSupportMenuDefinitionsDefaultArgs> = $Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload, S>
+
+  type ERPSupportMenuDefinitionsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ERPSupportMenuDefinitionsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ERPSupportMenuDefinitionsCountAggregateInputType | true
+    }
+
+  export interface ERPSupportMenuDefinitionsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ERPSupportMenuDefinitions'], meta: { name: 'ERPSupportMenuDefinitions' } }
+    /**
+     * Find zero or one ERPSupportMenuDefinitions that matches the filter.
+     * @param {ERPSupportMenuDefinitionsFindUniqueArgs} args - Arguments to find a ERPSupportMenuDefinitions
+     * @example
+     * // Get one ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ERPSupportMenuDefinitionsFindUniqueArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsFindUniqueArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ERPSupportMenuDefinitions that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ERPSupportMenuDefinitionsFindUniqueOrThrowArgs} args - Arguments to find a ERPSupportMenuDefinitions
+     * @example
+     * // Get one ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ERPSupportMenuDefinitionsFindUniqueOrThrowArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportMenuDefinitions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsFindFirstArgs} args - Arguments to find a ERPSupportMenuDefinitions
+     * @example
+     * // Get one ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ERPSupportMenuDefinitionsFindFirstArgs>(args?: SelectSubset<T, ERPSupportMenuDefinitionsFindFirstArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportMenuDefinitions that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsFindFirstOrThrowArgs} args - Arguments to find a ERPSupportMenuDefinitions
+     * @example
+     * // Get one ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ERPSupportMenuDefinitionsFindFirstOrThrowArgs>(args?: SelectSubset<T, ERPSupportMenuDefinitionsFindFirstOrThrowArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ERPSupportMenuDefinitions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findMany()
+     * 
+     * // Get first 10 ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.findMany({ take: 10 })
+     * 
+     * // Only select the `MenuKey`
+     * const eRPSupportMenuDefinitionsWithMenuKeyOnly = await prisma.eRPSupportMenuDefinitions.findMany({ select: { MenuKey: true } })
+     * 
+     */
+    findMany<T extends ERPSupportMenuDefinitionsFindManyArgs>(args?: SelectSubset<T, ERPSupportMenuDefinitionsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsCreateArgs} args - Arguments to create a ERPSupportMenuDefinitions.
+     * @example
+     * // Create one ERPSupportMenuDefinitions
+     * const ERPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.create({
+     *   data: {
+     *     // ... data to create a ERPSupportMenuDefinitions
+     *   }
+     * })
+     * 
+     */
+    create<T extends ERPSupportMenuDefinitionsCreateArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsCreateArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsCreateManyArgs} args - Arguments to create many ERPSupportMenuDefinitions.
+     * @example
+     * // Create many ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ERPSupportMenuDefinitionsCreateManyArgs>(args?: SelectSubset<T, ERPSupportMenuDefinitionsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsDeleteArgs} args - Arguments to delete one ERPSupportMenuDefinitions.
+     * @example
+     * // Delete one ERPSupportMenuDefinitions
+     * const ERPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.delete({
+     *   where: {
+     *     // ... filter to delete one ERPSupportMenuDefinitions
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ERPSupportMenuDefinitionsDeleteArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsDeleteArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsUpdateArgs} args - Arguments to update one ERPSupportMenuDefinitions.
+     * @example
+     * // Update one ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ERPSupportMenuDefinitionsUpdateArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsUpdateArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsDeleteManyArgs} args - Arguments to filter ERPSupportMenuDefinitions to delete.
+     * @example
+     * // Delete a few ERPSupportMenuDefinitions
+     * const { count } = await prisma.eRPSupportMenuDefinitions.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ERPSupportMenuDefinitionsDeleteManyArgs>(args?: SelectSubset<T, ERPSupportMenuDefinitionsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ERPSupportMenuDefinitions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ERPSupportMenuDefinitionsUpdateManyArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ERPSupportMenuDefinitions.
+     * @param {ERPSupportMenuDefinitionsUpsertArgs} args - Arguments to update or create a ERPSupportMenuDefinitions.
+     * @example
+     * // Update or create a ERPSupportMenuDefinitions
+     * const eRPSupportMenuDefinitions = await prisma.eRPSupportMenuDefinitions.upsert({
+     *   create: {
+     *     // ... data to create a ERPSupportMenuDefinitions
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ERPSupportMenuDefinitions we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ERPSupportMenuDefinitionsUpsertArgs>(args: SelectSubset<T, ERPSupportMenuDefinitionsUpsertArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ERPSupportMenuDefinitions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsCountArgs} args - Arguments to filter ERPSupportMenuDefinitions to count.
+     * @example
+     * // Count the number of ERPSupportMenuDefinitions
+     * const count = await prisma.eRPSupportMenuDefinitions.count({
+     *   where: {
+     *     // ... the filter for the ERPSupportMenuDefinitions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ERPSupportMenuDefinitionsCountArgs>(
+      args?: Subset<T, ERPSupportMenuDefinitionsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ERPSupportMenuDefinitionsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ERPSupportMenuDefinitions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ERPSupportMenuDefinitionsAggregateArgs>(args: Subset<T, ERPSupportMenuDefinitionsAggregateArgs>): Prisma.PrismaPromise<GetERPSupportMenuDefinitionsAggregateType<T>>
+
+    /**
+     * Group by ERPSupportMenuDefinitions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuDefinitionsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ERPSupportMenuDefinitionsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ERPSupportMenuDefinitionsGroupByArgs['orderBy'] }
+        : { orderBy?: ERPSupportMenuDefinitionsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ERPSupportMenuDefinitionsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetERPSupportMenuDefinitionsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ERPSupportMenuDefinitions model
+   */
+  readonly fields: ERPSupportMenuDefinitionsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ERPSupportMenuDefinitions.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ERPSupportMenuDefinitionsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    roleAccess<T extends ERPSupportMenuDefinitions$roleAccessArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportMenuDefinitions$roleAccessArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    items<T extends ERPSupportMenuDefinitions$itemsArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportMenuDefinitions$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ERPSupportMenuDefinitions model
+   */
+  interface ERPSupportMenuDefinitionsFieldRefs {
+    readonly MenuKey: FieldRef<"ERPSupportMenuDefinitions", 'String'>
+    readonly DisplayName: FieldRef<"ERPSupportMenuDefinitions", 'String'>
+    readonly IconClass: FieldRef<"ERPSupportMenuDefinitions", 'String'>
+    readonly SortOrder: FieldRef<"ERPSupportMenuDefinitions", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ERPSupportMenuDefinitions findUnique
+   */
+  export type ERPSupportMenuDefinitionsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuDefinitions to fetch.
+     */
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuDefinitions findUniqueOrThrow
+   */
+  export type ERPSupportMenuDefinitionsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuDefinitions to fetch.
+     */
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuDefinitions findFirst
+   */
+  export type ERPSupportMenuDefinitionsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuDefinitions to fetch.
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuDefinitions to fetch.
+     */
+    orderBy?: ERPSupportMenuDefinitionsOrderByWithRelationInput | ERPSupportMenuDefinitionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportMenuDefinitions.
+     */
+    cursor?: ERPSupportMenuDefinitionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuDefinitions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuDefinitions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportMenuDefinitions.
+     */
+    distinct?: ERPSupportMenuDefinitionsScalarFieldEnum | ERPSupportMenuDefinitionsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions findFirstOrThrow
+   */
+  export type ERPSupportMenuDefinitionsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuDefinitions to fetch.
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuDefinitions to fetch.
+     */
+    orderBy?: ERPSupportMenuDefinitionsOrderByWithRelationInput | ERPSupportMenuDefinitionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportMenuDefinitions.
+     */
+    cursor?: ERPSupportMenuDefinitionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuDefinitions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuDefinitions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportMenuDefinitions.
+     */
+    distinct?: ERPSupportMenuDefinitionsScalarFieldEnum | ERPSupportMenuDefinitionsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions findMany
+   */
+  export type ERPSupportMenuDefinitionsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuDefinitions to fetch.
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuDefinitions to fetch.
+     */
+    orderBy?: ERPSupportMenuDefinitionsOrderByWithRelationInput | ERPSupportMenuDefinitionsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ERPSupportMenuDefinitions.
+     */
+    cursor?: ERPSupportMenuDefinitionsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuDefinitions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuDefinitions.
+     */
+    skip?: number
+    distinct?: ERPSupportMenuDefinitionsScalarFieldEnum | ERPSupportMenuDefinitionsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions create
+   */
+  export type ERPSupportMenuDefinitionsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ERPSupportMenuDefinitions.
+     */
+    data: XOR<ERPSupportMenuDefinitionsCreateInput, ERPSupportMenuDefinitionsUncheckedCreateInput>
+  }
+
+  /**
+   * ERPSupportMenuDefinitions createMany
+   */
+  export type ERPSupportMenuDefinitionsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ERPSupportMenuDefinitions.
+     */
+    data: ERPSupportMenuDefinitionsCreateManyInput | ERPSupportMenuDefinitionsCreateManyInput[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions update
+   */
+  export type ERPSupportMenuDefinitionsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ERPSupportMenuDefinitions.
+     */
+    data: XOR<ERPSupportMenuDefinitionsUpdateInput, ERPSupportMenuDefinitionsUncheckedUpdateInput>
+    /**
+     * Choose, which ERPSupportMenuDefinitions to update.
+     */
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuDefinitions updateMany
+   */
+  export type ERPSupportMenuDefinitionsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ERPSupportMenuDefinitions.
+     */
+    data: XOR<ERPSupportMenuDefinitionsUpdateManyMutationInput, ERPSupportMenuDefinitionsUncheckedUpdateManyInput>
+    /**
+     * Filter which ERPSupportMenuDefinitions to update
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * Limit how many ERPSupportMenuDefinitions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportMenuDefinitions upsert
+   */
+  export type ERPSupportMenuDefinitionsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ERPSupportMenuDefinitions to update in case it exists.
+     */
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+    /**
+     * In case the ERPSupportMenuDefinitions found by the `where` argument doesn't exist, create a new ERPSupportMenuDefinitions with this data.
+     */
+    create: XOR<ERPSupportMenuDefinitionsCreateInput, ERPSupportMenuDefinitionsUncheckedCreateInput>
+    /**
+     * In case the ERPSupportMenuDefinitions was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ERPSupportMenuDefinitionsUpdateInput, ERPSupportMenuDefinitionsUncheckedUpdateInput>
+  }
+
+  /**
+   * ERPSupportMenuDefinitions delete
+   */
+  export type ERPSupportMenuDefinitionsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    /**
+     * Filter which ERPSupportMenuDefinitions to delete.
+     */
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuDefinitions deleteMany
+   */
+  export type ERPSupportMenuDefinitionsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportMenuDefinitions to delete
+     */
+    where?: ERPSupportMenuDefinitionsWhereInput
+    /**
+     * Limit how many ERPSupportMenuDefinitions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportMenuDefinitions.roleAccess
+   */
+  export type ERPSupportMenuDefinitions$roleAccessArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    where?: ERPSupportRoleMenuAccessWhereInput
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ERPSupportRoleMenuAccessScalarFieldEnum | ERPSupportRoleMenuAccessScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions.items
+   */
+  export type ERPSupportMenuDefinitions$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    where?: ERPSupportMenuItemsWhereInput
+    orderBy?: ERPSupportMenuItemsOrderByWithRelationInput | ERPSupportMenuItemsOrderByWithRelationInput[]
+    cursor?: ERPSupportMenuItemsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ERPSupportMenuItemsScalarFieldEnum | ERPSupportMenuItemsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuDefinitions without action
+   */
+  export type ERPSupportMenuDefinitionsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ERPSupportMenuItems
+   */
+
+  export type AggregateERPSupportMenuItems = {
+    _count: ERPSupportMenuItemsCountAggregateOutputType | null
+    _avg: ERPSupportMenuItemsAvgAggregateOutputType | null
+    _sum: ERPSupportMenuItemsSumAggregateOutputType | null
+    _min: ERPSupportMenuItemsMinAggregateOutputType | null
+    _max: ERPSupportMenuItemsMaxAggregateOutputType | null
+  }
+
+  export type ERPSupportMenuItemsAvgAggregateOutputType = {
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuItemsSumAggregateOutputType = {
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuItemsMinAggregateOutputType = {
+    ItemKey: string | null
+    MenuKey: string | null
+    DisplayName: string | null
+    Route: string | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuItemsMaxAggregateOutputType = {
+    ItemKey: string | null
+    MenuKey: string | null
+    DisplayName: string | null
+    Route: string | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportMenuItemsCountAggregateOutputType = {
+    ItemKey: number
+    MenuKey: number
+    DisplayName: number
+    Route: number
+    SortOrder: number
+    _all: number
+  }
+
+
+  export type ERPSupportMenuItemsAvgAggregateInputType = {
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuItemsSumAggregateInputType = {
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuItemsMinAggregateInputType = {
+    ItemKey?: true
+    MenuKey?: true
+    DisplayName?: true
+    Route?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuItemsMaxAggregateInputType = {
+    ItemKey?: true
+    MenuKey?: true
+    DisplayName?: true
+    Route?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportMenuItemsCountAggregateInputType = {
+    ItemKey?: true
+    MenuKey?: true
+    DisplayName?: true
+    Route?: true
+    SortOrder?: true
+    _all?: true
+  }
+
+  export type ERPSupportMenuItemsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportMenuItems to aggregate.
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuItems to fetch.
+     */
+    orderBy?: ERPSupportMenuItemsOrderByWithRelationInput | ERPSupportMenuItemsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ERPSupportMenuItemsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ERPSupportMenuItems
+    **/
+    _count?: true | ERPSupportMenuItemsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ERPSupportMenuItemsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ERPSupportMenuItemsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ERPSupportMenuItemsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ERPSupportMenuItemsMaxAggregateInputType
+  }
+
+  export type GetERPSupportMenuItemsAggregateType<T extends ERPSupportMenuItemsAggregateArgs> = {
+        [P in keyof T & keyof AggregateERPSupportMenuItems]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateERPSupportMenuItems[P]>
+      : GetScalarType<T[P], AggregateERPSupportMenuItems[P]>
+  }
+
+
+
+
+  export type ERPSupportMenuItemsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportMenuItemsWhereInput
+    orderBy?: ERPSupportMenuItemsOrderByWithAggregationInput | ERPSupportMenuItemsOrderByWithAggregationInput[]
+    by: ERPSupportMenuItemsScalarFieldEnum[] | ERPSupportMenuItemsScalarFieldEnum
+    having?: ERPSupportMenuItemsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ERPSupportMenuItemsCountAggregateInputType | true
+    _avg?: ERPSupportMenuItemsAvgAggregateInputType
+    _sum?: ERPSupportMenuItemsSumAggregateInputType
+    _min?: ERPSupportMenuItemsMinAggregateInputType
+    _max?: ERPSupportMenuItemsMaxAggregateInputType
+  }
+
+  export type ERPSupportMenuItemsGroupByOutputType = {
+    ItemKey: string
+    MenuKey: string
+    DisplayName: string
+    Route: string
+    SortOrder: number | null
+    _count: ERPSupportMenuItemsCountAggregateOutputType | null
+    _avg: ERPSupportMenuItemsAvgAggregateOutputType | null
+    _sum: ERPSupportMenuItemsSumAggregateOutputType | null
+    _min: ERPSupportMenuItemsMinAggregateOutputType | null
+    _max: ERPSupportMenuItemsMaxAggregateOutputType | null
+  }
+
+  type GetERPSupportMenuItemsGroupByPayload<T extends ERPSupportMenuItemsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ERPSupportMenuItemsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ERPSupportMenuItemsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ERPSupportMenuItemsGroupByOutputType[P]>
+            : GetScalarType<T[P], ERPSupportMenuItemsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ERPSupportMenuItemsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    ItemKey?: boolean
+    MenuKey?: boolean
+    DisplayName?: boolean
+    Route?: boolean
+    SortOrder?: boolean
+    menu?: boolean | ERPSupportMenuDefinitionsDefaultArgs<ExtArgs>
+    roleAccess?: boolean | ERPSupportMenuItems$roleAccessArgs<ExtArgs>
+    _count?: boolean | ERPSupportMenuItemsCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eRPSupportMenuItems"]>
+
+
+
+  export type ERPSupportMenuItemsSelectScalar = {
+    ItemKey?: boolean
+    MenuKey?: boolean
+    DisplayName?: boolean
+    Route?: boolean
+    SortOrder?: boolean
+  }
+
+  export type ERPSupportMenuItemsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"ItemKey" | "MenuKey" | "DisplayName" | "Route" | "SortOrder", ExtArgs["result"]["eRPSupportMenuItems"]>
+  export type ERPSupportMenuItemsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    menu?: boolean | ERPSupportMenuDefinitionsDefaultArgs<ExtArgs>
+    roleAccess?: boolean | ERPSupportMenuItems$roleAccessArgs<ExtArgs>
+    _count?: boolean | ERPSupportMenuItemsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+
+  export type $ERPSupportMenuItemsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ERPSupportMenuItems"
+    objects: {
+      menu: Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>
+      roleAccess: Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      ItemKey: string
+      MenuKey: string
+      DisplayName: string
+      Route: string
+      SortOrder: number | null
+    }, ExtArgs["result"]["eRPSupportMenuItems"]>
+    composites: {}
+  }
+
+  type ERPSupportMenuItemsGetPayload<S extends boolean | null | undefined | ERPSupportMenuItemsDefaultArgs> = $Result.GetResult<Prisma.$ERPSupportMenuItemsPayload, S>
+
+  type ERPSupportMenuItemsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ERPSupportMenuItemsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ERPSupportMenuItemsCountAggregateInputType | true
+    }
+
+  export interface ERPSupportMenuItemsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ERPSupportMenuItems'], meta: { name: 'ERPSupportMenuItems' } }
+    /**
+     * Find zero or one ERPSupportMenuItems that matches the filter.
+     * @param {ERPSupportMenuItemsFindUniqueArgs} args - Arguments to find a ERPSupportMenuItems
+     * @example
+     * // Get one ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ERPSupportMenuItemsFindUniqueArgs>(args: SelectSubset<T, ERPSupportMenuItemsFindUniqueArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ERPSupportMenuItems that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ERPSupportMenuItemsFindUniqueOrThrowArgs} args - Arguments to find a ERPSupportMenuItems
+     * @example
+     * // Get one ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ERPSupportMenuItemsFindUniqueOrThrowArgs>(args: SelectSubset<T, ERPSupportMenuItemsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportMenuItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsFindFirstArgs} args - Arguments to find a ERPSupportMenuItems
+     * @example
+     * // Get one ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ERPSupportMenuItemsFindFirstArgs>(args?: SelectSubset<T, ERPSupportMenuItemsFindFirstArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportMenuItems that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsFindFirstOrThrowArgs} args - Arguments to find a ERPSupportMenuItems
+     * @example
+     * // Get one ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ERPSupportMenuItemsFindFirstOrThrowArgs>(args?: SelectSubset<T, ERPSupportMenuItemsFindFirstOrThrowArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ERPSupportMenuItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findMany()
+     * 
+     * // Get first 10 ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.findMany({ take: 10 })
+     * 
+     * // Only select the `ItemKey`
+     * const eRPSupportMenuItemsWithItemKeyOnly = await prisma.eRPSupportMenuItems.findMany({ select: { ItemKey: true } })
+     * 
+     */
+    findMany<T extends ERPSupportMenuItemsFindManyArgs>(args?: SelectSubset<T, ERPSupportMenuItemsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsCreateArgs} args - Arguments to create a ERPSupportMenuItems.
+     * @example
+     * // Create one ERPSupportMenuItems
+     * const ERPSupportMenuItems = await prisma.eRPSupportMenuItems.create({
+     *   data: {
+     *     // ... data to create a ERPSupportMenuItems
+     *   }
+     * })
+     * 
+     */
+    create<T extends ERPSupportMenuItemsCreateArgs>(args: SelectSubset<T, ERPSupportMenuItemsCreateArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsCreateManyArgs} args - Arguments to create many ERPSupportMenuItems.
+     * @example
+     * // Create many ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ERPSupportMenuItemsCreateManyArgs>(args?: SelectSubset<T, ERPSupportMenuItemsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsDeleteArgs} args - Arguments to delete one ERPSupportMenuItems.
+     * @example
+     * // Delete one ERPSupportMenuItems
+     * const ERPSupportMenuItems = await prisma.eRPSupportMenuItems.delete({
+     *   where: {
+     *     // ... filter to delete one ERPSupportMenuItems
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ERPSupportMenuItemsDeleteArgs>(args: SelectSubset<T, ERPSupportMenuItemsDeleteArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsUpdateArgs} args - Arguments to update one ERPSupportMenuItems.
+     * @example
+     * // Update one ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ERPSupportMenuItemsUpdateArgs>(args: SelectSubset<T, ERPSupportMenuItemsUpdateArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsDeleteManyArgs} args - Arguments to filter ERPSupportMenuItems to delete.
+     * @example
+     * // Delete a few ERPSupportMenuItems
+     * const { count } = await prisma.eRPSupportMenuItems.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ERPSupportMenuItemsDeleteManyArgs>(args?: SelectSubset<T, ERPSupportMenuItemsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ERPSupportMenuItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ERPSupportMenuItemsUpdateManyArgs>(args: SelectSubset<T, ERPSupportMenuItemsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ERPSupportMenuItems.
+     * @param {ERPSupportMenuItemsUpsertArgs} args - Arguments to update or create a ERPSupportMenuItems.
+     * @example
+     * // Update or create a ERPSupportMenuItems
+     * const eRPSupportMenuItems = await prisma.eRPSupportMenuItems.upsert({
+     *   create: {
+     *     // ... data to create a ERPSupportMenuItems
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ERPSupportMenuItems we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ERPSupportMenuItemsUpsertArgs>(args: SelectSubset<T, ERPSupportMenuItemsUpsertArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ERPSupportMenuItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsCountArgs} args - Arguments to filter ERPSupportMenuItems to count.
+     * @example
+     * // Count the number of ERPSupportMenuItems
+     * const count = await prisma.eRPSupportMenuItems.count({
+     *   where: {
+     *     // ... the filter for the ERPSupportMenuItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends ERPSupportMenuItemsCountArgs>(
+      args?: Subset<T, ERPSupportMenuItemsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ERPSupportMenuItemsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ERPSupportMenuItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ERPSupportMenuItemsAggregateArgs>(args: Subset<T, ERPSupportMenuItemsAggregateArgs>): Prisma.PrismaPromise<GetERPSupportMenuItemsAggregateType<T>>
+
+    /**
+     * Group by ERPSupportMenuItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportMenuItemsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ERPSupportMenuItemsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ERPSupportMenuItemsGroupByArgs['orderBy'] }
+        : { orderBy?: ERPSupportMenuItemsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ERPSupportMenuItemsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetERPSupportMenuItemsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ERPSupportMenuItems model
+   */
+  readonly fields: ERPSupportMenuItemsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ERPSupportMenuItems.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ERPSupportMenuItemsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    menu<T extends ERPSupportMenuDefinitionsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportMenuDefinitionsDefaultArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    roleAccess<T extends ERPSupportMenuItems$roleAccessArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportMenuItems$roleAccessArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ERPSupportMenuItems model
+   */
+  interface ERPSupportMenuItemsFieldRefs {
+    readonly ItemKey: FieldRef<"ERPSupportMenuItems", 'String'>
+    readonly MenuKey: FieldRef<"ERPSupportMenuItems", 'String'>
+    readonly DisplayName: FieldRef<"ERPSupportMenuItems", 'String'>
+    readonly Route: FieldRef<"ERPSupportMenuItems", 'String'>
+    readonly SortOrder: FieldRef<"ERPSupportMenuItems", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ERPSupportMenuItems findUnique
+   */
+  export type ERPSupportMenuItemsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuItems to fetch.
+     */
+    where: ERPSupportMenuItemsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuItems findUniqueOrThrow
+   */
+  export type ERPSupportMenuItemsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuItems to fetch.
+     */
+    where: ERPSupportMenuItemsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuItems findFirst
+   */
+  export type ERPSupportMenuItemsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuItems to fetch.
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuItems to fetch.
+     */
+    orderBy?: ERPSupportMenuItemsOrderByWithRelationInput | ERPSupportMenuItemsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportMenuItems.
+     */
+    cursor?: ERPSupportMenuItemsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportMenuItems.
+     */
+    distinct?: ERPSupportMenuItemsScalarFieldEnum | ERPSupportMenuItemsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuItems findFirstOrThrow
+   */
+  export type ERPSupportMenuItemsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuItems to fetch.
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuItems to fetch.
+     */
+    orderBy?: ERPSupportMenuItemsOrderByWithRelationInput | ERPSupportMenuItemsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportMenuItems.
+     */
+    cursor?: ERPSupportMenuItemsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportMenuItems.
+     */
+    distinct?: ERPSupportMenuItemsScalarFieldEnum | ERPSupportMenuItemsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuItems findMany
+   */
+  export type ERPSupportMenuItemsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportMenuItems to fetch.
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportMenuItems to fetch.
+     */
+    orderBy?: ERPSupportMenuItemsOrderByWithRelationInput | ERPSupportMenuItemsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ERPSupportMenuItems.
+     */
+    cursor?: ERPSupportMenuItemsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportMenuItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportMenuItems.
+     */
+    skip?: number
+    distinct?: ERPSupportMenuItemsScalarFieldEnum | ERPSupportMenuItemsScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuItems create
+   */
+  export type ERPSupportMenuItemsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ERPSupportMenuItems.
+     */
+    data: XOR<ERPSupportMenuItemsCreateInput, ERPSupportMenuItemsUncheckedCreateInput>
+  }
+
+  /**
+   * ERPSupportMenuItems createMany
+   */
+  export type ERPSupportMenuItemsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ERPSupportMenuItems.
+     */
+    data: ERPSupportMenuItemsCreateManyInput | ERPSupportMenuItemsCreateManyInput[]
+  }
+
+  /**
+   * ERPSupportMenuItems update
+   */
+  export type ERPSupportMenuItemsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ERPSupportMenuItems.
+     */
+    data: XOR<ERPSupportMenuItemsUpdateInput, ERPSupportMenuItemsUncheckedUpdateInput>
+    /**
+     * Choose, which ERPSupportMenuItems to update.
+     */
+    where: ERPSupportMenuItemsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuItems updateMany
+   */
+  export type ERPSupportMenuItemsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ERPSupportMenuItems.
+     */
+    data: XOR<ERPSupportMenuItemsUpdateManyMutationInput, ERPSupportMenuItemsUncheckedUpdateManyInput>
+    /**
+     * Filter which ERPSupportMenuItems to update
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * Limit how many ERPSupportMenuItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportMenuItems upsert
+   */
+  export type ERPSupportMenuItemsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ERPSupportMenuItems to update in case it exists.
+     */
+    where: ERPSupportMenuItemsWhereUniqueInput
+    /**
+     * In case the ERPSupportMenuItems found by the `where` argument doesn't exist, create a new ERPSupportMenuItems with this data.
+     */
+    create: XOR<ERPSupportMenuItemsCreateInput, ERPSupportMenuItemsUncheckedCreateInput>
+    /**
+     * In case the ERPSupportMenuItems was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ERPSupportMenuItemsUpdateInput, ERPSupportMenuItemsUncheckedUpdateInput>
+  }
+
+  /**
+   * ERPSupportMenuItems delete
+   */
+  export type ERPSupportMenuItemsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    /**
+     * Filter which ERPSupportMenuItems to delete.
+     */
+    where: ERPSupportMenuItemsWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportMenuItems deleteMany
+   */
+  export type ERPSupportMenuItemsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportMenuItems to delete
+     */
+    where?: ERPSupportMenuItemsWhereInput
+    /**
+     * Limit how many ERPSupportMenuItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportMenuItems.roleAccess
+   */
+  export type ERPSupportMenuItems$roleAccessArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    where?: ERPSupportRoleMenuAccessWhereInput
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ERPSupportRoleMenuAccessScalarFieldEnum | ERPSupportRoleMenuAccessScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportMenuItems without action
+   */
+  export type ERPSupportMenuItemsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ERPSupportRoleMenuAccess
+   */
+
+  export type AggregateERPSupportRoleMenuAccess = {
+    _count: ERPSupportRoleMenuAccessCountAggregateOutputType | null
+    _avg: ERPSupportRoleMenuAccessAvgAggregateOutputType | null
+    _sum: ERPSupportRoleMenuAccessSumAggregateOutputType | null
+    _min: ERPSupportRoleMenuAccessMinAggregateOutputType | null
+    _max: ERPSupportRoleMenuAccessMaxAggregateOutputType | null
+  }
+
+  export type ERPSupportRoleMenuAccessAvgAggregateOutputType = {
+    Id: number | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportRoleMenuAccessSumAggregateOutputType = {
+    Id: number | null
+    SortOrder: number | null
+  }
+
+  export type ERPSupportRoleMenuAccessMinAggregateOutputType = {
+    Id: number | null
+    RoleCode: string | null
+    MenuKey: string | null
+    ItemKey: string | null
+    Environment: string | null
+    SortOrder: number | null
+    CreatedAt: Date | null
+    UpdatedAt: Date | null
+  }
+
+  export type ERPSupportRoleMenuAccessMaxAggregateOutputType = {
+    Id: number | null
+    RoleCode: string | null
+    MenuKey: string | null
+    ItemKey: string | null
+    Environment: string | null
+    SortOrder: number | null
+    CreatedAt: Date | null
+    UpdatedAt: Date | null
+  }
+
+  export type ERPSupportRoleMenuAccessCountAggregateOutputType = {
+    Id: number
+    RoleCode: number
+    MenuKey: number
+    ItemKey: number
+    Environment: number
+    SortOrder: number
+    CreatedAt: number
+    UpdatedAt: number
+    _all: number
+  }
+
+
+  export type ERPSupportRoleMenuAccessAvgAggregateInputType = {
+    Id?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportRoleMenuAccessSumAggregateInputType = {
+    Id?: true
+    SortOrder?: true
+  }
+
+  export type ERPSupportRoleMenuAccessMinAggregateInputType = {
+    Id?: true
+    RoleCode?: true
+    MenuKey?: true
+    ItemKey?: true
+    Environment?: true
+    SortOrder?: true
+    CreatedAt?: true
+    UpdatedAt?: true
+  }
+
+  export type ERPSupportRoleMenuAccessMaxAggregateInputType = {
+    Id?: true
+    RoleCode?: true
+    MenuKey?: true
+    ItemKey?: true
+    Environment?: true
+    SortOrder?: true
+    CreatedAt?: true
+    UpdatedAt?: true
+  }
+
+  export type ERPSupportRoleMenuAccessCountAggregateInputType = {
+    Id?: true
+    RoleCode?: true
+    MenuKey?: true
+    ItemKey?: true
+    Environment?: true
+    SortOrder?: true
+    CreatedAt?: true
+    UpdatedAt?: true
+    _all?: true
+  }
+
+  export type ERPSupportRoleMenuAccessAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportRoleMenuAccess to aggregate.
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportRoleMenuAccesses to fetch.
+     */
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportRoleMenuAccesses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportRoleMenuAccesses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ERPSupportRoleMenuAccesses
+    **/
+    _count?: true | ERPSupportRoleMenuAccessCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ERPSupportRoleMenuAccessAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ERPSupportRoleMenuAccessSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ERPSupportRoleMenuAccessMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ERPSupportRoleMenuAccessMaxAggregateInputType
+  }
+
+  export type GetERPSupportRoleMenuAccessAggregateType<T extends ERPSupportRoleMenuAccessAggregateArgs> = {
+        [P in keyof T & keyof AggregateERPSupportRoleMenuAccess]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateERPSupportRoleMenuAccess[P]>
+      : GetScalarType<T[P], AggregateERPSupportRoleMenuAccess[P]>
+  }
+
+
+
+
+  export type ERPSupportRoleMenuAccessGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ERPSupportRoleMenuAccessWhereInput
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithAggregationInput | ERPSupportRoleMenuAccessOrderByWithAggregationInput[]
+    by: ERPSupportRoleMenuAccessScalarFieldEnum[] | ERPSupportRoleMenuAccessScalarFieldEnum
+    having?: ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ERPSupportRoleMenuAccessCountAggregateInputType | true
+    _avg?: ERPSupportRoleMenuAccessAvgAggregateInputType
+    _sum?: ERPSupportRoleMenuAccessSumAggregateInputType
+    _min?: ERPSupportRoleMenuAccessMinAggregateInputType
+    _max?: ERPSupportRoleMenuAccessMaxAggregateInputType
+  }
+
+  export type ERPSupportRoleMenuAccessGroupByOutputType = {
+    Id: number
+    RoleCode: string
+    MenuKey: string
+    ItemKey: string | null
+    Environment: string
+    SortOrder: number | null
+    CreatedAt: Date
+    UpdatedAt: Date
+    _count: ERPSupportRoleMenuAccessCountAggregateOutputType | null
+    _avg: ERPSupportRoleMenuAccessAvgAggregateOutputType | null
+    _sum: ERPSupportRoleMenuAccessSumAggregateOutputType | null
+    _min: ERPSupportRoleMenuAccessMinAggregateOutputType | null
+    _max: ERPSupportRoleMenuAccessMaxAggregateOutputType | null
+  }
+
+  type GetERPSupportRoleMenuAccessGroupByPayload<T extends ERPSupportRoleMenuAccessGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ERPSupportRoleMenuAccessGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ERPSupportRoleMenuAccessGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ERPSupportRoleMenuAccessGroupByOutputType[P]>
+            : GetScalarType<T[P], ERPSupportRoleMenuAccessGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ERPSupportRoleMenuAccessSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    Id?: boolean
+    RoleCode?: boolean
+    MenuKey?: boolean
+    ItemKey?: boolean
+    Environment?: boolean
+    SortOrder?: boolean
+    CreatedAt?: boolean
+    UpdatedAt?: boolean
+    menu?: boolean | ERPSupportRoleMenuAccess$menuArgs<ExtArgs>
+    item?: boolean | ERPSupportRoleMenuAccess$itemArgs<ExtArgs>
+  }, ExtArgs["result"]["eRPSupportRoleMenuAccess"]>
+
+
+
+  export type ERPSupportRoleMenuAccessSelectScalar = {
+    Id?: boolean
+    RoleCode?: boolean
+    MenuKey?: boolean
+    ItemKey?: boolean
+    Environment?: boolean
+    SortOrder?: boolean
+    CreatedAt?: boolean
+    UpdatedAt?: boolean
+  }
+
+  export type ERPSupportRoleMenuAccessOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"Id" | "RoleCode" | "MenuKey" | "ItemKey" | "Environment" | "SortOrder" | "CreatedAt" | "UpdatedAt", ExtArgs["result"]["eRPSupportRoleMenuAccess"]>
+  export type ERPSupportRoleMenuAccessInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    menu?: boolean | ERPSupportRoleMenuAccess$menuArgs<ExtArgs>
+    item?: boolean | ERPSupportRoleMenuAccess$itemArgs<ExtArgs>
+  }
+
+  export type $ERPSupportRoleMenuAccessPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ERPSupportRoleMenuAccess"
+    objects: {
+      menu: Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs> | null
+      item: Prisma.$ERPSupportMenuItemsPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      Id: number
+      RoleCode: string
+      MenuKey: string
+      ItemKey: string | null
+      Environment: string
+      SortOrder: number | null
+      CreatedAt: Date
+      UpdatedAt: Date
+    }, ExtArgs["result"]["eRPSupportRoleMenuAccess"]>
+    composites: {}
+  }
+
+  type ERPSupportRoleMenuAccessGetPayload<S extends boolean | null | undefined | ERPSupportRoleMenuAccessDefaultArgs> = $Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload, S>
+
+  type ERPSupportRoleMenuAccessCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ERPSupportRoleMenuAccessFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ERPSupportRoleMenuAccessCountAggregateInputType | true
+    }
+
+  export interface ERPSupportRoleMenuAccessDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ERPSupportRoleMenuAccess'], meta: { name: 'ERPSupportRoleMenuAccess' } }
+    /**
+     * Find zero or one ERPSupportRoleMenuAccess that matches the filter.
+     * @param {ERPSupportRoleMenuAccessFindUniqueArgs} args - Arguments to find a ERPSupportRoleMenuAccess
+     * @example
+     * // Get one ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ERPSupportRoleMenuAccessFindUniqueArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessFindUniqueArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ERPSupportRoleMenuAccess that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ERPSupportRoleMenuAccessFindUniqueOrThrowArgs} args - Arguments to find a ERPSupportRoleMenuAccess
+     * @example
+     * // Get one ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ERPSupportRoleMenuAccessFindUniqueOrThrowArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportRoleMenuAccess that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessFindFirstArgs} args - Arguments to find a ERPSupportRoleMenuAccess
+     * @example
+     * // Get one ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ERPSupportRoleMenuAccessFindFirstArgs>(args?: SelectSubset<T, ERPSupportRoleMenuAccessFindFirstArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ERPSupportRoleMenuAccess that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessFindFirstOrThrowArgs} args - Arguments to find a ERPSupportRoleMenuAccess
+     * @example
+     * // Get one ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ERPSupportRoleMenuAccessFindFirstOrThrowArgs>(args?: SelectSubset<T, ERPSupportRoleMenuAccessFindFirstOrThrowArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ERPSupportRoleMenuAccesses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ERPSupportRoleMenuAccesses
+     * const eRPSupportRoleMenuAccesses = await prisma.eRPSupportRoleMenuAccess.findMany()
+     * 
+     * // Get first 10 ERPSupportRoleMenuAccesses
+     * const eRPSupportRoleMenuAccesses = await prisma.eRPSupportRoleMenuAccess.findMany({ take: 10 })
+     * 
+     * // Only select the `Id`
+     * const eRPSupportRoleMenuAccessWithIdOnly = await prisma.eRPSupportRoleMenuAccess.findMany({ select: { Id: true } })
+     * 
+     */
+    findMany<T extends ERPSupportRoleMenuAccessFindManyArgs>(args?: SelectSubset<T, ERPSupportRoleMenuAccessFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ERPSupportRoleMenuAccess.
+     * @param {ERPSupportRoleMenuAccessCreateArgs} args - Arguments to create a ERPSupportRoleMenuAccess.
+     * @example
+     * // Create one ERPSupportRoleMenuAccess
+     * const ERPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.create({
+     *   data: {
+     *     // ... data to create a ERPSupportRoleMenuAccess
+     *   }
+     * })
+     * 
+     */
+    create<T extends ERPSupportRoleMenuAccessCreateArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessCreateArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ERPSupportRoleMenuAccesses.
+     * @param {ERPSupportRoleMenuAccessCreateManyArgs} args - Arguments to create many ERPSupportRoleMenuAccesses.
+     * @example
+     * // Create many ERPSupportRoleMenuAccesses
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ERPSupportRoleMenuAccessCreateManyArgs>(args?: SelectSubset<T, ERPSupportRoleMenuAccessCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a ERPSupportRoleMenuAccess.
+     * @param {ERPSupportRoleMenuAccessDeleteArgs} args - Arguments to delete one ERPSupportRoleMenuAccess.
+     * @example
+     * // Delete one ERPSupportRoleMenuAccess
+     * const ERPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.delete({
+     *   where: {
+     *     // ... filter to delete one ERPSupportRoleMenuAccess
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ERPSupportRoleMenuAccessDeleteArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessDeleteArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ERPSupportRoleMenuAccess.
+     * @param {ERPSupportRoleMenuAccessUpdateArgs} args - Arguments to update one ERPSupportRoleMenuAccess.
+     * @example
+     * // Update one ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ERPSupportRoleMenuAccessUpdateArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessUpdateArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ERPSupportRoleMenuAccesses.
+     * @param {ERPSupportRoleMenuAccessDeleteManyArgs} args - Arguments to filter ERPSupportRoleMenuAccesses to delete.
+     * @example
+     * // Delete a few ERPSupportRoleMenuAccesses
+     * const { count } = await prisma.eRPSupportRoleMenuAccess.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ERPSupportRoleMenuAccessDeleteManyArgs>(args?: SelectSubset<T, ERPSupportRoleMenuAccessDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ERPSupportRoleMenuAccesses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ERPSupportRoleMenuAccesses
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ERPSupportRoleMenuAccessUpdateManyArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ERPSupportRoleMenuAccess.
+     * @param {ERPSupportRoleMenuAccessUpsertArgs} args - Arguments to update or create a ERPSupportRoleMenuAccess.
+     * @example
+     * // Update or create a ERPSupportRoleMenuAccess
+     * const eRPSupportRoleMenuAccess = await prisma.eRPSupportRoleMenuAccess.upsert({
+     *   create: {
+     *     // ... data to create a ERPSupportRoleMenuAccess
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ERPSupportRoleMenuAccess we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ERPSupportRoleMenuAccessUpsertArgs>(args: SelectSubset<T, ERPSupportRoleMenuAccessUpsertArgs<ExtArgs>>): Prisma__ERPSupportRoleMenuAccessClient<$Result.GetResult<Prisma.$ERPSupportRoleMenuAccessPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ERPSupportRoleMenuAccesses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessCountArgs} args - Arguments to filter ERPSupportRoleMenuAccesses to count.
+     * @example
+     * // Count the number of ERPSupportRoleMenuAccesses
+     * const count = await prisma.eRPSupportRoleMenuAccess.count({
+     *   where: {
+     *     // ... the filter for the ERPSupportRoleMenuAccesses we want to count
+     *   }
+     * })
+    **/
+    count<T extends ERPSupportRoleMenuAccessCountArgs>(
+      args?: Subset<T, ERPSupportRoleMenuAccessCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ERPSupportRoleMenuAccessCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ERPSupportRoleMenuAccess.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ERPSupportRoleMenuAccessAggregateArgs>(args: Subset<T, ERPSupportRoleMenuAccessAggregateArgs>): Prisma.PrismaPromise<GetERPSupportRoleMenuAccessAggregateType<T>>
+
+    /**
+     * Group by ERPSupportRoleMenuAccess.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ERPSupportRoleMenuAccessGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ERPSupportRoleMenuAccessGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ERPSupportRoleMenuAccessGroupByArgs['orderBy'] }
+        : { orderBy?: ERPSupportRoleMenuAccessGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ERPSupportRoleMenuAccessGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetERPSupportRoleMenuAccessGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ERPSupportRoleMenuAccess model
+   */
+  readonly fields: ERPSupportRoleMenuAccessFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ERPSupportRoleMenuAccess.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ERPSupportRoleMenuAccessClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    menu<T extends ERPSupportRoleMenuAccess$menuArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportRoleMenuAccess$menuArgs<ExtArgs>>): Prisma__ERPSupportMenuDefinitionsClient<$Result.GetResult<Prisma.$ERPSupportMenuDefinitionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    item<T extends ERPSupportRoleMenuAccess$itemArgs<ExtArgs> = {}>(args?: Subset<T, ERPSupportRoleMenuAccess$itemArgs<ExtArgs>>): Prisma__ERPSupportMenuItemsClient<$Result.GetResult<Prisma.$ERPSupportMenuItemsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ERPSupportRoleMenuAccess model
+   */
+  interface ERPSupportRoleMenuAccessFieldRefs {
+    readonly Id: FieldRef<"ERPSupportRoleMenuAccess", 'Int'>
+    readonly RoleCode: FieldRef<"ERPSupportRoleMenuAccess", 'String'>
+    readonly MenuKey: FieldRef<"ERPSupportRoleMenuAccess", 'String'>
+    readonly ItemKey: FieldRef<"ERPSupportRoleMenuAccess", 'String'>
+    readonly Environment: FieldRef<"ERPSupportRoleMenuAccess", 'String'>
+    readonly SortOrder: FieldRef<"ERPSupportRoleMenuAccess", 'Int'>
+    readonly CreatedAt: FieldRef<"ERPSupportRoleMenuAccess", 'DateTime'>
+    readonly UpdatedAt: FieldRef<"ERPSupportRoleMenuAccess", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ERPSupportRoleMenuAccess findUnique
+   */
+  export type ERPSupportRoleMenuAccessFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportRoleMenuAccess to fetch.
+     */
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess findUniqueOrThrow
+   */
+  export type ERPSupportRoleMenuAccessFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportRoleMenuAccess to fetch.
+     */
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess findFirst
+   */
+  export type ERPSupportRoleMenuAccessFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportRoleMenuAccess to fetch.
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportRoleMenuAccesses to fetch.
+     */
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportRoleMenuAccesses.
+     */
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportRoleMenuAccesses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportRoleMenuAccesses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportRoleMenuAccesses.
+     */
+    distinct?: ERPSupportRoleMenuAccessScalarFieldEnum | ERPSupportRoleMenuAccessScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess findFirstOrThrow
+   */
+  export type ERPSupportRoleMenuAccessFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportRoleMenuAccess to fetch.
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportRoleMenuAccesses to fetch.
+     */
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ERPSupportRoleMenuAccesses.
+     */
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportRoleMenuAccesses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportRoleMenuAccesses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ERPSupportRoleMenuAccesses.
+     */
+    distinct?: ERPSupportRoleMenuAccessScalarFieldEnum | ERPSupportRoleMenuAccessScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess findMany
+   */
+  export type ERPSupportRoleMenuAccessFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter, which ERPSupportRoleMenuAccesses to fetch.
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ERPSupportRoleMenuAccesses to fetch.
+     */
+    orderBy?: ERPSupportRoleMenuAccessOrderByWithRelationInput | ERPSupportRoleMenuAccessOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ERPSupportRoleMenuAccesses.
+     */
+    cursor?: ERPSupportRoleMenuAccessWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ERPSupportRoleMenuAccesses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ERPSupportRoleMenuAccesses.
+     */
+    skip?: number
+    distinct?: ERPSupportRoleMenuAccessScalarFieldEnum | ERPSupportRoleMenuAccessScalarFieldEnum[]
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess create
+   */
+  export type ERPSupportRoleMenuAccessCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ERPSupportRoleMenuAccess.
+     */
+    data: XOR<ERPSupportRoleMenuAccessCreateInput, ERPSupportRoleMenuAccessUncheckedCreateInput>
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess createMany
+   */
+  export type ERPSupportRoleMenuAccessCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ERPSupportRoleMenuAccesses.
+     */
+    data: ERPSupportRoleMenuAccessCreateManyInput | ERPSupportRoleMenuAccessCreateManyInput[]
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess update
+   */
+  export type ERPSupportRoleMenuAccessUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ERPSupportRoleMenuAccess.
+     */
+    data: XOR<ERPSupportRoleMenuAccessUpdateInput, ERPSupportRoleMenuAccessUncheckedUpdateInput>
+    /**
+     * Choose, which ERPSupportRoleMenuAccess to update.
+     */
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess updateMany
+   */
+  export type ERPSupportRoleMenuAccessUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ERPSupportRoleMenuAccesses.
+     */
+    data: XOR<ERPSupportRoleMenuAccessUpdateManyMutationInput, ERPSupportRoleMenuAccessUncheckedUpdateManyInput>
+    /**
+     * Filter which ERPSupportRoleMenuAccesses to update
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * Limit how many ERPSupportRoleMenuAccesses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess upsert
+   */
+  export type ERPSupportRoleMenuAccessUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ERPSupportRoleMenuAccess to update in case it exists.
+     */
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    /**
+     * In case the ERPSupportRoleMenuAccess found by the `where` argument doesn't exist, create a new ERPSupportRoleMenuAccess with this data.
+     */
+    create: XOR<ERPSupportRoleMenuAccessCreateInput, ERPSupportRoleMenuAccessUncheckedCreateInput>
+    /**
+     * In case the ERPSupportRoleMenuAccess was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ERPSupportRoleMenuAccessUpdateInput, ERPSupportRoleMenuAccessUncheckedUpdateInput>
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess delete
+   */
+  export type ERPSupportRoleMenuAccessDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+    /**
+     * Filter which ERPSupportRoleMenuAccess to delete.
+     */
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess deleteMany
+   */
+  export type ERPSupportRoleMenuAccessDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ERPSupportRoleMenuAccesses to delete
+     */
+    where?: ERPSupportRoleMenuAccessWhereInput
+    /**
+     * Limit how many ERPSupportRoleMenuAccesses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess.menu
+   */
+  export type ERPSupportRoleMenuAccess$menuArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuDefinitions
+     */
+    select?: ERPSupportMenuDefinitionsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuDefinitions
+     */
+    omit?: ERPSupportMenuDefinitionsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuDefinitionsInclude<ExtArgs> | null
+    where?: ERPSupportMenuDefinitionsWhereInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess.item
+   */
+  export type ERPSupportRoleMenuAccess$itemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportMenuItems
+     */
+    select?: ERPSupportMenuItemsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportMenuItems
+     */
+    omit?: ERPSupportMenuItemsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportMenuItemsInclude<ExtArgs> | null
+    where?: ERPSupportMenuItemsWhereInput
+  }
+
+  /**
+   * ERPSupportRoleMenuAccess without action
+   */
+  export type ERPSupportRoleMenuAccessDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ERPSupportRoleMenuAccess
+     */
+    select?: ERPSupportRoleMenuAccessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ERPSupportRoleMenuAccess
+     */
+    omit?: ERPSupportRoleMenuAccessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ERPSupportRoleMenuAccessInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -38741,6 +42099,41 @@ export namespace Prisma {
   };
 
   export type WmsDevicesScalarFieldEnum = (typeof WmsDevicesScalarFieldEnum)[keyof typeof WmsDevicesScalarFieldEnum]
+
+
+  export const ERPSupportMenuDefinitionsScalarFieldEnum: {
+    MenuKey: 'MenuKey',
+    DisplayName: 'DisplayName',
+    IconClass: 'IconClass',
+    SortOrder: 'SortOrder'
+  };
+
+  export type ERPSupportMenuDefinitionsScalarFieldEnum = (typeof ERPSupportMenuDefinitionsScalarFieldEnum)[keyof typeof ERPSupportMenuDefinitionsScalarFieldEnum]
+
+
+  export const ERPSupportMenuItemsScalarFieldEnum: {
+    ItemKey: 'ItemKey',
+    MenuKey: 'MenuKey',
+    DisplayName: 'DisplayName',
+    Route: 'Route',
+    SortOrder: 'SortOrder'
+  };
+
+  export type ERPSupportMenuItemsScalarFieldEnum = (typeof ERPSupportMenuItemsScalarFieldEnum)[keyof typeof ERPSupportMenuItemsScalarFieldEnum]
+
+
+  export const ERPSupportRoleMenuAccessScalarFieldEnum: {
+    Id: 'Id',
+    RoleCode: 'RoleCode',
+    MenuKey: 'MenuKey',
+    ItemKey: 'ItemKey',
+    Environment: 'Environment',
+    SortOrder: 'SortOrder',
+    CreatedAt: 'CreatedAt',
+    UpdatedAt: 'UpdatedAt'
+  };
+
+  export type ERPSupportRoleMenuAccessScalarFieldEnum = (typeof ERPSupportRoleMenuAccessScalarFieldEnum)[keyof typeof ERPSupportRoleMenuAccessScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -42139,6 +45532,197 @@ export namespace Prisma {
     Id?: StringWithAggregatesFilter<"WmsDevices"> | string
     DeviceName?: StringNullableWithAggregatesFilter<"WmsDevices"> | string | null
     LastLogin?: DateTimeWithAggregatesFilter<"WmsDevices"> | Date | string
+  }
+
+  export type ERPSupportMenuDefinitionsWhereInput = {
+    AND?: ERPSupportMenuDefinitionsWhereInput | ERPSupportMenuDefinitionsWhereInput[]
+    OR?: ERPSupportMenuDefinitionsWhereInput[]
+    NOT?: ERPSupportMenuDefinitionsWhereInput | ERPSupportMenuDefinitionsWhereInput[]
+    MenuKey?: StringFilter<"ERPSupportMenuDefinitions"> | string
+    DisplayName?: StringFilter<"ERPSupportMenuDefinitions"> | string
+    IconClass?: StringNullableFilter<"ERPSupportMenuDefinitions"> | string | null
+    SortOrder?: IntNullableFilter<"ERPSupportMenuDefinitions"> | number | null
+    roleAccess?: ERPSupportRoleMenuAccessListRelationFilter
+    items?: ERPSupportMenuItemsListRelationFilter
+  }
+
+  export type ERPSupportMenuDefinitionsOrderByWithRelationInput = {
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    IconClass?: SortOrderInput | SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    roleAccess?: ERPSupportRoleMenuAccessOrderByRelationAggregateInput
+    items?: ERPSupportMenuItemsOrderByRelationAggregateInput
+  }
+
+  export type ERPSupportMenuDefinitionsWhereUniqueInput = Prisma.AtLeast<{
+    MenuKey?: string
+    AND?: ERPSupportMenuDefinitionsWhereInput | ERPSupportMenuDefinitionsWhereInput[]
+    OR?: ERPSupportMenuDefinitionsWhereInput[]
+    NOT?: ERPSupportMenuDefinitionsWhereInput | ERPSupportMenuDefinitionsWhereInput[]
+    DisplayName?: StringFilter<"ERPSupportMenuDefinitions"> | string
+    IconClass?: StringNullableFilter<"ERPSupportMenuDefinitions"> | string | null
+    SortOrder?: IntNullableFilter<"ERPSupportMenuDefinitions"> | number | null
+    roleAccess?: ERPSupportRoleMenuAccessListRelationFilter
+    items?: ERPSupportMenuItemsListRelationFilter
+  }, "MenuKey">
+
+  export type ERPSupportMenuDefinitionsOrderByWithAggregationInput = {
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    IconClass?: SortOrderInput | SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    _count?: ERPSupportMenuDefinitionsCountOrderByAggregateInput
+    _avg?: ERPSupportMenuDefinitionsAvgOrderByAggregateInput
+    _max?: ERPSupportMenuDefinitionsMaxOrderByAggregateInput
+    _min?: ERPSupportMenuDefinitionsMinOrderByAggregateInput
+    _sum?: ERPSupportMenuDefinitionsSumOrderByAggregateInput
+  }
+
+  export type ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput = {
+    AND?: ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput | ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput[]
+    OR?: ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput[]
+    NOT?: ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput | ERPSupportMenuDefinitionsScalarWhereWithAggregatesInput[]
+    MenuKey?: StringWithAggregatesFilter<"ERPSupportMenuDefinitions"> | string
+    DisplayName?: StringWithAggregatesFilter<"ERPSupportMenuDefinitions"> | string
+    IconClass?: StringNullableWithAggregatesFilter<"ERPSupportMenuDefinitions"> | string | null
+    SortOrder?: IntNullableWithAggregatesFilter<"ERPSupportMenuDefinitions"> | number | null
+  }
+
+  export type ERPSupportMenuItemsWhereInput = {
+    AND?: ERPSupportMenuItemsWhereInput | ERPSupportMenuItemsWhereInput[]
+    OR?: ERPSupportMenuItemsWhereInput[]
+    NOT?: ERPSupportMenuItemsWhereInput | ERPSupportMenuItemsWhereInput[]
+    ItemKey?: StringFilter<"ERPSupportMenuItems"> | string
+    MenuKey?: StringFilter<"ERPSupportMenuItems"> | string
+    DisplayName?: StringFilter<"ERPSupportMenuItems"> | string
+    Route?: StringFilter<"ERPSupportMenuItems"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportMenuItems"> | number | null
+    menu?: XOR<ERPSupportMenuDefinitionsScalarRelationFilter, ERPSupportMenuDefinitionsWhereInput>
+    roleAccess?: ERPSupportRoleMenuAccessListRelationFilter
+  }
+
+  export type ERPSupportMenuItemsOrderByWithRelationInput = {
+    ItemKey?: SortOrder
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    Route?: SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    menu?: ERPSupportMenuDefinitionsOrderByWithRelationInput
+    roleAccess?: ERPSupportRoleMenuAccessOrderByRelationAggregateInput
+  }
+
+  export type ERPSupportMenuItemsWhereUniqueInput = Prisma.AtLeast<{
+    ItemKey?: string
+    AND?: ERPSupportMenuItemsWhereInput | ERPSupportMenuItemsWhereInput[]
+    OR?: ERPSupportMenuItemsWhereInput[]
+    NOT?: ERPSupportMenuItemsWhereInput | ERPSupportMenuItemsWhereInput[]
+    MenuKey?: StringFilter<"ERPSupportMenuItems"> | string
+    DisplayName?: StringFilter<"ERPSupportMenuItems"> | string
+    Route?: StringFilter<"ERPSupportMenuItems"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportMenuItems"> | number | null
+    menu?: XOR<ERPSupportMenuDefinitionsScalarRelationFilter, ERPSupportMenuDefinitionsWhereInput>
+    roleAccess?: ERPSupportRoleMenuAccessListRelationFilter
+  }, "ItemKey">
+
+  export type ERPSupportMenuItemsOrderByWithAggregationInput = {
+    ItemKey?: SortOrder
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    Route?: SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    _count?: ERPSupportMenuItemsCountOrderByAggregateInput
+    _avg?: ERPSupportMenuItemsAvgOrderByAggregateInput
+    _max?: ERPSupportMenuItemsMaxOrderByAggregateInput
+    _min?: ERPSupportMenuItemsMinOrderByAggregateInput
+    _sum?: ERPSupportMenuItemsSumOrderByAggregateInput
+  }
+
+  export type ERPSupportMenuItemsScalarWhereWithAggregatesInput = {
+    AND?: ERPSupportMenuItemsScalarWhereWithAggregatesInput | ERPSupportMenuItemsScalarWhereWithAggregatesInput[]
+    OR?: ERPSupportMenuItemsScalarWhereWithAggregatesInput[]
+    NOT?: ERPSupportMenuItemsScalarWhereWithAggregatesInput | ERPSupportMenuItemsScalarWhereWithAggregatesInput[]
+    ItemKey?: StringWithAggregatesFilter<"ERPSupportMenuItems"> | string
+    MenuKey?: StringWithAggregatesFilter<"ERPSupportMenuItems"> | string
+    DisplayName?: StringWithAggregatesFilter<"ERPSupportMenuItems"> | string
+    Route?: StringWithAggregatesFilter<"ERPSupportMenuItems"> | string
+    SortOrder?: IntNullableWithAggregatesFilter<"ERPSupportMenuItems"> | number | null
+  }
+
+  export type ERPSupportRoleMenuAccessWhereInput = {
+    AND?: ERPSupportRoleMenuAccessWhereInput | ERPSupportRoleMenuAccessWhereInput[]
+    OR?: ERPSupportRoleMenuAccessWhereInput[]
+    NOT?: ERPSupportRoleMenuAccessWhereInput | ERPSupportRoleMenuAccessWhereInput[]
+    Id?: IntFilter<"ERPSupportRoleMenuAccess"> | number
+    RoleCode?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    MenuKey?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    ItemKey?: StringNullableFilter<"ERPSupportRoleMenuAccess"> | string | null
+    Environment?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportRoleMenuAccess"> | number | null
+    CreatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    UpdatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    menu?: XOR<ERPSupportMenuDefinitionsNullableScalarRelationFilter, ERPSupportMenuDefinitionsWhereInput> | null
+    item?: XOR<ERPSupportMenuItemsNullableScalarRelationFilter, ERPSupportMenuItemsWhereInput> | null
+  }
+
+  export type ERPSupportRoleMenuAccessOrderByWithRelationInput = {
+    Id?: SortOrder
+    RoleCode?: SortOrder
+    MenuKey?: SortOrder
+    ItemKey?: SortOrderInput | SortOrder
+    Environment?: SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    CreatedAt?: SortOrder
+    UpdatedAt?: SortOrder
+    menu?: ERPSupportMenuDefinitionsOrderByWithRelationInput
+    item?: ERPSupportMenuItemsOrderByWithRelationInput
+  }
+
+  export type ERPSupportRoleMenuAccessWhereUniqueInput = Prisma.AtLeast<{
+    Id?: number
+    RoleCode_MenuKey_ItemKey?: ERPSupportRoleMenuAccessRoleCodeMenuKeyItemKeyCompoundUniqueInput
+    AND?: ERPSupportRoleMenuAccessWhereInput | ERPSupportRoleMenuAccessWhereInput[]
+    OR?: ERPSupportRoleMenuAccessWhereInput[]
+    NOT?: ERPSupportRoleMenuAccessWhereInput | ERPSupportRoleMenuAccessWhereInput[]
+    RoleCode?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    MenuKey?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    ItemKey?: StringNullableFilter<"ERPSupportRoleMenuAccess"> | string | null
+    Environment?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportRoleMenuAccess"> | number | null
+    CreatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    UpdatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    menu?: XOR<ERPSupportMenuDefinitionsNullableScalarRelationFilter, ERPSupportMenuDefinitionsWhereInput> | null
+    item?: XOR<ERPSupportMenuItemsNullableScalarRelationFilter, ERPSupportMenuItemsWhereInput> | null
+  }, "Id" | "RoleCode_MenuKey_ItemKey">
+
+  export type ERPSupportRoleMenuAccessOrderByWithAggregationInput = {
+    Id?: SortOrder
+    RoleCode?: SortOrder
+    MenuKey?: SortOrder
+    ItemKey?: SortOrderInput | SortOrder
+    Environment?: SortOrder
+    SortOrder?: SortOrderInput | SortOrder
+    CreatedAt?: SortOrder
+    UpdatedAt?: SortOrder
+    _count?: ERPSupportRoleMenuAccessCountOrderByAggregateInput
+    _avg?: ERPSupportRoleMenuAccessAvgOrderByAggregateInput
+    _max?: ERPSupportRoleMenuAccessMaxOrderByAggregateInput
+    _min?: ERPSupportRoleMenuAccessMinOrderByAggregateInput
+    _sum?: ERPSupportRoleMenuAccessSumOrderByAggregateInput
+  }
+
+  export type ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput = {
+    AND?: ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput | ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput[]
+    OR?: ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput[]
+    NOT?: ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput | ERPSupportRoleMenuAccessScalarWhereWithAggregatesInput[]
+    Id?: IntWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | number
+    RoleCode?: StringWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | string
+    MenuKey?: StringWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | string
+    ItemKey?: StringNullableWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | string | null
+    Environment?: StringWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | string
+    SortOrder?: IntNullableWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | number | null
+    CreatedAt?: DateTimeWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    UpdatedAt?: DateTimeWithAggregatesFilter<"ERPSupportRoleMenuAccess"> | Date | string
   }
 
   export type MigrationHistoryCreateInput = {
@@ -46145,6 +49729,193 @@ export namespace Prisma {
     LastLogin?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ERPSupportMenuDefinitionsCreateInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessCreateNestedManyWithoutMenuInput
+    items?: ERPSupportMenuItemsCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedCreateInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutMenuInput
+    items?: ERPSupportMenuItemsUncheckedCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUpdateManyWithoutMenuNestedInput
+    items?: ERPSupportMenuItemsUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedUpdateInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutMenuNestedInput
+    items?: ERPSupportMenuItemsUncheckedUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportMenuDefinitionsCreateManyInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateManyMutationInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedUpdateManyInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ERPSupportMenuItemsCreateInput = {
+    ItemKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+    menu: ERPSupportMenuDefinitionsCreateNestedOneWithoutItemsInput
+    roleAccess?: ERPSupportRoleMenuAccessCreateNestedManyWithoutItemInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedCreateInput = {
+    ItemKey: string
+    MenuKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutItemInput
+  }
+
+  export type ERPSupportMenuItemsUpdateInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    menu?: ERPSupportMenuDefinitionsUpdateOneRequiredWithoutItemsNestedInput
+    roleAccess?: ERPSupportRoleMenuAccessUpdateManyWithoutItemNestedInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutItemNestedInput
+  }
+
+  export type ERPSupportMenuItemsCreateManyInput = {
+    ItemKey: string
+    MenuKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+  }
+
+  export type ERPSupportMenuItemsUpdateManyMutationInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateManyInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ERPSupportRoleMenuAccessCreateInput = {
+    RoleCode: string
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+    menu?: ERPSupportMenuDefinitionsCreateNestedOneWithoutRoleAccessInput
+    item?: ERPSupportMenuItemsCreateNestedOneWithoutRoleAccessInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedCreateInput = {
+    Id?: number
+    RoleCode: string
+    MenuKey: string
+    ItemKey?: string | null
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateInput = {
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    menu?: ERPSupportMenuDefinitionsUpdateOneWithoutRoleAccessNestedInput
+    item?: ERPSupportMenuItemsUpdateOneWithoutRoleAccessNestedInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    ItemKey?: NullableStringFieldUpdateOperationsInput | string | null
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessCreateManyInput = {
+    RoleCode: string
+    MenuKey: string
+    ItemKey?: string | null
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateManyMutationInput = {
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateManyInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    ItemKey?: NullableStringFieldUpdateOperationsInput | string | null
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -48354,6 +52125,178 @@ export namespace Prisma {
     LastLogin?: SortOrder
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type ERPSupportRoleMenuAccessListRelationFilter = {
+    every?: ERPSupportRoleMenuAccessWhereInput
+    some?: ERPSupportRoleMenuAccessWhereInput
+    none?: ERPSupportRoleMenuAccessWhereInput
+  }
+
+  export type ERPSupportMenuItemsListRelationFilter = {
+    every?: ERPSupportMenuItemsWhereInput
+    some?: ERPSupportMenuItemsWhereInput
+    none?: ERPSupportMenuItemsWhereInput
+  }
+
+  export type ERPSupportRoleMenuAccessOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ERPSupportMenuItemsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsCountOrderByAggregateInput = {
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    IconClass?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsAvgOrderByAggregateInput = {
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsMaxOrderByAggregateInput = {
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    IconClass?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsMinOrderByAggregateInput = {
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    IconClass?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsSumOrderByAggregateInput = {
+    SortOrder?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type ERPSupportMenuDefinitionsScalarRelationFilter = {
+    is?: ERPSupportMenuDefinitionsWhereInput
+    isNot?: ERPSupportMenuDefinitionsWhereInput
+  }
+
+  export type ERPSupportMenuItemsCountOrderByAggregateInput = {
+    ItemKey?: SortOrder
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    Route?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuItemsAvgOrderByAggregateInput = {
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuItemsMaxOrderByAggregateInput = {
+    ItemKey?: SortOrder
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    Route?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuItemsMinOrderByAggregateInput = {
+    ItemKey?: SortOrder
+    MenuKey?: SortOrder
+    DisplayName?: SortOrder
+    Route?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuItemsSumOrderByAggregateInput = {
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportMenuDefinitionsNullableScalarRelationFilter = {
+    is?: ERPSupportMenuDefinitionsWhereInput | null
+    isNot?: ERPSupportMenuDefinitionsWhereInput | null
+  }
+
+  export type ERPSupportMenuItemsNullableScalarRelationFilter = {
+    is?: ERPSupportMenuItemsWhereInput | null
+    isNot?: ERPSupportMenuItemsWhereInput | null
+  }
+
+  export type ERPSupportRoleMenuAccessRoleCodeMenuKeyItemKeyCompoundUniqueInput = {
+    RoleCode: string
+    MenuKey: string
+    ItemKey: string
+  }
+
+  export type ERPSupportRoleMenuAccessCountOrderByAggregateInput = {
+    Id?: SortOrder
+    RoleCode?: SortOrder
+    MenuKey?: SortOrder
+    ItemKey?: SortOrder
+    Environment?: SortOrder
+    SortOrder?: SortOrder
+    CreatedAt?: SortOrder
+    UpdatedAt?: SortOrder
+  }
+
+  export type ERPSupportRoleMenuAccessAvgOrderByAggregateInput = {
+    Id?: SortOrder
+    SortOrder?: SortOrder
+  }
+
+  export type ERPSupportRoleMenuAccessMaxOrderByAggregateInput = {
+    Id?: SortOrder
+    RoleCode?: SortOrder
+    MenuKey?: SortOrder
+    ItemKey?: SortOrder
+    Environment?: SortOrder
+    SortOrder?: SortOrder
+    CreatedAt?: SortOrder
+    UpdatedAt?: SortOrder
+  }
+
+  export type ERPSupportRoleMenuAccessMinOrderByAggregateInput = {
+    Id?: SortOrder
+    RoleCode?: SortOrder
+    MenuKey?: SortOrder
+    ItemKey?: SortOrder
+    Environment?: SortOrder
+    SortOrder?: SortOrder
+    CreatedAt?: SortOrder
+    UpdatedAt?: SortOrder
+  }
+
+  export type ERPSupportRoleMenuAccessSumOrderByAggregateInput = {
+    Id?: SortOrder
+    SortOrder?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -48630,6 +52573,186 @@ export namespace Prisma {
     update?: XOR<XOR<CompanyProfilesUpdateToOneWithWhereWithoutSalesPricePrioritiesInput, CompanyProfilesUpdateWithoutSalesPricePrioritiesInput>, CompanyProfilesUncheckedUpdateWithoutSalesPricePrioritiesInput>
   }
 
+  export type ERPSupportRoleMenuAccessCreateNestedManyWithoutMenuInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput> | ERPSupportRoleMenuAccessCreateWithoutMenuInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyMenuInputEnvelope
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+  }
+
+  export type ERPSupportMenuItemsCreateNestedManyWithoutMenuInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput> | ERPSupportMenuItemsCreateWithoutMenuInput[] | ERPSupportMenuItemsUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutMenuInput | ERPSupportMenuItemsCreateOrConnectWithoutMenuInput[]
+    createMany?: ERPSupportMenuItemsCreateManyMenuInputEnvelope
+    connect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutMenuInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput> | ERPSupportRoleMenuAccessCreateWithoutMenuInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyMenuInputEnvelope
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+  }
+
+  export type ERPSupportMenuItemsUncheckedCreateNestedManyWithoutMenuInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput> | ERPSupportMenuItemsCreateWithoutMenuInput[] | ERPSupportMenuItemsUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutMenuInput | ERPSupportMenuItemsCreateOrConnectWithoutMenuInput[]
+    createMany?: ERPSupportMenuItemsCreateManyMenuInputEnvelope
+    connect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput> | ERPSupportRoleMenuAccessCreateWithoutMenuInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput[]
+    upsert?: ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutMenuInput | ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyMenuInputEnvelope
+    set?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    disconnect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    delete?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    update?: ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutMenuInput | ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutMenuInput | ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+  }
+
+  export type ERPSupportMenuItemsUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput> | ERPSupportMenuItemsCreateWithoutMenuInput[] | ERPSupportMenuItemsUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutMenuInput | ERPSupportMenuItemsCreateOrConnectWithoutMenuInput[]
+    upsert?: ERPSupportMenuItemsUpsertWithWhereUniqueWithoutMenuInput | ERPSupportMenuItemsUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: ERPSupportMenuItemsCreateManyMenuInputEnvelope
+    set?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    disconnect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    delete?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    connect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    update?: ERPSupportMenuItemsUpdateWithWhereUniqueWithoutMenuInput | ERPSupportMenuItemsUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: ERPSupportMenuItemsUpdateManyWithWhereWithoutMenuInput | ERPSupportMenuItemsUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: ERPSupportMenuItemsScalarWhereInput | ERPSupportMenuItemsScalarWhereInput[]
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput> | ERPSupportRoleMenuAccessCreateWithoutMenuInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput[]
+    upsert?: ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutMenuInput | ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyMenuInputEnvelope
+    set?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    disconnect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    delete?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    update?: ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutMenuInput | ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutMenuInput | ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateManyWithoutMenuNestedInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput> | ERPSupportMenuItemsCreateWithoutMenuInput[] | ERPSupportMenuItemsUncheckedCreateWithoutMenuInput[]
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutMenuInput | ERPSupportMenuItemsCreateOrConnectWithoutMenuInput[]
+    upsert?: ERPSupportMenuItemsUpsertWithWhereUniqueWithoutMenuInput | ERPSupportMenuItemsUpsertWithWhereUniqueWithoutMenuInput[]
+    createMany?: ERPSupportMenuItemsCreateManyMenuInputEnvelope
+    set?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    disconnect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    delete?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    connect?: ERPSupportMenuItemsWhereUniqueInput | ERPSupportMenuItemsWhereUniqueInput[]
+    update?: ERPSupportMenuItemsUpdateWithWhereUniqueWithoutMenuInput | ERPSupportMenuItemsUpdateWithWhereUniqueWithoutMenuInput[]
+    updateMany?: ERPSupportMenuItemsUpdateManyWithWhereWithoutMenuInput | ERPSupportMenuItemsUpdateManyWithWhereWithoutMenuInput[]
+    deleteMany?: ERPSupportMenuItemsScalarWhereInput | ERPSupportMenuItemsScalarWhereInput[]
+  }
+
+  export type ERPSupportMenuDefinitionsCreateNestedOneWithoutItemsInput = {
+    create?: XOR<ERPSupportMenuDefinitionsCreateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: ERPSupportMenuDefinitionsCreateOrConnectWithoutItemsInput
+    connect?: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  export type ERPSupportRoleMenuAccessCreateNestedManyWithoutItemInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput> | ERPSupportRoleMenuAccessCreateWithoutItemInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyItemInputEnvelope
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutItemInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput> | ERPSupportRoleMenuAccessCreateWithoutItemInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyItemInputEnvelope
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<ERPSupportMenuDefinitionsCreateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: ERPSupportMenuDefinitionsCreateOrConnectWithoutItemsInput
+    upsert?: ERPSupportMenuDefinitionsUpsertWithoutItemsInput
+    connect?: ERPSupportMenuDefinitionsWhereUniqueInput
+    update?: XOR<XOR<ERPSupportMenuDefinitionsUpdateToOneWithWhereWithoutItemsInput, ERPSupportMenuDefinitionsUpdateWithoutItemsInput>, ERPSupportMenuDefinitionsUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateManyWithoutItemNestedInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput> | ERPSupportRoleMenuAccessCreateWithoutItemInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput[]
+    upsert?: ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutItemInput | ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutItemInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyItemInputEnvelope
+    set?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    disconnect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    delete?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    update?: ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutItemInput | ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutItemInput[]
+    updateMany?: ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutItemInput | ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutItemInput[]
+    deleteMany?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutItemNestedInput = {
+    create?: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput> | ERPSupportRoleMenuAccessCreateWithoutItemInput[] | ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput[]
+    connectOrCreate?: ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput | ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput[]
+    upsert?: ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutItemInput | ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutItemInput[]
+    createMany?: ERPSupportRoleMenuAccessCreateManyItemInputEnvelope
+    set?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    disconnect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    delete?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    connect?: ERPSupportRoleMenuAccessWhereUniqueInput | ERPSupportRoleMenuAccessWhereUniqueInput[]
+    update?: ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutItemInput | ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutItemInput[]
+    updateMany?: ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutItemInput | ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutItemInput[]
+    deleteMany?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+  }
+
+  export type ERPSupportMenuDefinitionsCreateNestedOneWithoutRoleAccessInput = {
+    create?: XOR<ERPSupportMenuDefinitionsCreateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutRoleAccessInput>
+    connectOrCreate?: ERPSupportMenuDefinitionsCreateOrConnectWithoutRoleAccessInput
+    connect?: ERPSupportMenuDefinitionsWhereUniqueInput
+  }
+
+  export type ERPSupportMenuItemsCreateNestedOneWithoutRoleAccessInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedCreateWithoutRoleAccessInput>
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutRoleAccessInput
+    connect?: ERPSupportMenuItemsWhereUniqueInput
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateOneWithoutRoleAccessNestedInput = {
+    create?: XOR<ERPSupportMenuDefinitionsCreateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutRoleAccessInput>
+    connectOrCreate?: ERPSupportMenuDefinitionsCreateOrConnectWithoutRoleAccessInput
+    upsert?: ERPSupportMenuDefinitionsUpsertWithoutRoleAccessInput
+    disconnect?: ERPSupportMenuDefinitionsWhereInput | boolean
+    delete?: ERPSupportMenuDefinitionsWhereInput | boolean
+    connect?: ERPSupportMenuDefinitionsWhereUniqueInput
+    update?: XOR<XOR<ERPSupportMenuDefinitionsUpdateToOneWithWhereWithoutRoleAccessInput, ERPSupportMenuDefinitionsUpdateWithoutRoleAccessInput>, ERPSupportMenuDefinitionsUncheckedUpdateWithoutRoleAccessInput>
+  }
+
+  export type ERPSupportMenuItemsUpdateOneWithoutRoleAccessNestedInput = {
+    create?: XOR<ERPSupportMenuItemsCreateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedCreateWithoutRoleAccessInput>
+    connectOrCreate?: ERPSupportMenuItemsCreateOrConnectWithoutRoleAccessInput
+    upsert?: ERPSupportMenuItemsUpsertWithoutRoleAccessInput
+    disconnect?: ERPSupportMenuItemsWhereInput | boolean
+    delete?: ERPSupportMenuItemsWhereInput | boolean
+    connect?: ERPSupportMenuItemsWhereUniqueInput
+    update?: XOR<XOR<ERPSupportMenuItemsUpdateToOneWithWhereWithoutRoleAccessInput, ERPSupportMenuItemsUpdateWithoutRoleAccessInput>, ERPSupportMenuItemsUncheckedUpdateWithoutRoleAccessInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -48879,6 +53002,33 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedBytesNullableFilter<$PrismaModel>
     _max?: NestedBytesNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type SalesInvoiceItemsCreateWithoutSalesInvoiceHeadersInput = {
@@ -50198,6 +54348,304 @@ export namespace Prisma {
     CompanyProfileSettings?: CompanyProfileSettingsUncheckedUpdateManyWithoutCompanyProfilesNestedInput
   }
 
+  export type ERPSupportRoleMenuAccessCreateWithoutMenuInput = {
+    RoleCode: string
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+    item?: ERPSupportMenuItemsCreateNestedOneWithoutRoleAccessInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput = {
+    Id?: number
+    RoleCode: string
+    ItemKey?: string | null
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessCreateOrConnectWithoutMenuInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    create: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput>
+  }
+
+  export type ERPSupportRoleMenuAccessCreateManyMenuInputEnvelope = {
+    data: ERPSupportRoleMenuAccessCreateManyMenuInput | ERPSupportRoleMenuAccessCreateManyMenuInput[]
+  }
+
+  export type ERPSupportMenuItemsCreateWithoutMenuInput = {
+    ItemKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessCreateNestedManyWithoutItemInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedCreateWithoutMenuInput = {
+    ItemKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutItemInput
+  }
+
+  export type ERPSupportMenuItemsCreateOrConnectWithoutMenuInput = {
+    where: ERPSupportMenuItemsWhereUniqueInput
+    create: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput>
+  }
+
+  export type ERPSupportMenuItemsCreateManyMenuInputEnvelope = {
+    data: ERPSupportMenuItemsCreateManyMenuInput | ERPSupportMenuItemsCreateManyMenuInput[]
+  }
+
+  export type ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutMenuInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    update: XOR<ERPSupportRoleMenuAccessUpdateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedUpdateWithoutMenuInput>
+    create: XOR<ERPSupportRoleMenuAccessCreateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutMenuInput>
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutMenuInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    data: XOR<ERPSupportRoleMenuAccessUpdateWithoutMenuInput, ERPSupportRoleMenuAccessUncheckedUpdateWithoutMenuInput>
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutMenuInput = {
+    where: ERPSupportRoleMenuAccessScalarWhereInput
+    data: XOR<ERPSupportRoleMenuAccessUpdateManyMutationInput, ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutMenuInput>
+  }
+
+  export type ERPSupportRoleMenuAccessScalarWhereInput = {
+    AND?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+    OR?: ERPSupportRoleMenuAccessScalarWhereInput[]
+    NOT?: ERPSupportRoleMenuAccessScalarWhereInput | ERPSupportRoleMenuAccessScalarWhereInput[]
+    Id?: IntFilter<"ERPSupportRoleMenuAccess"> | number
+    RoleCode?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    MenuKey?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    ItemKey?: StringNullableFilter<"ERPSupportRoleMenuAccess"> | string | null
+    Environment?: StringFilter<"ERPSupportRoleMenuAccess"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportRoleMenuAccess"> | number | null
+    CreatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+    UpdatedAt?: DateTimeFilter<"ERPSupportRoleMenuAccess"> | Date | string
+  }
+
+  export type ERPSupportMenuItemsUpsertWithWhereUniqueWithoutMenuInput = {
+    where: ERPSupportMenuItemsWhereUniqueInput
+    update: XOR<ERPSupportMenuItemsUpdateWithoutMenuInput, ERPSupportMenuItemsUncheckedUpdateWithoutMenuInput>
+    create: XOR<ERPSupportMenuItemsCreateWithoutMenuInput, ERPSupportMenuItemsUncheckedCreateWithoutMenuInput>
+  }
+
+  export type ERPSupportMenuItemsUpdateWithWhereUniqueWithoutMenuInput = {
+    where: ERPSupportMenuItemsWhereUniqueInput
+    data: XOR<ERPSupportMenuItemsUpdateWithoutMenuInput, ERPSupportMenuItemsUncheckedUpdateWithoutMenuInput>
+  }
+
+  export type ERPSupportMenuItemsUpdateManyWithWhereWithoutMenuInput = {
+    where: ERPSupportMenuItemsScalarWhereInput
+    data: XOR<ERPSupportMenuItemsUpdateManyMutationInput, ERPSupportMenuItemsUncheckedUpdateManyWithoutMenuInput>
+  }
+
+  export type ERPSupportMenuItemsScalarWhereInput = {
+    AND?: ERPSupportMenuItemsScalarWhereInput | ERPSupportMenuItemsScalarWhereInput[]
+    OR?: ERPSupportMenuItemsScalarWhereInput[]
+    NOT?: ERPSupportMenuItemsScalarWhereInput | ERPSupportMenuItemsScalarWhereInput[]
+    ItemKey?: StringFilter<"ERPSupportMenuItems"> | string
+    MenuKey?: StringFilter<"ERPSupportMenuItems"> | string
+    DisplayName?: StringFilter<"ERPSupportMenuItems"> | string
+    Route?: StringFilter<"ERPSupportMenuItems"> | string
+    SortOrder?: IntNullableFilter<"ERPSupportMenuItems"> | number | null
+  }
+
+  export type ERPSupportMenuDefinitionsCreateWithoutItemsInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedCreateWithoutItemsInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsCreateOrConnectWithoutItemsInput = {
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+    create: XOR<ERPSupportMenuDefinitionsCreateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutItemsInput>
+  }
+
+  export type ERPSupportRoleMenuAccessCreateWithoutItemInput = {
+    RoleCode: string
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+    menu?: ERPSupportMenuDefinitionsCreateNestedOneWithoutRoleAccessInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput = {
+    Id?: number
+    RoleCode: string
+    MenuKey: string
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessCreateOrConnectWithoutItemInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    create: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput>
+  }
+
+  export type ERPSupportRoleMenuAccessCreateManyItemInputEnvelope = {
+    data: ERPSupportRoleMenuAccessCreateManyItemInput | ERPSupportRoleMenuAccessCreateManyItemInput[]
+  }
+
+  export type ERPSupportMenuDefinitionsUpsertWithoutItemsInput = {
+    update: XOR<ERPSupportMenuDefinitionsUpdateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedUpdateWithoutItemsInput>
+    create: XOR<ERPSupportMenuDefinitionsCreateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutItemsInput>
+    where?: ERPSupportMenuDefinitionsWhereInput
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateToOneWithWhereWithoutItemsInput = {
+    where?: ERPSupportMenuDefinitionsWhereInput
+    data: XOR<ERPSupportMenuDefinitionsUpdateWithoutItemsInput, ERPSupportMenuDefinitionsUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateWithoutItemsInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedUpdateWithoutItemsInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportRoleMenuAccessUpsertWithWhereUniqueWithoutItemInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    update: XOR<ERPSupportRoleMenuAccessUpdateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedUpdateWithoutItemInput>
+    create: XOR<ERPSupportRoleMenuAccessCreateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedCreateWithoutItemInput>
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateWithWhereUniqueWithoutItemInput = {
+    where: ERPSupportRoleMenuAccessWhereUniqueInput
+    data: XOR<ERPSupportRoleMenuAccessUpdateWithoutItemInput, ERPSupportRoleMenuAccessUncheckedUpdateWithoutItemInput>
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateManyWithWhereWithoutItemInput = {
+    where: ERPSupportRoleMenuAccessScalarWhereInput
+    data: XOR<ERPSupportRoleMenuAccessUpdateManyMutationInput, ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutItemInput>
+  }
+
+  export type ERPSupportMenuDefinitionsCreateWithoutRoleAccessInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    items?: ERPSupportMenuItemsCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedCreateWithoutRoleAccessInput = {
+    MenuKey: string
+    DisplayName: string
+    IconClass?: string | null
+    SortOrder?: number | null
+    items?: ERPSupportMenuItemsUncheckedCreateNestedManyWithoutMenuInput
+  }
+
+  export type ERPSupportMenuDefinitionsCreateOrConnectWithoutRoleAccessInput = {
+    where: ERPSupportMenuDefinitionsWhereUniqueInput
+    create: XOR<ERPSupportMenuDefinitionsCreateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutRoleAccessInput>
+  }
+
+  export type ERPSupportMenuItemsCreateWithoutRoleAccessInput = {
+    ItemKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+    menu: ERPSupportMenuDefinitionsCreateNestedOneWithoutItemsInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedCreateWithoutRoleAccessInput = {
+    ItemKey: string
+    MenuKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+  }
+
+  export type ERPSupportMenuItemsCreateOrConnectWithoutRoleAccessInput = {
+    where: ERPSupportMenuItemsWhereUniqueInput
+    create: XOR<ERPSupportMenuItemsCreateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedCreateWithoutRoleAccessInput>
+  }
+
+  export type ERPSupportMenuDefinitionsUpsertWithoutRoleAccessInput = {
+    update: XOR<ERPSupportMenuDefinitionsUpdateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedUpdateWithoutRoleAccessInput>
+    create: XOR<ERPSupportMenuDefinitionsCreateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedCreateWithoutRoleAccessInput>
+    where?: ERPSupportMenuDefinitionsWhereInput
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateToOneWithWhereWithoutRoleAccessInput = {
+    where?: ERPSupportMenuDefinitionsWhereInput
+    data: XOR<ERPSupportMenuDefinitionsUpdateWithoutRoleAccessInput, ERPSupportMenuDefinitionsUncheckedUpdateWithoutRoleAccessInput>
+  }
+
+  export type ERPSupportMenuDefinitionsUpdateWithoutRoleAccessInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    items?: ERPSupportMenuItemsUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportMenuDefinitionsUncheckedUpdateWithoutRoleAccessInput = {
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    IconClass?: NullableStringFieldUpdateOperationsInput | string | null
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    items?: ERPSupportMenuItemsUncheckedUpdateManyWithoutMenuNestedInput
+  }
+
+  export type ERPSupportMenuItemsUpsertWithoutRoleAccessInput = {
+    update: XOR<ERPSupportMenuItemsUpdateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedUpdateWithoutRoleAccessInput>
+    create: XOR<ERPSupportMenuItemsCreateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedCreateWithoutRoleAccessInput>
+    where?: ERPSupportMenuItemsWhereInput
+  }
+
+  export type ERPSupportMenuItemsUpdateToOneWithWhereWithoutRoleAccessInput = {
+    where?: ERPSupportMenuItemsWhereInput
+    data: XOR<ERPSupportMenuItemsUpdateWithoutRoleAccessInput, ERPSupportMenuItemsUncheckedUpdateWithoutRoleAccessInput>
+  }
+
+  export type ERPSupportMenuItemsUpdateWithoutRoleAccessInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    menu?: ERPSupportMenuDefinitionsUpdateOneRequiredWithoutItemsNestedInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateWithoutRoleAccessInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
   export type SalesInvoiceItemsCreateManySalesInvoiceHeadersInput = {
     SalesInvoiceItemId: string
     SalesOrderId?: string | null
@@ -50394,6 +54842,112 @@ export namespace Prisma {
     SalesPricePriorityId?: StringFieldUpdateOperationsInput | string
     NoUrut?: IntFieldUpdateOperationsInput | number
     PricingRuleType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ERPSupportRoleMenuAccessCreateManyMenuInput = {
+    RoleCode: string
+    ItemKey?: string | null
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportMenuItemsCreateManyMenuInput = {
+    ItemKey: string
+    DisplayName: string
+    Route: string
+    SortOrder?: number | null
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateWithoutMenuInput = {
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    item?: ERPSupportMenuItemsUpdateOneWithoutRoleAccessNestedInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateWithoutMenuInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    ItemKey?: NullableStringFieldUpdateOperationsInput | string | null
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutMenuInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    ItemKey?: NullableStringFieldUpdateOperationsInput | string | null
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ERPSupportMenuItemsUpdateWithoutMenuInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUpdateManyWithoutItemNestedInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateWithoutMenuInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    roleAccess?: ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutItemNestedInput
+  }
+
+  export type ERPSupportMenuItemsUncheckedUpdateManyWithoutMenuInput = {
+    ItemKey?: StringFieldUpdateOperationsInput | string
+    DisplayName?: StringFieldUpdateOperationsInput | string
+    Route?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type ERPSupportRoleMenuAccessCreateManyItemInput = {
+    RoleCode: string
+    MenuKey: string
+    Environment?: string
+    SortOrder?: number | null
+    CreatedAt?: Date | string
+    UpdatedAt?: Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUpdateWithoutItemInput = {
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    menu?: ERPSupportMenuDefinitionsUpdateOneWithoutRoleAccessNestedInput
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateWithoutItemInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ERPSupportRoleMenuAccessUncheckedUpdateManyWithoutItemInput = {
+    Id?: IntFieldUpdateOperationsInput | number
+    RoleCode?: StringFieldUpdateOperationsInput | string
+    MenuKey?: StringFieldUpdateOperationsInput | string
+    Environment?: StringFieldUpdateOperationsInput | string
+    SortOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    UpdatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

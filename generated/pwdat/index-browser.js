@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.11.1
- * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+ * Prisma Client JS version: 6.10.0
+ * Query Engine version: aee10d5a411e4360c6d3445ce4810ca65adbf3e8
  */
 Prisma.prismaVersion = {
-  client: "6.11.1",
-  engine: "f40f79ec31188888a2e33acda0ecc8fd10a853a9"
+  client: "6.10.0",
+  engine: "aee10d5a411e4360c6d3445ce4810ca65adbf3e8"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -693,6 +693,32 @@ exports.Prisma.WmsDevicesScalarFieldEnum = {
   LastLogin: 'LastLogin'
 };
 
+exports.Prisma.ERPSupportMenuDefinitionsScalarFieldEnum = {
+  MenuKey: 'MenuKey',
+  DisplayName: 'DisplayName',
+  IconClass: 'IconClass',
+  SortOrder: 'SortOrder'
+};
+
+exports.Prisma.ERPSupportMenuItemsScalarFieldEnum = {
+  ItemKey: 'ItemKey',
+  MenuKey: 'MenuKey',
+  DisplayName: 'DisplayName',
+  Route: 'Route',
+  SortOrder: 'SortOrder'
+};
+
+exports.Prisma.ERPSupportRoleMenuAccessScalarFieldEnum = {
+  Id: 'Id',
+  RoleCode: 'RoleCode',
+  MenuKey: 'MenuKey',
+  ItemKey: 'ItemKey',
+  Environment: 'Environment',
+  SortOrder: 'SortOrder',
+  CreatedAt: 'CreatedAt',
+  UpdatedAt: 'UpdatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -738,7 +764,10 @@ exports.Prisma.ModelName = {
   UserRoles: 'UserRoles',
   Users: 'Users',
   UserWms: 'UserWms',
-  WmsDevices: 'WmsDevices'
+  WmsDevices: 'WmsDevices',
+  ERPSupportMenuDefinitions: 'ERPSupportMenuDefinitions',
+  ERPSupportMenuItems: 'ERPSupportMenuItems',
+  ERPSupportRoleMenuAccess: 'ERPSupportRoleMenuAccess'
 };
 
 /**

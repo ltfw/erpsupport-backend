@@ -1,12 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/pwdat"
+  provider      = "prisma-client-js"
+  output        = "../generated/pwdat"
   binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
+  // previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_PWDAT_URL")
+  // schemas  = ["dbo"]
 }
 
 model MigrationHistory {
@@ -614,4 +616,57 @@ model WmsDevices {
   Id         String   @id(map: "PK_dbo.WmsDevices") @db.NVarChar(100)
   DeviceName String?  @db.NVarChar(Max)
   LastLogin  DateTime @db.DateTime
+}
+
+model ERPSupportMenuDefinitions {
+  MenuKey     String  @id @db.NVarChar(100)
+  DisplayName String  @db.NVarChar(100)
+  IconClass   String? @db.NVarChar(100)
+  SortOrder   Int?
+
+  // Back relation — no cascade
+  roleAccess ERPSupportRoleMenuAccess[]
+
+  items ERPSupportMenuItems[]
+  // @@schema("dbo")
+
+  @@map("ERPSupportMenuDefinitions")
+}
+
+model ERPSupportMenuItems {
+  ItemKey     String @id @db.NVarChar(100)
+  MenuKey     String @db.NVarChar(100)
+  DisplayName String @db.NVarChar(100)
+  Route       String @db.NVarChar(200)
+  SortOrder   Int?
+
+  // Relation to menu group
+  menu ERPSupportMenuDefinitions @relation(fields: [MenuKey], references: [MenuKey])
+
+  // Back relation
+  roleAccess ERPSupportRoleMenuAccess[]
+  // @@schema("dbo")
+
+  @@map("ERPSupportMenuItems")
+}
+
+model ERPSupportRoleMenuAccess {
+  Id          Int      @id @default(autoincrement())
+  RoleCode    String   @db.NVarChar(100)
+  MenuKey     String   @db.NVarChar(100)
+  ItemKey     String?  @db.NVarChar(100)
+  Environment String   @default("All") @db.NVarChar(20)
+  SortOrder   Int?
+  CreatedAt   DateTime @default(now()) @db.DateTime2
+  UpdatedAt   DateTime @default(now()) @db.DateTime2
+
+  // Relations
+  menu ERPSupportMenuDefinitions? @relation(fields: [MenuKey], references: [MenuKey], onUpdate: NoAction, onDelete: NoAction)
+  item ERPSupportMenuItems?       @relation(fields: [ItemKey], references: [ItemKey], onUpdate: NoAction, onDelete: NoAction)
+  // @@schema("dbo")
+
+  // Constraints — MUST be at the end, each on its own line
+  @@unique([RoleCode, MenuKey, ItemKey])
+  // @@check(Environment = 'All' OR Environment = 'Production' OR Environment = 'Development')
+  @@map("ERPSupportRoleMenuAccess")
 }
