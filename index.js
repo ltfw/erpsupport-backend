@@ -8,6 +8,7 @@ const supplierRoutes = require('./routes/supplier');
 const lainLainRoutes = require('./routes/tools/others');
 const navigationsRoutes = require('./routes/navigations');
 const rayoncabangRoutes = require('./routes/reports/rayoncabang');
+const daftarBarangRoutes = require('./routes/reports/daftarbarang');
 const authenticateToken = require('./middleware/auth');
 
 const adminNavigationRoutes = require('./routes/admin/navigation'); // Import admin navigation routes
@@ -53,6 +54,7 @@ app.use('/departments',authenticateToken, departmentsRoutes);
 app.use('/suppliers', authenticateToken, supplierRoutes);
 app.use('/navigations', authenticateToken, navigationsRoutes);
 app.use('/report/rayoncabang', authenticateToken, rayoncabangRoutes);
+app.use('/report/daftarbarang', authenticateToken, daftarBarangRoutes);
 app.use('/others', lainLainRoutes);
 
 app.use('/admin/navigations', authenticateToken, adminNavigationRoutes);
