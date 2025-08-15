@@ -50,7 +50,7 @@ router.get("/", async (req, res) => {
           c.KodeSales = s.KodeSales
         where
           (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
-          ${cabangArray.length > 0 ? sql`AND KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
+          ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
         group by
           d.NamaDept,
           c.KodeLgn,
@@ -88,7 +88,7 @@ router.get("/", async (req, res) => {
             c.KodeSales = s.KodeSales
           WHERE
             (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
-                  ${cabangArray.length > 0 ? sql`AND KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
+                  ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
           GROUP BY
             d.NamaDept,
             c.KodeLgn,

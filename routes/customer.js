@@ -1,8 +1,9 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
+const { generateRunningNumber } = require("../utils/GenerateRunningNumber");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['info', 'warn', 'error'], });
+const prisma = new PrismaClient({ log: ['query','info', 'warn', 'error'], });
 
 // Get all customers using pagination
 router.get("/export", async (req, res) => {
@@ -174,17 +175,19 @@ router.get("/rayoncustomer", async (req, res) => {
       conditions.push(`rd.RayonCode = '${rayon}'`)
     }
     if (group) {
-      conditions.push(`c.CustomerGroupId = '${group}'`)
+      const groupArray = group.split(',').map(g => `'${g.trim()}'`).join(',');
+      conditions.push(`c.CustomerGroupId in (${groupArray})`)
     }
 
     // Build WHERE clause manually
     const whereClause = conditions.length > 0
       ? `WHERE ${conditions.join(' AND ')}`
       : ''
+    console.log("whereClause", whereClause);
 
     // Final raw SQL string (safe only if you control the input)
     const rawQuery = `
-      SELECT d.NamaDept, r.RayonName, s.NamaSales, c.KodeLgn, c.NamaLgn, 
+      SELECT c.KodeDept, d.NamaDept, r.RayonName, s.NamaSales, c.KodeLgn, c.NamaLgn, 
              be.BusinessEntityName, cg.CustomerGroupName
       FROM customers c
       JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
@@ -208,6 +211,44 @@ router.get("/rayoncustomer", async (req, res) => {
     })
   }
 })
+
+router.post("/rayoncustomer", async (req, res) => {
+  try {
+    const { header, detail } = req.body;
+     
+    if(header){
+      const runningNumber = await generateRunningNumber(header.KodeDept)
+
+      const resultHeader = await prisma.$queryRaw`
+        INSERT INTO rekualifikasiheader (NoTransaksi, Rayon, Salesman, Status)
+        VALUES (${runningNumber}, ${header.RayonName}, ${header.NamaSales}, 1)
+      `
+
+      if(detail){
+        for(const item of detail){
+          const resultDetail = await prisma.$queryRaw`
+            INSERT INTO rekualifikasidetail (RekualifikasiHeaderId, KodeLgn, BawaSalesman, SudahBalik, SudahUpdate, SudahLengkap)
+            VALUES (${resultHeader.id}, ${item.KodeLgn}, ${item.BawaSalesman}, ${item.SudahBalik}, ${item.SudahUpdate}, ${item.SudahLengkap})
+          `
+        }
+      }
+    }else{
+      return res.status(400).json({
+        error: "Header tidak boleh kosong"
+      })
+    }
+
+    return res.status(200).json({
+      message: "Data berhasil dikirim"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error: "POST Rayon Customer Error",
+      details: error.message
+    })
+  }
+})
+
 
 // Get customer by ID
 router.get("/:id", async (req, res) => {
