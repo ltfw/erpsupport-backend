@@ -90,7 +90,6 @@ router.get("/export", async (req, res) => {
   }
 });
 
-
 router.get("/", async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
@@ -220,15 +219,19 @@ router.post("/rayoncustomer", async (req, res) => {
       const runningNumber = await generateRunningNumber(header.KodeDept)
 
       const resultHeader = await prisma.$queryRaw`
-        INSERT INTO rekualifikasiheader (NoTransaksi, Rayon, Salesman, Status)
-        VALUES (${runningNumber}, ${header.RayonName}, ${header.NamaSales}, 1)
+        INSERT INTO rekualifikasiheader (NoTransaksi, Rayon, Salesman, Status,KodeDept)
+        OUTPUT INSERTED.*
+        VALUES (${runningNumber}, ${header.RayonName}, ${header.NamaSales}, 1,${header.KodeDept})
       `
+
+      console.log('resultHeader', resultHeader);
+      
 
       if(detail){
         for(const item of detail){
           const resultDetail = await prisma.$queryRaw`
             INSERT INTO rekualifikasidetail (RekualifikasiHeaderId, KodeLgn, BawaSalesman, SudahBalik, SudahUpdate, SudahLengkap)
-            VALUES (${resultHeader.id}, ${item.KodeLgn}, ${item.BawaSalesman}, ${item.SudahBalik}, ${item.SudahUpdate}, ${item.SudahLengkap})
+            VALUES (${resultHeader[0].RekualifikasiHeaderId}, ${item.KodeLgn}, ${item.BawaSalesman}, ${item.SudahBalik}, ${item.SudahUpdate}, ${item.SudahLengkap})
           `
         }
       }
@@ -248,6 +251,76 @@ router.post("/rayoncustomer", async (req, res) => {
     })
   }
 })
+
+router.get("/requalify", async (req, res) => {
+  try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const pageSize = Math.min(Math.max(parseInt(req.query.per_page) || 10, 1), 100);
+    const search = req.query.search?.trim() || '';
+    const skip = (page - 1) * pageSize;
+
+    const userCabang = req.user.cabang;
+    const userRole = req.user.role;
+    console.log("User Role:", userRole, "User Cabang:", userCabang,"user:", req.user);
+
+         // Build WHERE clause for $queryRaw
+     let whereConditions = [];
+     
+     if (search) {
+       whereConditions.push(`(rh.Rayon LIKE ${Prisma.escape(`%${search}%`)} OR rh.Salesman LIKE ${Prisma.escape(`%${search}%`)})`);
+     }
+     
+     if (userRole !== 'ADM' && userCabang) {
+       whereConditions.push(`rh.KodeDept = ${Prisma.escape(userCabang)}`);
+     }
+     
+     const whereClause = whereConditions.length > 0 ? whereConditions.join(' AND ') : '1=1';
+
+         const [customers, totalResult] = await Promise.all([
+       prisma.$queryRaw`
+         select
+           rh.*,
+           d.NamaDept,
+           case
+             when rh.Status = 1 then 'OPEN'
+             else 'CLOSED'
+           end as StatusName
+         from
+           RekualifikasiHeader rh
+         join Departments d on
+           rh.KodeDept = d.KodeDept
+           WHERE ${Prisma.raw(whereClause)}
+         order by rh.TglInput
+         OFFSET ${skip} ROWS
+         FETCH NEXT ${pageSize} ROWS ONLY
+       `,
+
+       prisma.$queryRaw`
+         SELECT COUNT(*) AS total
+         FROM rekualifikasiheader rh
+         WHERE ${Prisma.raw(whereClause)}
+       `,
+     ]);
+
+    const total = Number(totalResult[0]?.total || 0);
+
+    return res.json({
+      data: customers,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return res.status(500).json({
+      message: "Failed to fetch customers",
+      details: error.message,
+    });
+  }
+});
 
 
 // Get customer by ID
