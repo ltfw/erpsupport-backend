@@ -154,22 +154,34 @@ router.get("/detail/:id", async (req, res) => {
   try {
     // KodeDept: req.params.id
     const data = await prisma.$queryRaw`
-        select 
+      select
+        ati.ParentTransaction,
+        format(ati.TglTrnFaktur, 'dd/MM/yyyy', 'ID-id') as TglTrnFaktur,
+        format(ati.TglJthTmp, 'dd/MM/yyyy', 'ID-id') as TglJthTmp,
+        datediff(day, ati.tgljthtmp, getdate()) as aging,
+        ardetail.nominal
+      from
+        artransactionitems ati
+      join (
+        select
           ati.ParentTransaction,
-          format(ati.TglTrnFaktur,'dd/MM/yyyy','ID-id') as TglTrnFaktur,
-          format(ati.TglJthTmp,'dd/MM/yyyy','ID-id') as TglJthTmp,
-          datediff(day,ati.tgljthtmp,getdate()) as aging,
           sum(ati.JumlahTrn) as nominal
-        from artransactionitems ati
-        where ati.CustomerId = ${req.params.id}
+        from
+          artransactionitems ati
+        where
+          ati.CustomerId = '28ffb95c-4ac2-4232-9b48-02e912a09a0f'
         group by
-          ati.ParentTransaction,
-          ati.TglTrnFaktur,
-          ati.TglJthTmp
+          ati.ParentTransaction
         having
           sum(ati.JumlahTrn) > 0
-        ;
-      `
+      ) as ardetail on ardetail.ParentTransaction = ati.ParentTransaction
+      where
+        ati.CustomerId = '28ffb95c-4ac2-4232-9b48-02e912a09a0f'
+        and ati.TypeTrn = 'C'
+      order by
+        ati.TglTrnFaktur
+            ;
+      `      
 
     res.json(data);
   } catch (error) {
