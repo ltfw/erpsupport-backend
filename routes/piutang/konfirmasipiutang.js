@@ -175,7 +175,7 @@ router.get("/detail/:id", async (req, res) => {
         group by
           ati.ParentTransaction
         having
-          sum(ati.JumlahTrn) > 0
+          sum(ati.JumlahTrn) > 1
             ) as ardetail on
         ardetail.ParentTransaction = ati.ParentTransaction
       where
