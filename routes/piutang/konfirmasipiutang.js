@@ -171,7 +171,7 @@ router.get("/detail/:id", async (req, res) => {
         from
           artransactionitems ati
         where
-          ati.CustomerId = '0b3dc9b9-9662-4089-83d9-dfb439038bf3'
+          ati.CustomerId = ${req.params.id}
         group by
           ati.ParentTransaction
         having
@@ -179,10 +179,9 @@ router.get("/detail/:id", async (req, res) => {
             ) as ardetail on
         ardetail.ParentTransaction = ati.ParentTransaction
       where
-        ati.CustomerId = '0b3dc9b9-9662-4089-83d9-dfb439038bf3'
+        ati.CustomerId = ${req.params.id}
       order by
-        ati.TglTrnFaktur
-            ;
+        ati.TglTrnFaktur;
       `      
 
     res.json(data);
