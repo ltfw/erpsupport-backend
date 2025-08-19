@@ -155,7 +155,9 @@ router.get("/detail/:id", async (req, res) => {
     // KodeDept: req.params.id
     const data = await prisma.$queryRaw`
       select
+        distinct 
         ati.ParentTransaction,
+        ati.TglTrnFaktur,
         format(ati.TglTrnFaktur, 'dd/MM/yyyy', 'ID-id') as TglTrnFaktur,
         format(ati.TglJthTmp, 'dd/MM/yyyy', 'ID-id') as TglJthTmp,
         datediff(day, ati.tgljthtmp, getdate()) as aging,
@@ -169,15 +171,15 @@ router.get("/detail/:id", async (req, res) => {
         from
           artransactionitems ati
         where
-          ati.CustomerId = ${req.params.id}
+          ati.CustomerId = '0b3dc9b9-9662-4089-83d9-dfb439038bf3'
         group by
           ati.ParentTransaction
         having
           sum(ati.JumlahTrn) > 0
-      ) as ardetail on ardetail.ParentTransaction = ati.ParentTransaction
+            ) as ardetail on
+        ardetail.ParentTransaction = ati.ParentTransaction
       where
-        ati.CustomerId = ${req.params.id}
-        and ati.TypeTrn = 'C'
+        ati.CustomerId = '0b3dc9b9-9662-4089-83d9-dfb439038bf3'
       order by
         ati.TglTrnFaktur
             ;
