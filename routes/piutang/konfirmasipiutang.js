@@ -169,14 +169,14 @@ router.get("/detail/:id", async (req, res) => {
         from
           artransactionitems ati
         where
-          ati.CustomerId = '28ffb95c-4ac2-4232-9b48-02e912a09a0f'
+          ati.CustomerId = ${req.params.id}
         group by
           ati.ParentTransaction
         having
           sum(ati.JumlahTrn) > 0
       ) as ardetail on ardetail.ParentTransaction = ati.ParentTransaction
       where
-        ati.CustomerId = '28ffb95c-4ac2-4232-9b48-02e912a09a0f'
+        ati.CustomerId = ${req.params.id}
         and ati.TypeTrn = 'C'
       order by
         ati.TglTrnFaktur
