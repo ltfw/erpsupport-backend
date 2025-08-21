@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
     const username = req.user.username;
 
     const searchQuery = `%${search}%`;
-    const usernameQuery = isAdmin=='ADM' ? sql`` : sql` and us.UserName = ${username}`
+    const usernameQuery = isAdmin=='ADM' || isAdmin=='MKT-SANI' ? sql`` : sql` and us.UserName = ${username}`
     // console.log("User Role:", isAdmin, "Username:", username, "usernameQuery:", usernameQuery);
 
     const page = parseInt(req.query.page) || 1;
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     let totalResult = 0;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
-    if (isAdmin=='ADM') {
+    if (isAdmin=='ADM' || isAdmin=='MKT-SANI') {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn

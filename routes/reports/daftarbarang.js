@@ -14,9 +14,28 @@ router.get("/", async (req, res) => {
     const pageSize = parseInt(req.query.per_page) || 10;
     const skip = (page - 1) * pageSize;
     const searchDate = req.query.date?.trim() || '';
+    const cabang = req.query.cabang?.trim() || '';
+    const vendor = req.query.vendor?.trim() || '';
 
-    // The pagination part needs to be directly after ORDER BY.
-    // The variables `skip` and `pageSize` should not be wrapped in `sql(...)` here.
+    let cabangArray = [];
+    let vendorArray = [];
+    const allowedRoles = ['ADM', 'FAS','MKT-SANI'];
+    if(allowedRoles.includes(userRole) && cabang) {
+      cabangArray = cabang ? cabang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
+    }else if(allowedRoles.includes(userRole) && !cabang) {
+      cabangArray = [];
+    }else{
+      cabangArray = [req.user.cabang];
+    }
+
+    if(allowedRoles.includes(userRole) && vendor) {
+      vendorArray = vendor ? vendor.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
+    }else if(allowedRoles.includes(userRole) && !vendor) {
+      vendorArray = [];
+    }else{
+      vendorArray = [req.user.vendor];
+    }
+    console.log("user roles:",userRole, "vendor Array: ", vendorArray);
 
     const [data, totalResult] = await Promise.all([
       prisma.$queryRaw`
@@ -39,6 +58,8 @@ router.get("/", async (req, res) => {
           bnt.InventoryStockId = is2.InventoryStockId
         join Warehouses w on
           w.kodegudang = is2.KodeGudang
+        join InventorySuppliers is3 on
+          is3.InventoryId = i.InventoryId 
         join (
           select is2.InventoryId, is2.KodeGudang,sum(is2.QtyBoSo) as boso from InventoryStocks is2 
           join inventories i on is2.InventoryId = i.InventoryId
@@ -46,6 +67,8 @@ router.get("/", async (req, res) => {
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
           cast(bnt.tanggaltransaksi as date) <= ${searchDate}
+          ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
+          ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
         group by
           is2.KodeGudang,
           w.NamaGudang,
@@ -68,6 +91,8 @@ router.get("/", async (req, res) => {
           bnt.InventoryStockId = is2.InventoryStockId
         join Warehouses w on
           w.kodegudang = is2.KodeGudang
+        join InventorySuppliers is3 on
+          is3.InventoryId = i.InventoryId 
         join (
           select is2.InventoryId, is2.KodeGudang,sum(is2.QtyBoSo) as boso from InventoryStocks is2 
           join inventories i on is2.InventoryId = i.InventoryId
@@ -75,6 +100,8 @@ router.get("/", async (req, res) => {
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
           cast(bnt.tanggaltransaksi as date) <= ${searchDate}
+          ${cabangArray.length > 0 ? sql`and is2.KodeGudang in (${Prisma.join(cabangArray)})` : sql``}
+          ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
         group by
           is2.KodeGudang,
           w.NamaGudang,

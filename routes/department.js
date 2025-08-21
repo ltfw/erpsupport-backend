@@ -18,15 +18,15 @@ router.get("/", async (req, res) => {
     const cabang = req.query.cabang?.trim() || '';
 
     let cabangArray = [];
-    const allowedRoles = ['ADM', 'FAS'];
+    const allowedRoles = ['ADM', 'FAS','MKT-SANI'];
     if(allowedRoles.includes(userRole) && cabang) {
-      cabangArray = cabang ? cabang.split(',').map(s => s.trim()) : [];
+      cabangArray = cabang ? cabang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     }else if(allowedRoles.includes(userRole) && !cabang) {
       cabangArray = [];
     }else{
       cabangArray = [req.user.cabang];
     }
-    console.log("user role:",userRole, "Cabang Array: ", cabangArray);
+    console.log("user roles:",userRole, "Cabang Array: ", cabangArray);
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
     const [departments, totalResult] = await Promise.all([
