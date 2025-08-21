@@ -2,12 +2,12 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query','warn', 'error'] });
+const prisma = new PrismaClient({ log: ['warn', 'error'] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
   const userRole = req.user.role;
-  console.log("data user", req.user.role, req.user.username, req.user.cabang);
+  console.log("data user", req.user.role, req.user.username, req.user.cabang, req.user);
 
   try {
     const page = parseInt(req.query.page) || 1;
@@ -31,7 +31,11 @@ router.get("/", async (req, res) => {
     if(allowedRoles.includes(userRole) && vendor) {
       vendorArray = vendor ? vendor.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     }else if(allowedRoles.includes(userRole) && !vendor) {
-      vendorArray = [];
+      if(userRole=='MKT-SANI'){
+        vendorArray = [req.user.vendor];
+      }else{
+        vendorArray = [];
+      }
     }else{
       vendorArray = [req.user.vendor];
     }
@@ -84,34 +88,59 @@ router.get("/", async (req, res) => {
       prisma.$queryRaw`
         select
           count(*) as total
-        from inventories i
-        join inventorystocks is2 on
-          i.InventoryId = is2.InventoryId
-        join batchnumbertransactions bnt on
-          bnt.InventoryStockId = is2.InventoryStockId
-        join Warehouses w on
-          w.kodegudang = is2.KodeGudang
-        join InventorySuppliers is3 on
-          is3.InventoryId = i.InventoryId 
-        join (
-          select is2.InventoryId, is2.KodeGudang,sum(is2.QtyBoSo) as boso from InventoryStocks is2 
-          join inventories i on is2.InventoryId = i.InventoryId
-          group BY is2.InventoryId, is2.KodeGudang
-        ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
-        where
-          cast(bnt.tanggaltransaksi as date) <= ${searchDate}
-          ${cabangArray.length > 0 ? sql`and is2.KodeGudang in (${Prisma.join(cabangArray)})` : sql``}
-          ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
-        group by
-          is2.KodeGudang,
-          w.NamaGudang,
-          i.kodeitem,
-          i.NamaBarang,
-          boso.boso
-        having
-          sum(bnt.qty) > 0
-        order by
-          is2.KodeGudang,i.KodeItem
+        from
+          (
+          select
+            is2.KodeGudang,
+            w.NamaGudang,
+            i.KodeItem,
+            i.NamaBarang,
+            sum(bnt.Qty) as 'SumQtyPhysical',
+            sum(bnt.QtyPickingList) as 'SumQtyPickingList',
+            sum(bnt.QtyBooking) as 'SumQtyBooking',
+            boso.boso as 'SumQtyBoSO',
+            sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
+            case
+              when CONVERT(DATE, GETDATE()) = '2025-08-21' then sum(bnt.Qty) - abs(boso.boso)
+              else sum(bnt.Qty)
+            end as QtyShow
+          from
+            inventories i
+          join inventorystocks is2 on
+            i.InventoryId = is2.InventoryId
+          join batchnumbertransactions bnt on
+            bnt.InventoryStockId = is2.InventoryStockId
+          join Warehouses w on
+            w.kodegudang = is2.KodeGudang
+          join InventorySuppliers is3 on
+            is3.InventoryId = i.InventoryId
+          join (
+            select
+              is2.InventoryId,
+              is2.KodeGudang,
+              sum(is2.QtyBoSo) as boso
+            from
+              InventoryStocks is2
+            join inventories i on
+              is2.InventoryId = i.InventoryId
+            group BY
+              is2.InventoryId,
+              is2.KodeGudang
+                ) as boso on
+            is2.KodeGudang = boso.kodegudang
+            and is2.inventoryid = boso.inventoryid
+          where
+            cast(bnt.tanggaltransaksi as date) <= '2025-08-21'
+            and is3.KodeLgn in ('1001')
+          group by
+            is2.KodeGudang,
+            w.NamaGudang,
+            i.kodeitem,
+            i.NamaBarang,
+            boso.boso
+          having
+            sum(bnt.qty) > 0
+          ) as t
       `
     ]);
 

@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ["warn", "error"] });
+const prisma = new PrismaClient({ log: ["query", "warn", "error"] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
@@ -13,7 +13,8 @@ router.get("/", async (req, res) => {
 
     const searchQuery = `%${search}%`;
     const usernameQuery = isAdmin=='ADM' || isAdmin=='MKT-SANI' ? sql`` : sql` and us.UserName = ${username}`
-    // console.log("User Role:", isAdmin, "Username:", username, "usernameQuery:", usernameQuery);
+    const vendorQuery = isAdmin=='MKT-SANI' ? sql` and v.KodeLgn = ${req.user.vendor}` : sql``
+    console.log("User Role:", isAdmin, "Username:", username, "vendorQuery:", vendorQuery);
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 100;
@@ -23,7 +24,7 @@ router.get("/", async (req, res) => {
     let totalResult = 0;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
-    if (isAdmin=='ADM' || isAdmin=='MKT-SANI') {
+    if (isAdmin=='ADM') {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
@@ -46,7 +47,8 @@ router.get("/", async (req, res) => {
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
-        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}) AND us.UserName = ${username}
+        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery})
+        ${vendorQuery}
         ORDER BY v.KodeLgn
         ${offsetClause}
       `,
@@ -54,7 +56,8 @@ router.get("/", async (req, res) => {
         SELECT COUNT(*) AS total
         FROM PwdatBackup.dbo.UserSupplier us
         JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
-        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery}) AND us.UserName = ${username}
+        WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery})
+        ${vendorQuery}
       `,
       ]);
     }
