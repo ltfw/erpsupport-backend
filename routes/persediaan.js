@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['warn', 'error'], });
+const prisma = new PrismaClient({ log: ['query','warn', 'error'], });
 
 router.get("/perbatch", async (req, res) => {
   try {
@@ -195,6 +195,9 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || ''
 
     const searchQuery = `%${search}%`
+    const isKonsinyasiSearch = search.toLowerCase().includes('konsi')
+    const isRegulerSearch = search.toLowerCase().includes('reg')
+    const isBonusSearch = search.toLowerCase().includes('bon')
 
     const [customers, totalResult] = await Promise.all([
       prisma.$queryRawUnsafe(`
@@ -208,7 +211,11 @@ router.get("/", async (req, res) => {
         Inventories i
       where
         i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
-        and (i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
+        and((i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
+        ${isKonsinyasiSearch ? 'or i.IsConsignmentIn = 1' : ''}
+        ${isRegulerSearch ? 'or (i.IsConsignmentIn = 0 and i.isbonus = 0)' : ''}
+        ${isBonusSearch ? 'or (i.isbonus = 1)' : ''}
+      )
       order by i.kodeitem,i.NamaBarang
       offset ${skip} rows
       fetch next ${pageSize} rows only;
@@ -217,7 +224,11 @@ router.get("/", async (req, res) => {
         select count(*) as total 
         from Inventories i
         where i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
-        and (i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
+        and ((i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
+        ${isKonsinyasiSearch ? 'or i.IsConsignmentIn = 1' : ''}
+        ${isRegulerSearch ? 'or (i.IsConsignmentIn = 0 and i.isbonus = 0)' : ''}
+        ${isBonusSearch ? 'or (i.isbonus = 1)' : ''}
+      )
       `),
     ]);
 

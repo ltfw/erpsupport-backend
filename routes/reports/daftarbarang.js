@@ -70,7 +70,8 @@ router.get("/", async (req, res) => {
           group BY is2.InventoryId, is2.KodeGudang
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
-          cast(bnt.tanggaltransaksi as date) <= ${searchDate}
+          (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '03-GUU-03')
+          and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
           ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
           ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
         group by
@@ -90,56 +91,45 @@ router.get("/", async (req, res) => {
           count(*) as total
         from
           (
-          select
-            is2.KodeGudang,
-            w.NamaGudang,
-            i.KodeItem,
-            i.NamaBarang,
-            sum(bnt.Qty) as 'SumQtyPhysical',
-            sum(bnt.QtyPickingList) as 'SumQtyPickingList',
-            sum(bnt.QtyBooking) as 'SumQtyBooking',
-            boso.boso as 'SumQtyBoSO',
-            sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
-            case
-              when CONVERT(DATE, GETDATE()) = '2025-08-21' then sum(bnt.Qty) - abs(boso.boso)
-              else sum(bnt.Qty)
-            end as QtyShow
-          from
-            inventories i
-          join inventorystocks is2 on
-            i.InventoryId = is2.InventoryId
-          join batchnumbertransactions bnt on
-            bnt.InventoryStockId = is2.InventoryStockId
-          join Warehouses w on
-            w.kodegudang = is2.KodeGudang
-          join InventorySuppliers is3 on
-            is3.InventoryId = i.InventoryId
-          join (
             select
-              is2.InventoryId,
               is2.KodeGudang,
-              sum(is2.QtyBoSo) as boso
-            from
-              InventoryStocks is2
-            join inventories i on
-              is2.InventoryId = i.InventoryId
-            group BY
-              is2.InventoryId,
-              is2.KodeGudang
-                ) as boso on
-            is2.KodeGudang = boso.kodegudang
-            and is2.inventoryid = boso.inventoryid
-          where
-            cast(bnt.tanggaltransaksi as date) <= '2025-08-21'
-            and is3.KodeLgn in ('1001')
-          group by
-            is2.KodeGudang,
-            w.NamaGudang,
-            i.kodeitem,
-            i.NamaBarang,
-            boso.boso
-          having
-            sum(bnt.qty) > 0
+              w.NamaGudang,
+              i.KodeItem,
+              i.NamaBarang,
+              sum(bnt.Qty) as 'SumQtyPhysical',
+              sum(bnt.QtyPickingList) as 'SumQtyPickingList',
+              sum(bnt.QtyBooking) as 'SumQtyBooking',
+              boso.boso as 'SumQtyBoSO',
+              sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
+              case when CONVERT(DATE, GETDATE()) = ${searchDate} then sum(bnt.Qty) - abs(boso.boso)
+              else sum(bnt.Qty) end as QtyShow
+            from inventories i
+            join inventorystocks is2 on
+              i.InventoryId = is2.InventoryId
+            join batchnumbertransactions bnt on
+              bnt.InventoryStockId = is2.InventoryStockId
+            join Warehouses w on
+              w.kodegudang = is2.KodeGudang
+            join InventorySuppliers is3 on
+              is3.InventoryId = i.InventoryId 
+            join (
+              select is2.InventoryId, is2.KodeGudang,sum(is2.QtyBoSo) as boso from InventoryStocks is2 
+              join inventories i on is2.InventoryId = i.InventoryId
+              group BY is2.InventoryId, is2.KodeGudang
+            ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
+            where
+              (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '03-GUU-03')
+              and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
+              ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
+              ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
+            group by
+              is2.KodeGudang,
+              w.NamaGudang,
+              i.kodeitem,
+              i.NamaBarang,
+              boso.boso
+            having
+              sum(bnt.qty) > 0
           ) as t
       `
     ]);
