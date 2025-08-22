@@ -2,7 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../../generated/dbtrans");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['warn', 'error'] });
+const prisma = new PrismaClient({ log: ['query', 'warn', 'error'] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
@@ -16,30 +16,45 @@ router.get("/", async (req, res) => {
     const searchDate = req.query.date?.trim() || '';
     const cabang = req.query.cabang?.trim() || '';
     const vendor = req.query.vendor?.trim() || '';
+    const barang = req.query.barang?.trim() || '';
 
     let cabangArray = [];
     let vendorArray = [];
-    const allowedRoles = ['ADM', 'FAS','MKT-SANI'];
-    if(allowedRoles.includes(userRole) && cabang) {
+    let barangArray = [];
+    const allowedRoles = ['ADM', 'FAS', 'MKT-SANI'];
+    if (allowedRoles.includes(userRole) && cabang) {
       cabangArray = cabang ? cabang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
-    }else if(allowedRoles.includes(userRole) && !cabang) {
+    } else if (allowedRoles.includes(userRole) && !cabang) {
       cabangArray = [];
-    }else{
+    } else {
       cabangArray = [req.user.cabang];
     }
 
-    if(allowedRoles.includes(userRole) && vendor) {
+    if (allowedRoles.includes(userRole) && vendor) {
       vendorArray = vendor ? vendor.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
-    }else if(allowedRoles.includes(userRole) && !vendor) {
-      if(userRole=='MKT-SANI'){
+    } else if (allowedRoles.includes(userRole) && !vendor) {
+      if (userRole == 'MKT-SANI') {
         vendorArray = [req.user.vendor];
-      }else{
+      } else {
         vendorArray = [];
       }
-    }else{
+    } else {
       vendorArray = [req.user.vendor];
     }
-    console.log("user roles:",userRole, "vendor Array: ", vendorArray);
+
+    if (allowedRoles.includes(userRole) && barang) {
+      barangArray = barang ? barang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
+    } else if (allowedRoles.includes(userRole) && !barang) {
+      barangArray = [];
+    } else {
+      barangArray = [];
+
+    }
+
+    // barangArray = ['01-00001', '01-00002'];
+
+    console.log("user roles:", userRole, "barang Array: ", barangArray, "barang: ", barang);
+
 
     const [data, totalResult] = await Promise.all([
       prisma.$queryRaw`
@@ -77,6 +92,7 @@ router.get("/", async (req, res) => {
           and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
           ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
           ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
+          ${barangArray.length > 0 ? sql`and i.KodeItem in (${Prisma.join(barangArray)})` : sql``}
         group by
           is2.KodeGudang,
           w.NamaGudang,
@@ -130,6 +146,7 @@ router.get("/", async (req, res) => {
               and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
               ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
               ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
+              ${barangArray.length > 0 ? sql`and i.KodeItem in (${Prisma.join(barangArray)})` : sql``}
             group by
               is2.KodeGudang,
               w.NamaGudang,
