@@ -195,7 +195,7 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || ''
 
     const searchQuery = `%${search}%`
-    const isKonsinyasiSearch = search.toLowerCase().includes('konsi')
+    const isKonsinyasiSearch = search.toLowerCase().includes('kon')
     const isRegulerSearch = search.toLowerCase().includes('reg')
     const isBonusSearch = search.toLowerCase().includes('bon')
 

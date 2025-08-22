@@ -54,7 +54,10 @@ router.get("/", async (req, res) => {
           boso.boso as 'SumQtyBoSO',
           sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
           case when CONVERT(DATE, GETDATE()) = ${searchDate} then sum(bnt.Qty) - abs(boso.boso)
-          else sum(bnt.Qty) end as QtyShow
+          else sum(bnt.Qty) end as QtyShow,
+          case when i.IsConsignmentIn = 1 then 'Konsinyasi'
+          when i.isbonus = 1 then 'Bonus'
+          else 'Reguler' end as Keterangan
         from inventories i
         join inventorystocks is2 on
           i.InventoryId = is2.InventoryId
@@ -79,7 +82,9 @@ router.get("/", async (req, res) => {
           w.NamaGudang,
           i.kodeitem,
           i.NamaBarang,
-          boso.boso
+          boso.boso,
+          i.IsConsignmentIn,
+          i.isbonus
         having
           sum(bnt.qty) > 0
         order by
@@ -102,7 +107,10 @@ router.get("/", async (req, res) => {
               boso.boso as 'SumQtyBoSO',
               sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
               case when CONVERT(DATE, GETDATE()) = ${searchDate} then sum(bnt.Qty) - abs(boso.boso)
-              else sum(bnt.Qty) end as QtyShow
+              else sum(bnt.Qty) end as QtyShow,
+              case when i.IsConsignmentIn = 1 then 'Konsinyasi'
+              when i.isbonus = 1 then 'Bonus'
+              else 'Reguler' end as Keterangan
             from inventories i
             join inventorystocks is2 on
               i.InventoryId = is2.InventoryId
@@ -127,7 +135,9 @@ router.get("/", async (req, res) => {
               w.NamaGudang,
               i.kodeitem,
               i.NamaBarang,
-              boso.boso
+              boso.boso,
+              i.IsConsignmentIn,
+              i.isbonus
             having
               sum(bnt.qty) > 0
           ) as t
