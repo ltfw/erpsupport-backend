@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
           group BY is2.InventoryId, is2.KodeGudang
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
-          (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '03-GUU-03')
+          (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '00-GUU-02' and is2.KodeGudang <> '03-GUU-03')
           and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
           ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
           ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
@@ -118,7 +118,7 @@ router.get("/", async (req, res) => {
               group BY is2.InventoryId, is2.KodeGudang
             ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
             where
-              (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '03-GUU-03')
+              (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '00-GUU-02' and is2.KodeGudang <> '03-GUU-03')
               and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
               ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
               ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
