@@ -42,13 +42,12 @@ router.get("/", async (req, res) => {
       vendorArray = [req.user.vendor];
     }
 
-    if (allowedRoles.includes(userRole) && barang) {
+    if (barang) {
       barangArray = barang ? barang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     } else if (allowedRoles.includes(userRole) && !barang) {
       barangArray = [];
-    } else {
+    } else{
       barangArray = [];
-
     }
 
     // barangArray = ['01-00001', '01-00002'];
