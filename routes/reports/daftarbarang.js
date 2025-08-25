@@ -63,6 +63,7 @@ router.get("/", async (req, res) => {
           i.KodeItem,
           i.NamaBarang,
           i.KodeSatuan,
+          i.KodeKategory,
           sum(bnt.Qty) as 'SumQtyPhysical',
           sum(bnt.QtyPickingList) as 'SumQtyPickingList',
           sum(bnt.QtyBooking) as 'SumQtyBooking',
@@ -99,6 +100,7 @@ router.get("/", async (req, res) => {
           i.kodeitem,
           i.NamaBarang,
           i.KodeSatuan,
+          i.KodeKategory,
           boso.boso,
           i.IsConsignmentIn,
           i.isbonus
