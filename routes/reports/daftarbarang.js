@@ -63,6 +63,7 @@ router.get("/", async (req, res) => {
           w.NamaGudang,
           i.KodeItem,
           i.NamaBarang,
+          i.KodeSatuan,
           sum(bnt.Qty) as 'SumQtyPhysical',
           sum(bnt.QtyPickingList) as 'SumQtyPickingList',
           sum(bnt.QtyBooking) as 'SumQtyBooking',
@@ -98,6 +99,7 @@ router.get("/", async (req, res) => {
           w.NamaGudang,
           i.kodeitem,
           i.NamaBarang,
+          i.KodeSatuan,
           boso.boso,
           i.IsConsignmentIn,
           i.isbonus
@@ -117,6 +119,7 @@ router.get("/", async (req, res) => {
               w.NamaGudang,
               i.KodeItem,
               i.NamaBarang,
+              i.KodeSatuan,
               sum(bnt.Qty) as 'SumQtyPhysical',
               sum(bnt.QtyPickingList) as 'SumQtyPickingList',
               sum(bnt.QtyBooking) as 'SumQtyBooking',
@@ -152,6 +155,7 @@ router.get("/", async (req, res) => {
               w.NamaGudang,
               i.kodeitem,
               i.NamaBarang,
+              i.KodeSatuan,
               boso.boso,
               i.IsConsignmentIn,
               i.isbonus
