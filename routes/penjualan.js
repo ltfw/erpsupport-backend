@@ -57,14 +57,14 @@ router.get("/", async (req, res) => {
         i.NamaBarang,
         is3.NamaLgn as NamaSupplier,
         bc.BusinessCentreName,
-        sii.Hna1,
-        sii.Qty,
+        sii.Hna,
+        case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end as Qty,
         sii.SatuanNs,
-        sii.hna1 * sii.Qty as ValueHNA,
-        (sii.hna1 * sii.Qty) - (sii.hna1 * sii.Qty * sii.itemdispsn / 100) as ValueNett,
-        (sii.hna1 * sii.Qty * sii.itemdispsn / 100) as TotalValueDisc,
-        (sii.hna1 * sii.Qty * sii.DiscountDistributorPsn / 100) as ValueDiscDist,
-        (sii.hna1 * sii.Qty * sii.DiscountPrinciplePsn / 100) as ValueDiscPrinc,
+        sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end as ValueHNA,
+        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end) - (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.itemdispsn / 100) as ValueNett,
+        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.itemdispsn / 100) as TotalValueDisc,
+        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.DiscountDistributorPsn / 100) as ValueDiscDist,
+        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.DiscountPrinciplePsn / 100) as ValueDiscPrinc,
         sii.ItemDisPsn as TotalDiscPsn,
         sii.DiscountDistributorPsn as DiscDistPsn,
         sii.DiscountPrinciplePsn as DiscPrincPsn,
@@ -90,14 +90,15 @@ router.get("/", async (req, res) => {
       JOIN Departments d ON d.KodeDept = sih.KodeCc
       JOIN Salesmen s ON s.KodeSales = sih.KodeSales
       JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
-      JOIN Rayons r ON s.KodeSales = r.KodeSales
       JOIN Customers c ON c.CustomerId = sih.CustomerId
+      JOIN RayonDistricts rd on c.DistrictId = rd.DistrictId
+      JOIN Rayons r ON rd.RayonCode = r.RayonCode
       JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
       JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
       JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
       LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
+      WHERE cast(sih.TglFaktur as date) BETWEEN ${startDate} AND ${endDate}
         ${cabangArray.length > 0
           ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
           : Prisma.sql``}
@@ -132,8 +133,9 @@ router.get("/", async (req, res) => {
       JOIN Departments d ON d.KodeDept = sih.KodeCc
       JOIN Salesmen s ON s.KodeSales = sih.KodeSales
       JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
-      JOIN Rayons r ON s.KodeSales = r.KodeSales
       JOIN Customers c ON c.CustomerId = sih.CustomerId
+      JOIN RayonDistricts rd on c.DistrictId = rd.DistrictId
+      JOIN Rayons r ON rd.RayonCode = r.RayonCode
       JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
       JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
