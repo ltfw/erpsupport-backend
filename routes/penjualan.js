@@ -24,6 +24,7 @@ router.get("/", async (req, res) => {
     const userRole = req.user.role;
     const userName = req.user.username;
     const userCabang = req.user.cabang;
+    const userVendor = req.user.vendor;
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: "Start date and end date are required" });
@@ -33,6 +34,12 @@ router.get("/", async (req, res) => {
     if (userRole != 'ADM') {
       if (cabangArray.length === 0 && userCabang) { // Ensure userCabang is valid
         cabangArray.push(userCabang);
+      }
+    }
+
+    if(userVendor){
+      if (vendorArray.length === 0 && userVendor) { // Ensure userVendor is valid
+        vendorArray.push(userVendor);
       }
     }
 
