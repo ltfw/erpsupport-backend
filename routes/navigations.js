@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
 
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 10;
+    const pageSize = parseInt(req.query.per_page) || 100;
     const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
     const searchQuery = `%${search}%`;
@@ -47,6 +47,8 @@ router.get("/", async (req, res) => {
 
     const nav = [];
     const menuMap = new Map();
+    console.log("fetched navigations:", navigations);
+    
 
     navigations.forEach(row => {
       if (!menuMap.has(row.MenuKey)) {
@@ -59,6 +61,7 @@ router.get("/", async (req, res) => {
         menuMap.set(row.MenuKey, menu);
         nav.push(menu);
       }
+      // console.log("row item key:", row.MenuKey);
 
       if (row.ItemKey) {
         menuMap.get(row.MenuKey).items.push({

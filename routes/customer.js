@@ -66,14 +66,22 @@ router.get("/export", async (req, res) => {
           WHEN c.TypePpn = 'T' THEN 'Tidak Ada PPN'
         END AS "Tipe PPn",
         CONCAT('https://erp.sdlindonesia.com/#/customer/edit/', c.CustomerId) AS "URL"
-      FROM Customers c
-      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-      JOIN Areas a ON c.KodeWil = a.KodeWil
-      JOIN Departments d ON a.KodeDept = d.KodeDept
-      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
-      JOIN Salesmen s ON c.KodeSales = s.KodeSales
-      JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
-      JOIN Rayons r ON rd.RayonCode = r.RayonCode
+      FROM
+        Customers c
+      JOIN BusinessEntities be ON
+        c.BusinessEntityId = be.BusinessEntityId
+      JOIN Areas a ON
+        c.KodeWil = a.KodeWil
+      JOIN Departments d ON
+        a.KodeDept = d.KodeDept
+      JOIN CustomerGroups cg ON
+        c.CustomerGroupId = cg.CustomerGroupId
+      JOIN RayonDistricts rd ON
+        c.DistrictId = rd.DistrictId
+      JOIN Rayons r ON
+        rd.RayonCode = r.RayonCode
+      JOIN Salesmen s ON
+        r.KodeSales = s.KodeSales
       ${whereClause}
       ORDER BY c.KodeLgn
     `, ...params);
