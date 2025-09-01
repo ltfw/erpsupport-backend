@@ -132,7 +132,12 @@ router.get("/", async (req, res) => {
         FROM customers c
         JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
         JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-        JOIN salesmen s ON c.KodeSales = s.KodeSales
+        JOIN RayonDistricts rd ON
+          c.DistrictId = rd.DistrictId
+        JOIN Rayons r ON
+          rd.RayonCode = r.RayonCode
+        JOIN Salesmen s ON
+          r.KodeSales = s.KodeSales
         JOIN Departments d ON c.KodeDept = d.KodeDept
         WHERE ${whereClause}
         ORDER BY c.KodeLgn
