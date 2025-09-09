@@ -15,7 +15,7 @@ const requireAdmin = (req, res, next) => {
 
 // 🔹 HELPER: Handle Prisma errors
 const handlePrismaError = (err, res) => {
-  console.error('Prisma Error:', err)
+  // console.error('Prisma Error:', err)
   if (err.code === 'P2002') {
     return res.status(400).json({ error: 'Duplicate entry: Key already exists.' })
   }

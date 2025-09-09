@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     const skip = (page - 1) * pageSize;
     const searchDate = req.query.date?.trim() || '';
 
-    const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
+    const offsetClause = pageSize > 0 ? Prisma.sql`OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY` : Prisma.sql``;
 
     const [data, totalResult] = await Promise.all([
       prisma.$queryRaw`
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
         ${offsetClause}
       `,
       prisma.$queryRaw`
-        SELECT *
+        SELECT count(*) as total
         FROM CabangRayonHistory
         WHERE 
         ${searchDate} >= ValidFrom AND (${searchDate} <= ValidTo OR ValidTo IS NULL)

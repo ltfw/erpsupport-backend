@@ -74,4 +74,46 @@ router.post("/login", async (req, res) => {
   res.json({ token, user: safeUser });
 });
 
+// change password based on token user, old password and new password
+router.post("/changepassword", async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "No token provided" });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded JWT:", decoded);
+    const username = decoded.username;
+    const queryUsers = await pwdat.$queryRaw`
+      SELECT u.UserName,u.KodePassword
+      FROM Users u
+      WHERE u.UserName = ${username}; 
+    `;
+    const pwUsers = queryUsers[0];
+    if (!pwUsers)
+      return res.status(400).json({ error: "User not found" });
+
+    const hashedOldPassword = crypto
+      .createHash("sha1")
+      .update(oldPassword)
+      .digest("hex");
+    console.log(hashedOldPassword, pwUsers.KodePassword);
+    if (hashedOldPassword !== pwUsers.KodePassword) {
+      return res.status(403).json({ error: "Old password is incorrect" });
+    } 
+    const hashedNewPassword = crypto
+      .createHash("sha1")
+      .update(newPassword)
+      .digest("hex");
+    const queryUpdateUser = await pwdat.$queryRaw`
+      update users set KodePassword = ${hashedNewPassword}
+      WHERE UserName = ${username}; 
+    `;
+    console.log("Update result:", queryUpdateUser);
+    res.json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(403).json({ error: "Invalid token", details:err });
+  }
+});
+
 module.exports = router

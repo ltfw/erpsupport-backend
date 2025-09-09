@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
 
     const nav = [];
     const menuMap = new Map();
-    console.log("fetched navigations:", navigations);
+    // console.log("fetched navigations:", navigations);
     
 
     navigations.forEach(row => {

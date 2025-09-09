@@ -189,6 +189,151 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/outstandingsj", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.per_page) || -1;
+    const search = req.query.search?.trim() || '';
+    const skip = (page - 1) * pageSize;
+    const cabangParam = req.query.cabang || '';
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()).filter(Boolean) : []; // Filter empty strings
+    const vendorParam = req.query.vendor || '';
+    const vendorArray = vendorParam ? vendorParam.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const endDate = req.query.end_date || null;
+    const searchQuery = `%${search}%`;
+    const userRole = req.user.role;
+    const userName = req.user.username;
+    const userCabang = req.user.cabang;
+    const userVendor = req.user.vendor;
+
+    if (!endDate) {
+      return res.status(400).json({ error: "end date are required" });
+    }
+
+    // Apply user role logic for default filters
+    if (userRole != 'ADM') {
+      if (cabangArray.length === 0 && userCabang) { // Ensure userCabang is valid
+        cabangArray.push(userCabang);
+      }
+    }
+
+    if(userVendor){
+      if (vendorArray.length === 0 && userVendor) { // Ensure userVendor is valid
+        vendorArray.push(userVendor);
+      }
+    }
+    const pageSetup = pageSize > 0 ? Prisma.sql`OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY` : Prisma.sql``;
+
+    // --- Main Data Query ---
+    // Using the Prisma.sql`` and Prisma.join approach from your original working file
+    const sales = await prisma.$queryRaw`
+      select
+        is3.kodelgn as KodeSupplier,
+        format(dp.TglSj,'yyyy-MM-dd') as TglSj,
+        dp.NoSJ,
+        dp.NoSo,
+        dp.PoLanggan,
+        CONCAT(c.NamaLgn, ' ', be.BusinessEntityCode) as NamaLgn,
+        dpi.NamaBarang,
+        dpi.SatuanNs,
+        dpi.Qty,
+        dpi.Hna,
+        (dpi.qty * dpi.hna) as Total,
+        s.NamaSales
+      from
+        DeliveryPermits dp
+      left join SalesInvoiceHeaders sih on
+        dp.DeliveryPermitId = sih.DeliveryPermitId
+      join DeliveryPermitItems dpi on
+        dp.DeliveryPermitId = dpi.DeliveryPermitId
+      join customers c on
+        dp.CustomerId = c.CustomerId
+      join BusinessEntities be on
+        c.BusinessEntityId = be.BusinessEntityId
+      join inventorystocks is2 on
+        dpi.Inventorystockid = is2.inventorystockid
+      join InventorySuppliers is3 on
+        is2.inventoryid = is3.inventoryid
+      join salesmen s on
+        dp.KodeSales = s.kodesales
+      where
+        sih.SalesInvoiceHeaderId is null and 
+        dp.TglSj <= ${endDate + ' 23:59:59' } 
+        ${cabangArray.length > 0
+          ? Prisma.sql`AND dp.KodeCc IN (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+        ${vendorArray.length > 0
+          ? Prisma.sql`AND is3.KodeLgn IN (${Prisma.join(vendorArray)})`
+          : Prisma.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+            or dpi.NamaBarang LIKE ${searchQuery}
+            OR dp.NoSJ LIKE ${searchQuery} 
+        )
+      order by dp.TglSj desc
+      ${pageSetup};
+    `;
+    // --- End Main Data Query ---
+
+    // --- Count Query ---
+    // Also using the reliable Prisma.sql`` and Prisma.join approach
+    const totalResult = await prisma.$queryRaw`
+      select
+        count(*) as total
+      from
+        DeliveryPermits dp
+      left join SalesInvoiceHeaders sih on
+        dp.DeliveryPermitId = sih.DeliveryPermitId
+      join DeliveryPermitItems dpi on
+        dp.DeliveryPermitId = dpi.DeliveryPermitId
+      join customers c on
+        dp.CustomerId = c.CustomerId
+      join BusinessEntities be on
+        c.BusinessEntityId = be.BusinessEntityId
+      join inventorystocks is2 on
+        dpi.Inventorystockid = is2.inventorystockid
+      join InventorySuppliers is3 on
+        is2.inventoryid = is3.inventoryid
+      join salesmen s on
+        dp.KodeSales = s.kodesales
+      where
+        sih.SalesInvoiceHeaderId is null and 
+        cast(dp.TglSj as date) <= ${endDate}
+        ${cabangArray.length > 0
+          ? Prisma.sql`AND dp.KodeCc IN (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+        ${vendorArray.length > 0
+          ? Prisma.sql`AND is3.KodeLgn IN (${Prisma.join(vendorArray)})`
+          : Prisma.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+            or dpi.NamaBarang LIKE ${searchQuery}
+            OR dp.NoSJ LIKE ${searchQuery} 
+        )
+    `;
+    // --- End Count Query ---
+
+    const total = Number(totalResult[0]?.total || 0);
+
+    return res.json({
+      data:sales, // Match frontend expectation (check your frontend expects 'data' or 'sales')
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to fetch sales:", error);
+    // Return a more detailed error message
+    return res.status(500).json({
+      error: "Failed to fetch sales",
+      details: error
+    });
+  }
+});
+
 // Get customer by ID
 router.get("/:id", async (req, res) => {
   try {
