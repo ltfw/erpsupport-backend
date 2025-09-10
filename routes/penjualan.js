@@ -334,6 +334,107 @@ router.get("/outstandingsj", async (req, res) => {
   }
 });
 
+router.get("/outstandingdt", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.per_page) || -1;
+    const search = req.query.search?.trim() || '';
+    const skip = (page - 1) * pageSize;
+    const cabangParam = req.query.cabang || '';
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()).filter(Boolean) : []; // Filter empty strings
+    const vendorParam = req.query.vendor || '';
+    const vendorArray = vendorParam ? vendorParam.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const endDate = req.query.end_date || null;
+    const searchQuery = `%${search}%`;
+    const userRole = req.user.role;
+    const userName = req.user.username;
+    const userCabang = req.user.cabang;
+    const userVendor = req.user.vendor;
+
+    if (!endDate) {
+      return res.status(400).json({ error: "end date are required" });
+    }
+
+    // Apply user role logic for default filters
+    if (userRole != 'ADM') {
+      if (cabangArray.length === 0 && userCabang) { // Ensure userCabang is valid
+        cabangArray.push(userCabang);
+      }
+    }
+
+    if(userVendor){
+      if (vendorArray.length === 0 && userVendor) { // Ensure userVendor is valid
+        vendorArray.push(userVendor);
+      }
+    }
+    const pageSetup = pageSize > 0 ? Prisma.sql`OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY` : Prisma.sql``;
+
+    // --- Main Data Query ---
+    // Using the Prisma.sql`` and Prisma.join approach from your original working file
+    const sales = await prisma.$queryRaw`
+      select 
+        d.namadept as 'NamaCabang',
+        dc.nobukti as 'NoTagih',
+        format(dc.tgltagih, 'dd/MM/yyyy') as 'TglTagih',
+        FORMAT(dc.tgltagih, 'MMMM', 'id-ID') as 'Bulan',
+        dc.namapenagih as 'NamaPenagih',
+        dc.grandtotal as 'NominalTotal'
+      from DebtCollections dc 
+      join Customers c on c.CustomerId = dc.customerid
+      join departments d on c.KodeDept = d.kodedept
+      where isclosed <> 1 and isclosedmanually <> 1 and
+        dc.TglTagih <= ${endDate + ' 23:59:59' } 
+        ${cabangArray.length > 0
+          ? Prisma.sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+        )
+      order by dc.tgltagih,dc.nobukti
+      ${pageSetup};
+    `;
+    // --- End Main Data Query ---
+
+    // --- Count Query ---
+    // Also using the reliable Prisma.sql`` and Prisma.join approach
+    const totalResult = await prisma.$queryRaw`
+      select
+        count(*) as total
+      from DebtCollections dc 
+      join Customers c on c.CustomerId = dc.customerid
+      join departments d on c.KodeDept = d.kodedept
+      where isclosed <> 1 and isclosedmanually <> 1 and
+        dc.TglTagih <= ${endDate + ' 23:59:59' } 
+        ${cabangArray.length > 0
+          ? Prisma.sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+        )
+    `;
+    // --- End Count Query ---
+
+    const total = Number(totalResult[0]?.total || 0);
+
+    return res.json({
+      data:sales, // Match frontend expectation (check your frontend expects 'data' or 'sales')
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to fetch sales:", error);
+    // Return a more detailed error message
+    return res.status(500).json({
+      error: "Failed to fetch sales",
+      details: error
+    });
+  }
+});
+
 // Get customer by ID
 router.get("/:id", async (req, res) => {
   try {

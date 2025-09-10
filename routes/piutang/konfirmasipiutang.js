@@ -177,7 +177,7 @@ router.get("/detail/:id", async (req, res) => {
         having
           sum(ati.JumlahTrn) > 1
             ) as ardetail on
-        ardetail.ParentTransaction = ati.ParentTransaction
+        ardetail.ParentTransaction = ati.NoBukti
       where
         ati.CustomerId = ${req.params.id}
       order by
