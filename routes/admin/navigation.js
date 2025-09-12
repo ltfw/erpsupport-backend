@@ -36,6 +36,16 @@ router.get('/groups', requireAdmin, async (req, res) => {
   }
 })
 
+// GET all roles 
+router.get('/roles', requireAdmin, async (req, res) => {
+  try {
+    const roles = await prisma.userRoles.findMany()
+    res.json(roles)
+  } catch (err) {
+    handlePrismaError(err, res)
+  }
+})
+
 // POST create or update menu group
 router.post('/groups', requireAdmin, async (req, res) => {
   const { MenuKey, DisplayName, IconClass, SortOrder } = req.body
