@@ -70,6 +70,8 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
+app.get('/health', (req, res) => res.json({ status: 'OK' }));
+
 const port = process.env.PORT || 5000;
 const host = process.env.HOST || '0.0.0.0'; 
 
