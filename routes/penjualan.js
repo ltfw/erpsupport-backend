@@ -47,6 +47,7 @@ router.get("/", async (req, res) => {
     // Using the Prisma.sql`` and Prisma.join approach from your original working file
     const sales = await prisma.$queryRaw`
       SELECT
+        distinct
         d.NamaDept,
         d.KepalaCabang,
         sih.KodeWil,
