@@ -113,7 +113,7 @@ router.get("/", async (req, res) => {
     let whereClause = `(c.KodeLgn LIKE @P1 OR c.NamaLgn LIKE @P2)`;
     const params = [`%${search}%`, `%${search}%`]; // P1 and P2
 
-    if (userRole !== 'ADM') {
+    if (userRole !== 'ADM' && userRole !== 'FAS') {
       whereClause += ` AND c.KodeDept = @P3`;
       params.push(userCabang); // P3
     }
