@@ -16,7 +16,7 @@ router.get("/export", async (req, res) => {
     let whereClause = '';
     const params = [];
 
-    if (userRole !== 'ADM') {
+    if (userRole !== 'ADM' && userRole !== 'FAS') {
       whereClause = 'WHERE c.KodeDept = @P1';
       params.push(userCabang);
     }
