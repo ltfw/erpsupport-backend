@@ -47,14 +47,14 @@ router.get("/", async (req, res) => {
     // Using the Prisma.sql`` and Prisma.join approach from your original working file
     const sales = await prisma.$queryRaw`
       SELECT
-        distinct
+        DISTINCT
         d.NamaDept,
         d.KepalaCabang,
         sih.KodeWil,
         s.NamaSales,
-        s2.NamaSales as NamaSpv,
+        s2.NamaSales AS NamaSpv,
         r.RayonName,
-        FORMAT(sih.TglFaktur, 'dd/MM/yyyy') as TglFaktur,
+        FORMAT(sih.TglFaktur, 'dd/MM/yyyy') AS TglFaktur,
         sih.NoBukti,
         cg.CustomerGroupName,
         be.BusinessEntityName,
@@ -63,49 +63,116 @@ router.get("/", async (req, res) => {
         c.Alamat1,
         i.KodeItem,
         i.NamaBarang,
-        is3.NamaLgn as NamaSupplier,
+        is3.NamaLgn AS NamaSupplier,
         bc.BusinessCentreName,
-        sii.Hna,
-        case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end as Qty,
+        -- Prefer Hna if > 0, otherwise HargaJual
+        CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+        END AS Hna,
+        -- Qty: negative for RS, positive otherwise
+        CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END AS Qty,
         sii.SatuanNs,
-        sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end as ValueHNA,
-        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end) - (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.itemdispsn / 100) as ValueNett,
-        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.itemdispsn / 100) as TotalValueDisc,
-        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.DiscountDistributorPsn / 100) as ValueDiscDist,
-        (sii.Hna * case when bnt.qtyrefund > 0 then bnt.Qty else abs(bnt.Qty) end * sii.DiscountPrinciplePsn / 100) as ValueDiscPrinc,
-        sii.ItemDisPsn as TotalDiscPsn,
-        sii.DiscountDistributorPsn as DiscDistPsn,
-        sii.DiscountPrinciplePsn as DiscPrincPsn,
+        -- ValueHNA
+        (CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+        END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) AS ValueHNA,
+        -- ValueNett
+        ((CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+          END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END))
+        -
+        ((CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+          END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) * sii.ItemDisPsn / 100) AS ValueNett,
+        -- TotalValueDisc
+        ((CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+          END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) * sii.ItemDisPsn / 100) AS TotalValueDisc,
+        -- Distributor Discount
+        ((CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+          END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) * sii.DiscountDistributorPsn / 100) AS ValueDiscDist,
+        -- Principle Discount
+        ((CASE 
+            WHEN sii.Hna = 0 THEN sii.HargaJual
+            ELSE sii.Hna
+          END) *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) * sii.DiscountPrinciplePsn / 100) AS ValueDiscPrinc,
+        sii.ItemDisPsn AS TotalDiscPsn,
+        sii.DiscountDistributorPsn AS DiscDistPsn,
+        sii.DiscountPrinciplePsn AS DiscPrincPsn,
         bnt.BatchNumber,
-        FORMAT(bnt.TglExpired, 'dd/MM/yyyy') as TglExpired,
+        FORMAT(bnt.TglExpired, 'dd/MM/yyyy') AS TglExpired,
         c.Province,
         c.Regency,
         c.District,
         c.Village,
         CASE
-          WHEN sih.TipeJual = 'E' THEN 'E-Katalog'
-          WHEN sih.TipeJual = 'R' THEN 'Non E-Katalong'
-          ELSE ''
-        END as TipeJual,
+            WHEN sih.TipeJual = 'E' THEN 'E-Katalog'
+            WHEN sih.TipeJual = 'R' THEN 'Non E-Katalong'
+            ELSE ''
+        END AS TipeJual,
         sih.PoLanggan,
         sii.PromotionCode,
         p.PromotionName
-      FROM SalesInvoiceHeaders sih
-      JOIN SalesInvoiceItems sii ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-      JOIN BatchNumberTransactions bnt ON bnt.InventoryStockId = sii.InventoryStockId AND bnt.ParentTransaction = sih.AllNoSj
-      JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
-      JOIN Inventories i ON is2.InventoryId = i.InventoryId
-      JOIN Departments d ON d.KodeDept = sih.KodeCc
-      JOIN Salesmen s ON s.KodeSales = sih.KodeSales
-      JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
-      JOIN Customers c ON c.CustomerId = sih.CustomerId
-      JOIN RayonDistricts rd on c.DistrictId = rd.DistrictId
-      JOIN Rayons r ON rd.RayonCode = r.RayonCode
-      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
-      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
-      JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
-      LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
+    FROM SalesInvoiceHeaders sih
+    JOIN SalesInvoiceItems sii 
+        ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
+    JOIN BatchNumberTransactions bnt 
+        ON bnt.InventoryStockId = sii.InventoryStockId
+      AND (bnt.ParentTransaction = sih.AllNoSj OR bnt.ParentTransactionId = sih.SalesInvoiceHeaderId)
+    JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
+    JOIN Inventories i ON is2.InventoryId = i.InventoryId
+    JOIN Departments d ON d.KodeDept = sih.KodeCc
+    JOIN Salesmen s ON s.KodeSales = sih.KodeSales
+    JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
+    JOIN Customers c ON c.CustomerId = sih.CustomerId
+    JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
+    JOIN Rayons r ON rd.RayonCode = r.RayonCode
+    JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
+    JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
+    JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+    JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
+    LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
       WHERE cast(sih.TglFaktur as date) BETWEEN ${startDate} AND ${endDate}
         ${cabangArray.length > 0
           ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
@@ -134,15 +201,18 @@ router.get("/", async (req, res) => {
     const totalResult = await prisma.$queryRaw`
       SELECT COUNT(*) as total
       FROM SalesInvoiceHeaders sih
-      JOIN SalesInvoiceItems sii ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-      JOIN BatchNumberTransactions bnt ON bnt.InventoryStockId = sii.InventoryStockId AND bnt.ParentTransaction = sih.AllNoSj
+      JOIN SalesInvoiceItems sii 
+          ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
+      JOIN BatchNumberTransactions bnt 
+          ON bnt.InventoryStockId = sii.InventoryStockId
+        AND (bnt.ParentTransaction = sih.AllNoSj OR bnt.ParentTransactionId = sih.SalesInvoiceHeaderId)
       JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
       JOIN Inventories i ON is2.InventoryId = i.InventoryId
       JOIN Departments d ON d.KodeDept = sih.KodeCc
       JOIN Salesmen s ON s.KodeSales = sih.KodeSales
       JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
       JOIN Customers c ON c.CustomerId = sih.CustomerId
-      JOIN RayonDistricts rd on c.DistrictId = rd.DistrictId
+      JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
       JOIN Rayons r ON rd.RayonCode = r.RayonCode
       JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId

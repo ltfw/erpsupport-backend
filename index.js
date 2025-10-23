@@ -10,10 +10,13 @@ const navigationsRoutes = require('./routes/navigations');
 const rayoncabangRoutes = require('./routes/reports/rayoncabang');
 const daftarBarangRoutes = require('./routes/reports/daftarbarang');
 const konfirmasiPiutangRoutes = require('./routes/piutang/konfirmasipiutang');
+const alkesRoutes = require('./routes/reports/alkes');
+const reportfarmasiRoutes = require('./routes/reports/reportfarmasi');
 const authenticateToken = require('./middleware/auth');
 
 const adminNavigationRoutes = require('./routes/admin/navigation'); // Import admin navigation routes
 const cors = require('cors');
+const { getCurrentDateFormatted } = require('./utils/Date');
 require('dotenv').config();
 
 const app = express();
@@ -25,7 +28,7 @@ app.use((req, res, next) => {
 });
 
 const allowedOrigins = [
-  'http://localhost:3000', // For local development on the same machine
+  'http://localhost:3030', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
   'http://10.252.22.20',
   'http://localhost',
@@ -57,6 +60,9 @@ app.use('/navigations', authenticateToken, navigationsRoutes);
 app.use('/report/rayoncabang', authenticateToken, rayoncabangRoutes);
 app.use('/report/daftarbarang', authenticateToken, daftarBarangRoutes);
 app.use('/piutang/konfirmasipiutang', authenticateToken, konfirmasiPiutangRoutes);
+app.use('/alkes', authenticateToken, alkesRoutes);
+app.use('/farmasi/', authenticateToken, reportfarmasiRoutes);
+
 app.use('/others', lainLainRoutes);
 
 app.use('/admin/navigations', authenticateToken, adminNavigationRoutes);
@@ -68,6 +74,10 @@ app.get('/protected', authenticateToken, (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('API is running');
+});
+app.get('/test', (req, res) => {
+  console.log(getCurrentDateFormatted());
+  res.send(`Test endpoint is working. Current server time is: ${getCurrentDateFormatted()}`);
 });
 
 app.get('/health', (req, res) => res.json({ status: 'OK' }));

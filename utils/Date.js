@@ -29,10 +29,20 @@ const formatDateToDDMMYYYY = (dateStr) => {
   return `${day}/${month}/${year}`;
 };
 
+const getDatetimeOfPreviousMonth = (dateString) => {
+    const date = new Date(dateString);
+    date.setDate(0); // Rolls back to the last day of the previous month
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day} 23:59:59`;
+}
+
 // ✅ Export using CommonJS
 module.exports = {
   getCurrentDateFormatted,
   getFirstDayOfMonthFormatted,
   getFirstDayOfGivenMonthFormatted,
-  formatDateToDDMMYYYY
+  formatDateToDDMMYYYY,
+  getDatetimeOfPreviousMonth
 };
