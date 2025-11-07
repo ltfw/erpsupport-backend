@@ -136,7 +136,11 @@ router.delete('/items/:key', requireAdmin, async (req, res) => {
 router.get('/access', requireAdmin, async (req, res) => {
   try {
     const access = await prisma.eRPSupportRoleMenuAccess.findMany({
-      orderBy: { SortOrder: 'asc' }
+      orderBy: [
+        { RoleCode: 'asc' },
+        { MenuKey: 'asc' },
+        { ItemKey: 'asc' }
+      ]
     })
     res.json(access)
   } catch (err) {

@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 
 const allowedOrigins = [
-  'http://localhost:3030', // For local development on the same machine
+  'http://localhost:3000', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
   'http://10.252.22.20',
   'http://localhost',

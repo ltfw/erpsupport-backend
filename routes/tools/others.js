@@ -36,6 +36,16 @@ router.post("/importcoretax", async (req, res) => {
       )
       const results = await Promise.all(updatePromises);
       updatedCount = results.reduce((sum, r) => sum + r, 0);
+    }else if (tipe === "pembelian") {
+      const updatePromises = data.map(item =>
+        prisma.$executeRaw`
+        UPDATE PurchaseBills
+        SET NoFakturP = ${item.TaxInvoiceNumber}
+        WHERE NoFakturSupplier = ${item.TaxReference}
+      `
+      )
+      const results = await Promise.all(updatePromises);
+      updatedCount = results.reduce((sum, r) => sum + r, 0);
     }
 
     res.json({

@@ -8735,7 +8735,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\LENOVO\\Documents\\deploy\\massupport\\backend\\generated\\dbtrans",
+      "value": "C:\\Users\\User\\Documents\\learn\\backendformas\\generated\\dbtrans",
       "fromEnvVar": null
     },
     "config": {
@@ -8757,11 +8757,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\LENOVO\\Documents\\deploy\\massupport\\backend\\prisma\\schema2.prisma",
+    "sourceFilePath": "C:\\Users\\User\\Documents\\learn\\backendformas\\prisma\\schema2.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../.env",
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
