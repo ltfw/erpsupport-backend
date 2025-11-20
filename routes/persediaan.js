@@ -1,17 +1,27 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
+const { getCurrentDateFormatted } = require("../utils/Date");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['query','warn', 'error'], });
 
 router.get("/perbatch", async (req, res) => {
+  const endDate = req.query.date;
+  // check if date is valid
+  if (!endDate) {
+    return res.status(400).json({ error: "Date is required" });
+  }
+  if (endDate > getCurrentDateFormatted()) {
+    return res.status(400).json({ error: "Date is not valid" });
+  }
+  
   try {
     console.log("Fetching per batch stocks...");
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 200;
     const skip = (page - 1) * pageSize;
     const search = req.query.search?.trim() || '';
-    const endDate = req.query.date || getCurrentDateFormatted();
+    const endDate = req.query.date;
     const cabangParam = req.query.cabang || '';
     const vendorParam = req.query.vendor || '';
     const barangParam = req.query.barang || '';
@@ -30,11 +40,11 @@ router.get("/perbatch", async (req, res) => {
 
     // Search
     if (search) {
-      whereFragments.push(Prisma.sql`i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}`);
+      whereFragments.push(Prisma.sql`is2.KodeGudang LIKE ${searchQuery} OR w.NamaGudang LIKE ${searchQuery}`);
     }
 
     // Cabang filter
-    if (userRole !== 'ADM') {
+    if (userRole !== 'ADM' || cabangArray.length > 0) {
       const cabangList = cabangArray.length > 0 ? cabangArray : [userCabang];
       whereFragments.push(Prisma.sql`w.KodeDept IN (${Prisma.join(cabangList)})`);
     }
@@ -69,39 +79,39 @@ router.get("/perbatch", async (req, res) => {
       whereClause = Prisma.sql`WHERE ${combined}`;
     }
 
-    const query = Prisma.sql`
-      SELECT
-        bc.BusinessCentreName,
-        is2.KodeGudang,
-        w.NamaGudang,
-        i.KodeItem,
-        i.NamaBarang,
-        sumBatchNumber.BatchNumber,
-        FORMAT(sumBatchNumber.TglExpired, 'dd/MM/yyyy') AS TglExpired,
-        sumBatchNumber.Qty
-      FROM
-        inventories i
-      JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
-      JOIN inventorysuppliers is3 ON is3.InventoryId = is2.InventoryId
-      JOIN businesscentres bc ON bc.businessCentreCode = is3.businessCentreCode
-      JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
-      JOIN (
-        SELECT
-          bnt.InventoryStockId,
-          bnt.BatchNumber,
-          bnt.TglExpired,
-          SUM(bnt.Qty) AS Qty
-        FROM BatchNumberTransactions bnt
-        WHERE CAST(bnt.tanggaltransaksi AS DATE) <= ${endDate}
-        GROUP BY bnt.InventoryStockId, bnt.BatchNumber, bnt.TglExpired
-        HAVING SUM(bnt.Qty) > 0
-      ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
-      ${whereClause}
-      and is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
-      ORDER BY is2.KodeGudang, sumBatchNumber.BatchNumber
-      OFFSET ${skip} ROWS
-      FETCH NEXT ${pageSize} ROWS ONLY;
-    `;
+    // const query = Prisma.sql`
+    //   SELECT
+    //     bc.BusinessCentreName,
+    //     is2.KodeGudang,
+    //     w.NamaGudang,
+    //     i.KodeItem,
+    //     i.NamaBarang,
+    //     sumBatchNumber.BatchNumber,
+    //     FORMAT(sumBatchNumber.TglExpired, 'dd/MM/yyyy') AS TglExpired,
+    //     sumBatchNumber.Qty
+    //   FROM
+    //     inventories i
+    //   JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
+    //   JOIN inventorysuppliers is3 ON is3.InventoryId = is2.InventoryId
+    //   JOIN businesscentres bc ON bc.businessCentreCode = is3.businessCentreCode
+    //   JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
+    //   JOIN (
+    //     SELECT
+    //       bnt.InventoryStockId,
+    //       bnt.BatchNumber,
+    //       bnt.TglExpired,
+    //       SUM(bnt.Qty) AS Qty
+    //     FROM BatchNumberTransactions bnt
+    //     WHERE CAST(bnt.tanggaltransaksi AS DATE) <= ${endDate}
+    //     GROUP BY bnt.InventoryStockId, bnt.BatchNumber, bnt.TglExpired
+    //     HAVING SUM(bnt.Qty) > 0
+    //   ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
+    //   ${whereClause}
+    //   and is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
+    //   ORDER BY is2.KodeGudang, sumBatchNumber.BatchNumber
+    //   OFFSET ${skip} ROWS
+    //   FETCH NEXT ${pageSize} ROWS ONLY;
+    // `;
 
     // 🔥 DEBUG: Log the query
     // console.log("Final SQL Query:", query);
@@ -140,7 +150,7 @@ router.get("/perbatch", async (req, res) => {
           SUM(bnt.Qty) > 0
       ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
       ${whereClause}
-      and is2.KodeGudang <> '00-GUU-03'
+      and is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
       ORDER BY
         is2.KodeGudang,
         sumBatchNumber.BatchNumber
@@ -162,7 +172,7 @@ router.get("/perbatch", async (req, res) => {
         WHERE CAST(tanggaltransaksi AS DATE) <= ${endDate}
       ) AS bnt ON is2.InventoryStockId = bnt.InventoryStockId
       ${whereClause}
-      and is2.KodeGudang <> '00-GUU-03'
+      and is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
     `;
 
     const total = Number(countResult[0]?.total || 0);
