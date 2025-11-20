@@ -97,7 +97,7 @@ router.get("/perbatch", async (req, res) => {
         HAVING SUM(bnt.Qty) > 0
       ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
       ${whereClause}
-      and is2.KodeGudang <> '00-GUU-03'
+      and is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
       ORDER BY is2.KodeGudang, sumBatchNumber.BatchNumber
       OFFSET ${skip} ROWS
       FETCH NEXT ${pageSize} ROWS ONLY;
