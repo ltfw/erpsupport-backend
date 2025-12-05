@@ -6,107 +6,115 @@ const prisma = new PrismaClient({ log: ['warn', 'error'] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
-  const userRole = req.user.role;
   console.log("data user", req.user.role, req.user.username, req.user.cabang);
 
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
-    const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
-    const searchQuery = `%${search}%`;
-    const cabang = req.query.cabang?.trim() || '';
+    const rawVendorId = req.query.vendor?.trim() || '';
+    // get startDate and endDate
+    const startDate = req.query.start_date?.trim() || '';
+    const endDate = req.query.end_date?.trim() || '';
 
-    let cabangArray = [];
-    const allowedRoles = ['ADM', 'FAS'];
-    if (allowedRoles.includes(userRole) && cabang) {
-      cabangArray = cabang ? cabang.split(',').map(s => s.trim()) : [];
-    } else if (allowedRoles.includes(userRole) && !cabang) {
-      cabangArray = [];
-    } else {
-      cabangArray = [req.user.cabang];
-    }
-    console.log("user role:", userRole, "Cabang Array: ", cabangArray);
+    const dateFilter = startDate && endDate
+      ? sql`
+      AND ati2.TglJthTmp >= ${startDate}
+      AND ati2.TglJthTmp <  DATEADD(day, 1, ${endDate})
+    `
+      : sql``;
+
+    const vendorIds = Array.isArray(rawVendorId)
+      ? rawVendorId.map(id => id.trim()).filter(Boolean)
+      : rawVendorId
+        .split(',')
+        .map(id => id.trim())
+        .filter(Boolean);
+    const vendorFilter = vendorIds.length > 0
+      ? sql` AND v.KodeLgn IN (${Prisma.join(vendorIds)})`
+      : sql``;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
-    const [piutang, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-        select
-          d.NamaDept,
-          c.KodeLgn,
-          c.NamaLgn,
-          be.BusinessEntityName,
-          ati.CustomerId,
-          s.NamaSales,
-          sum(ati.JumlahTrn) as nominal
-        from
-          artransactionitems ati
-        join customers c on
-          ati.customerid = c.customerid
-        join departments d ON 
-          d.KodeDept = c.KodeDept
-        join BusinessEntities be on
-          be.BusinessEntityId = c.BusinessEntityId
-        join salesmen s on
-          c.KodeSales = s.KodeSales
-        where
-          (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
-          ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
-        group by
-          d.NamaDept,
-          c.KodeLgn,
-          c.NamaLgn,
-          be.BusinessEntityName,
-          ati.CustomerId,
-          s.NamaSales
-        having
-          sum(ati.JumlahTrn) > 0
-        order by
-          c.kodelgn
-        ${offsetClause}
-      `,
+    const [hutang, totalResult] = await Promise.all([
       prisma.$queryRaw`
         SELECT
-          COUNT(*) as total
+          v.NamaLgn,
+          ati.NoFaktur,
+          ath.NoFakturSupplier,
+          FORMAT(ath.TglTrn, 'yyyy-MM-dd') AS TglTrn,
+          ati.Nominal,
+          FORMAT(ati2.TglJthTmp, 'yyyy-MM-dd') AS TglJthTmp,
+          DATEDIFF(DAY, ati2.TglJthTmp, GETDATE()) AS UmurHutang
         FROM
           (
           SELECT
-            d.NamaDept,
-            c.KodeLgn,
-            c.NamaLgn,
-            be.BusinessEntityName,
-            ati.CustomerId,
-            sum(ati.JumlahTrn) as nominal
+            ati.VendorId,
+            ati.ParentTransaction AS NoFaktur,
+            ROUND(SUM(ati.jumlahtrn), 2) AS Nominal
           FROM
-            artransactionitems ati
-          JOIN customers c ON
-            ati.customerid = c.customerid
-          JOIN departments d ON
-            d.KodeDept = c.KodeDept
-          JOIN BusinessEntities be ON
-            be.BusinessEntityId = c.BusinessEntityId
-          JOIN salesmen s ON
-            c.KodeSales = s.KodeSales
-          WHERE
-            (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
-                  ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
+            aptransactionitems ati
           GROUP BY
-            d.NamaDept,
-            c.KodeLgn,
-            c.NamaLgn,
-            be.BusinessEntityName,
-            ati.CustomerId,
-            s.NamaSales
+            ati.VendorId,
+            ati.ParentTransaction
           HAVING
-            SUM(ati.JumlahTrn) > 0
-        ) AS grouped_results;
+            SUM(ati.JumlahTrn) > 1
+          ) as ati
+        join ApTransactionItems as ati2 on 
+          ati.NoFaktur = ati2.ParentTransaction
+        JOIN Vendors v ON
+          ati.vendorId = v.VendorId
+        JOIN ApTransactionHeaders ath ON
+          ati.NoFaktur = ath.NoBukti
+        WHERE 1 = 1
+        ${vendorFilter}
+        ${dateFilter}
+        ORDER BY
+          UmurHutang DESC,
+          Nominal DESC
+        ${offsetClause}
+      `,
+      prisma.$queryRaw`
+        SELECT COUNT(*) as total
+        FROM (
+          SELECT
+            v.NamaLgn,
+            ati.NoFaktur,
+            ath.NoFakturSupplier,
+            FORMAT(ath.TglTrn, 'yyyy-MM-dd') AS TglTrn,
+            ati.Nominal,
+            FORMAT(ati2.TglJthTmp, 'yyyy-MM-dd') AS TglJthTmp,
+            DATEDIFF(DAY, ati2.TglJthTmp, GETDATE()) AS UmurHutang
+          FROM
+            (
+            SELECT
+              ati.VendorId,
+              ati.ParentTransaction AS NoFaktur,
+              ROUND(SUM(ati.jumlahtrn), 2) AS Nominal
+            FROM
+              aptransactionitems ati
+            GROUP BY
+              ati.VendorId,
+              ati.ParentTransaction
+            HAVING
+              SUM(ati.JumlahTrn) > 1
+            ) as ati
+          join ApTransactionItems as ati2 on 
+            ati.NoFaktur = ati2.ParentTransaction
+          JOIN Vendors v ON
+            ati.vendorId = v.VendorId
+          JOIN ApTransactionHeaders ath ON
+            ati.NoFaktur = ath.NoBukti
+          WHERE 1 = 1
+            ${vendorFilter}
+            ${dateFilter}
+        ) AS grouped_results
       `
     ]);
 
     const total = Number(totalResult[0]?.total || 0);
 
     res.json({
-      data: piutang,
+      data: hutang,
       pagination: {
         page,
         pageSize,
@@ -116,7 +124,7 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch piutang", errors: error });
+    res.status(500).json({ error: "Failed to fetch hutang", errors: error });
   }
 });
 

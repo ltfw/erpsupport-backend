@@ -1,7 +1,9 @@
 const express = require("express");
 const { PrismaClient } = require("../../generated/erpsupport"); // Changed to erpsupport
+const { PrismaClient:PrismaClientdb } = require("../../generated/dbtrans");
 const router = express.Router();
 const prisma = new PrismaClient();
+const prismaDb = new PrismaClientdb();
 
 // GET /api/alkes - Get all MappingProdukMasKemenkes with pagination and search
 router.get("/", async (req, res) => {
@@ -11,7 +13,8 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || '';
     const skip = (page - 1) * pageSize;
 
-    const [alkes, total] = await Promise.all([
+    // Get paginated MappingProdukMasKemenkes records
+    const [alkesData, total] = await Promise.all([
       prisma.MappingProdukMasKemenkes.findMany({
         where: {
           OR: [
@@ -25,7 +28,7 @@ router.get("/", async (req, res) => {
         skip,
         take: pageSize,
         orderBy: {
-          NamaProduk: 'asc', // Or any other field
+          NamaProduk: 'asc',
         },
       }),
       prisma.MappingProdukMasKemenkes.count({
@@ -40,6 +43,38 @@ router.get("/", async (req, res) => {
         },
       }),
     ]);
+
+    // Extract unique KodeMas values from the paginated results for joining with Inventories
+    const kodeMasValues = [...new Set(alkesData.map(item => item.KodeMas).filter(Boolean))];
+
+    // Fetch Inventories data where KodeItem matches KodeMas
+    const inventories = kodeMasValues.length > 0
+      ? await prismaDb.Inventories.findMany({
+          where: {
+            KodeItem: {
+              in: kodeMasValues,
+            },
+          },
+          // Select all fields from Inventories, or specify only the ones you need
+          // select: {
+          //   KodeItem: true,
+          //   NamaBarang: true,
+          //   NamaAlias: true,
+          //   // Add other fields from Inventories that you need
+          // },
+        })
+      : [];
+
+    // Create a map for quick lookup: KodeItem -> Inventory
+    const inventoryMap = new Map(
+      inventories.map(inv => [inv.KodeItem, inv])
+    );
+
+    // Join the data: add Inventory to each alkes record
+    const alkes = alkesData.map(alke => ({
+      ...alke,
+      Inventory: inventoryMap.get(alke.KodeMas) || null,
+    }));
 
     res.json({
       data: alkes,
