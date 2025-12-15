@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type MappingProdukMasKemenkes = $Result.DefaultSelection<Prisma.$MappingProdukMasKemenkesPayload>
+/**
+ * Model CabangMapping
+ * 
+ */
+export type CabangMapping = $Result.DefaultSelection<Prisma.$CabangMappingPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -153,6 +158,16 @@ export class PrismaClient<
     * ```
     */
   get mappingProdukMasKemenkes(): Prisma.MappingProdukMasKemenkesDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cabangMapping`: Exposes CRUD operations for the **CabangMapping** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CabangMappings
+    * const cabangMappings = await prisma.cabangMapping.findMany()
+    * ```
+    */
+  get cabangMapping(): Prisma.CabangMappingDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -593,7 +608,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    MappingProdukMasKemenkes: 'MappingProdukMasKemenkes'
+    MappingProdukMasKemenkes: 'MappingProdukMasKemenkes',
+    CabangMapping: 'CabangMapping'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -612,7 +628,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "mappingProdukMasKemenkes"
+      modelProps: "mappingProdukMasKemenkes" | "cabangMapping"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -679,6 +695,72 @@ export namespace Prisma {
           count: {
             args: Prisma.MappingProdukMasKemenkesCountArgs<ExtArgs>
             result: $Utils.Optional<MappingProdukMasKemenkesCountAggregateOutputType> | number
+          }
+        }
+      }
+      CabangMapping: {
+        payload: Prisma.$CabangMappingPayload<ExtArgs>
+        fields: Prisma.CabangMappingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CabangMappingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CabangMappingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          findFirst: {
+            args: Prisma.CabangMappingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CabangMappingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          findMany: {
+            args: Prisma.CabangMappingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>[]
+          }
+          create: {
+            args: Prisma.CabangMappingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          createMany: {
+            args: Prisma.CabangMappingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.CabangMappingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          update: {
+            args: Prisma.CabangMappingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          deleteMany: {
+            args: Prisma.CabangMappingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CabangMappingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CabangMappingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabangMappingPayload>
+          }
+          aggregate: {
+            args: Prisma.CabangMappingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCabangMapping>
+          }
+          groupBy: {
+            args: Prisma.CabangMappingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CabangMappingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CabangMappingCountArgs<ExtArgs>
+            result: $Utils.Optional<CabangMappingCountAggregateOutputType> | number
           }
         }
       }
@@ -767,6 +849,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     mappingProdukMasKemenkes?: MappingProdukMasKemenkesOmit
+    cabangMapping?: CabangMappingOmit
   }
 
   /* Types for Logging */
@@ -874,7 +957,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMinAggregateOutputType = {
     id: string | null
     KodeMas: string | null
-    NamaProduk: string | null
+    NamaProdukKemenkes: string | null
     KodeCabang: string | null
     NamaCabang: string | null
     IdProdukKemenkes: string | null
@@ -885,7 +968,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMaxAggregateOutputType = {
     id: string | null
     KodeMas: string | null
-    NamaProduk: string | null
+    NamaProdukKemenkes: string | null
     KodeCabang: string | null
     NamaCabang: string | null
     IdProdukKemenkes: string | null
@@ -896,7 +979,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesCountAggregateOutputType = {
     id: number
     KodeMas: number
-    NamaProduk: number
+    NamaProdukKemenkes: number
     KodeCabang: number
     NamaCabang: number
     IdProdukKemenkes: number
@@ -909,7 +992,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMinAggregateInputType = {
     id?: true
     KodeMas?: true
-    NamaProduk?: true
+    NamaProdukKemenkes?: true
     KodeCabang?: true
     NamaCabang?: true
     IdProdukKemenkes?: true
@@ -920,7 +1003,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMaxAggregateInputType = {
     id?: true
     KodeMas?: true
-    NamaProduk?: true
+    NamaProdukKemenkes?: true
     KodeCabang?: true
     NamaCabang?: true
     IdProdukKemenkes?: true
@@ -931,7 +1014,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesCountAggregateInputType = {
     id?: true
     KodeMas?: true
-    NamaProduk?: true
+    NamaProdukKemenkes?: true
     KodeCabang?: true
     NamaCabang?: true
     IdProdukKemenkes?: true
@@ -1015,7 +1098,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesGroupByOutputType = {
     id: string
     KodeMas: string
-    NamaProduk: string
+    NamaProdukKemenkes: string
     KodeCabang: string
     NamaCabang: string | null
     IdProdukKemenkes: string | null
@@ -1043,7 +1126,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     KodeMas?: boolean
-    NamaProduk?: boolean
+    NamaProdukKemenkes?: boolean
     KodeCabang?: boolean
     NamaCabang?: boolean
     IdProdukKemenkes?: boolean
@@ -1056,7 +1139,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesSelectScalar = {
     id?: boolean
     KodeMas?: boolean
-    NamaProduk?: boolean
+    NamaProdukKemenkes?: boolean
     KodeCabang?: boolean
     NamaCabang?: boolean
     IdProdukKemenkes?: boolean
@@ -1064,7 +1147,7 @@ export namespace Prisma {
     UpdatedAt?: boolean
   }
 
-  export type MappingProdukMasKemenkesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "KodeMas" | "NamaProduk" | "KodeCabang" | "NamaCabang" | "IdProdukKemenkes" | "CreatedAt" | "UpdatedAt", ExtArgs["result"]["mappingProdukMasKemenkes"]>
+  export type MappingProdukMasKemenkesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "KodeMas" | "NamaProdukKemenkes" | "KodeCabang" | "NamaCabang" | "IdProdukKemenkes" | "CreatedAt" | "UpdatedAt", ExtArgs["result"]["mappingProdukMasKemenkes"]>
 
   export type $MappingProdukMasKemenkesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MappingProdukMasKemenkes"
@@ -1072,7 +1155,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       KodeMas: string
-      NamaProduk: string
+      NamaProdukKemenkes: string
       KodeCabang: string
       NamaCabang: string | null
       IdProdukKemenkes: string | null
@@ -1449,7 +1532,7 @@ export namespace Prisma {
   interface MappingProdukMasKemenkesFieldRefs {
     readonly id: FieldRef<"MappingProdukMasKemenkes", 'String'>
     readonly KodeMas: FieldRef<"MappingProdukMasKemenkes", 'String'>
-    readonly NamaProduk: FieldRef<"MappingProdukMasKemenkes", 'String'>
+    readonly NamaProdukKemenkes: FieldRef<"MappingProdukMasKemenkes", 'String'>
     readonly KodeCabang: FieldRef<"MappingProdukMasKemenkes", 'String'>
     readonly NamaCabang: FieldRef<"MappingProdukMasKemenkes", 'String'>
     readonly IdProdukKemenkes: FieldRef<"MappingProdukMasKemenkes", 'String'>
@@ -1776,6 +1859,909 @@ export namespace Prisma {
 
 
   /**
+   * Model CabangMapping
+   */
+
+  export type AggregateCabangMapping = {
+    _count: CabangMappingCountAggregateOutputType | null
+    _min: CabangMappingMinAggregateOutputType | null
+    _max: CabangMappingMaxAggregateOutputType | null
+  }
+
+  export type CabangMappingMinAggregateOutputType = {
+    id: string | null
+    CabangSumber: string | null
+    NamaCabangSumber: string | null
+    CabangTarget: string | null
+    NamaCabangTarget: string | null
+    KodeUpline: string | null
+    NamaUpline: string | null
+  }
+
+  export type CabangMappingMaxAggregateOutputType = {
+    id: string | null
+    CabangSumber: string | null
+    NamaCabangSumber: string | null
+    CabangTarget: string | null
+    NamaCabangTarget: string | null
+    KodeUpline: string | null
+    NamaUpline: string | null
+  }
+
+  export type CabangMappingCountAggregateOutputType = {
+    id: number
+    CabangSumber: number
+    NamaCabangSumber: number
+    CabangTarget: number
+    NamaCabangTarget: number
+    KodeUpline: number
+    NamaUpline: number
+    _all: number
+  }
+
+
+  export type CabangMappingMinAggregateInputType = {
+    id?: true
+    CabangSumber?: true
+    NamaCabangSumber?: true
+    CabangTarget?: true
+    NamaCabangTarget?: true
+    KodeUpline?: true
+    NamaUpline?: true
+  }
+
+  export type CabangMappingMaxAggregateInputType = {
+    id?: true
+    CabangSumber?: true
+    NamaCabangSumber?: true
+    CabangTarget?: true
+    NamaCabangTarget?: true
+    KodeUpline?: true
+    NamaUpline?: true
+  }
+
+  export type CabangMappingCountAggregateInputType = {
+    id?: true
+    CabangSumber?: true
+    NamaCabangSumber?: true
+    CabangTarget?: true
+    NamaCabangTarget?: true
+    KodeUpline?: true
+    NamaUpline?: true
+    _all?: true
+  }
+
+  export type CabangMappingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CabangMapping to aggregate.
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabangMappings to fetch.
+     */
+    orderBy?: CabangMappingOrderByWithRelationInput | CabangMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CabangMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabangMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabangMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CabangMappings
+    **/
+    _count?: true | CabangMappingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CabangMappingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CabangMappingMaxAggregateInputType
+  }
+
+  export type GetCabangMappingAggregateType<T extends CabangMappingAggregateArgs> = {
+        [P in keyof T & keyof AggregateCabangMapping]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCabangMapping[P]>
+      : GetScalarType<T[P], AggregateCabangMapping[P]>
+  }
+
+
+
+
+  export type CabangMappingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CabangMappingWhereInput
+    orderBy?: CabangMappingOrderByWithAggregationInput | CabangMappingOrderByWithAggregationInput[]
+    by: CabangMappingScalarFieldEnum[] | CabangMappingScalarFieldEnum
+    having?: CabangMappingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CabangMappingCountAggregateInputType | true
+    _min?: CabangMappingMinAggregateInputType
+    _max?: CabangMappingMaxAggregateInputType
+  }
+
+  export type CabangMappingGroupByOutputType = {
+    id: string
+    CabangSumber: string
+    NamaCabangSumber: string
+    CabangTarget: string
+    NamaCabangTarget: string
+    KodeUpline: string | null
+    NamaUpline: string | null
+    _count: CabangMappingCountAggregateOutputType | null
+    _min: CabangMappingMinAggregateOutputType | null
+    _max: CabangMappingMaxAggregateOutputType | null
+  }
+
+  type GetCabangMappingGroupByPayload<T extends CabangMappingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CabangMappingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CabangMappingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CabangMappingGroupByOutputType[P]>
+            : GetScalarType<T[P], CabangMappingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CabangMappingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    CabangSumber?: boolean
+    NamaCabangSumber?: boolean
+    CabangTarget?: boolean
+    NamaCabangTarget?: boolean
+    KodeUpline?: boolean
+    NamaUpline?: boolean
+  }, ExtArgs["result"]["cabangMapping"]>
+
+
+
+  export type CabangMappingSelectScalar = {
+    id?: boolean
+    CabangSumber?: boolean
+    NamaCabangSumber?: boolean
+    CabangTarget?: boolean
+    NamaCabangTarget?: boolean
+    KodeUpline?: boolean
+    NamaUpline?: boolean
+  }
+
+  export type CabangMappingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "CabangSumber" | "NamaCabangSumber" | "CabangTarget" | "NamaCabangTarget" | "KodeUpline" | "NamaUpline", ExtArgs["result"]["cabangMapping"]>
+
+  export type $CabangMappingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CabangMapping"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      CabangSumber: string
+      NamaCabangSumber: string
+      CabangTarget: string
+      NamaCabangTarget: string
+      KodeUpline: string | null
+      NamaUpline: string | null
+    }, ExtArgs["result"]["cabangMapping"]>
+    composites: {}
+  }
+
+  type CabangMappingGetPayload<S extends boolean | null | undefined | CabangMappingDefaultArgs> = $Result.GetResult<Prisma.$CabangMappingPayload, S>
+
+  type CabangMappingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CabangMappingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CabangMappingCountAggregateInputType | true
+    }
+
+  export interface CabangMappingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CabangMapping'], meta: { name: 'CabangMapping' } }
+    /**
+     * Find zero or one CabangMapping that matches the filter.
+     * @param {CabangMappingFindUniqueArgs} args - Arguments to find a CabangMapping
+     * @example
+     * // Get one CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CabangMappingFindUniqueArgs>(args: SelectSubset<T, CabangMappingFindUniqueArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CabangMapping that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CabangMappingFindUniqueOrThrowArgs} args - Arguments to find a CabangMapping
+     * @example
+     * // Get one CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CabangMappingFindUniqueOrThrowArgs>(args: SelectSubset<T, CabangMappingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CabangMapping that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingFindFirstArgs} args - Arguments to find a CabangMapping
+     * @example
+     * // Get one CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CabangMappingFindFirstArgs>(args?: SelectSubset<T, CabangMappingFindFirstArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CabangMapping that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingFindFirstOrThrowArgs} args - Arguments to find a CabangMapping
+     * @example
+     * // Get one CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CabangMappingFindFirstOrThrowArgs>(args?: SelectSubset<T, CabangMappingFindFirstOrThrowArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CabangMappings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CabangMappings
+     * const cabangMappings = await prisma.cabangMapping.findMany()
+     * 
+     * // Get first 10 CabangMappings
+     * const cabangMappings = await prisma.cabangMapping.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cabangMappingWithIdOnly = await prisma.cabangMapping.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CabangMappingFindManyArgs>(args?: SelectSubset<T, CabangMappingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CabangMapping.
+     * @param {CabangMappingCreateArgs} args - Arguments to create a CabangMapping.
+     * @example
+     * // Create one CabangMapping
+     * const CabangMapping = await prisma.cabangMapping.create({
+     *   data: {
+     *     // ... data to create a CabangMapping
+     *   }
+     * })
+     * 
+     */
+    create<T extends CabangMappingCreateArgs>(args: SelectSubset<T, CabangMappingCreateArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CabangMappings.
+     * @param {CabangMappingCreateManyArgs} args - Arguments to create many CabangMappings.
+     * @example
+     * // Create many CabangMappings
+     * const cabangMapping = await prisma.cabangMapping.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CabangMappingCreateManyArgs>(args?: SelectSubset<T, CabangMappingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a CabangMapping.
+     * @param {CabangMappingDeleteArgs} args - Arguments to delete one CabangMapping.
+     * @example
+     * // Delete one CabangMapping
+     * const CabangMapping = await prisma.cabangMapping.delete({
+     *   where: {
+     *     // ... filter to delete one CabangMapping
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CabangMappingDeleteArgs>(args: SelectSubset<T, CabangMappingDeleteArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CabangMapping.
+     * @param {CabangMappingUpdateArgs} args - Arguments to update one CabangMapping.
+     * @example
+     * // Update one CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CabangMappingUpdateArgs>(args: SelectSubset<T, CabangMappingUpdateArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CabangMappings.
+     * @param {CabangMappingDeleteManyArgs} args - Arguments to filter CabangMappings to delete.
+     * @example
+     * // Delete a few CabangMappings
+     * const { count } = await prisma.cabangMapping.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CabangMappingDeleteManyArgs>(args?: SelectSubset<T, CabangMappingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CabangMappings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CabangMappings
+     * const cabangMapping = await prisma.cabangMapping.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CabangMappingUpdateManyArgs>(args: SelectSubset<T, CabangMappingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CabangMapping.
+     * @param {CabangMappingUpsertArgs} args - Arguments to update or create a CabangMapping.
+     * @example
+     * // Update or create a CabangMapping
+     * const cabangMapping = await prisma.cabangMapping.upsert({
+     *   create: {
+     *     // ... data to create a CabangMapping
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CabangMapping we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CabangMappingUpsertArgs>(args: SelectSubset<T, CabangMappingUpsertArgs<ExtArgs>>): Prisma__CabangMappingClient<$Result.GetResult<Prisma.$CabangMappingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CabangMappings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingCountArgs} args - Arguments to filter CabangMappings to count.
+     * @example
+     * // Count the number of CabangMappings
+     * const count = await prisma.cabangMapping.count({
+     *   where: {
+     *     // ... the filter for the CabangMappings we want to count
+     *   }
+     * })
+    **/
+    count<T extends CabangMappingCountArgs>(
+      args?: Subset<T, CabangMappingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CabangMappingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CabangMapping.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CabangMappingAggregateArgs>(args: Subset<T, CabangMappingAggregateArgs>): Prisma.PrismaPromise<GetCabangMappingAggregateType<T>>
+
+    /**
+     * Group by CabangMapping.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabangMappingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CabangMappingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CabangMappingGroupByArgs['orderBy'] }
+        : { orderBy?: CabangMappingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CabangMappingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCabangMappingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CabangMapping model
+   */
+  readonly fields: CabangMappingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CabangMapping.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CabangMappingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CabangMapping model
+   */
+  interface CabangMappingFieldRefs {
+    readonly id: FieldRef<"CabangMapping", 'String'>
+    readonly CabangSumber: FieldRef<"CabangMapping", 'String'>
+    readonly NamaCabangSumber: FieldRef<"CabangMapping", 'String'>
+    readonly CabangTarget: FieldRef<"CabangMapping", 'String'>
+    readonly NamaCabangTarget: FieldRef<"CabangMapping", 'String'>
+    readonly KodeUpline: FieldRef<"CabangMapping", 'String'>
+    readonly NamaUpline: FieldRef<"CabangMapping", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CabangMapping findUnique
+   */
+  export type CabangMappingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter, which CabangMapping to fetch.
+     */
+    where: CabangMappingWhereUniqueInput
+  }
+
+  /**
+   * CabangMapping findUniqueOrThrow
+   */
+  export type CabangMappingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter, which CabangMapping to fetch.
+     */
+    where: CabangMappingWhereUniqueInput
+  }
+
+  /**
+   * CabangMapping findFirst
+   */
+  export type CabangMappingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter, which CabangMapping to fetch.
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabangMappings to fetch.
+     */
+    orderBy?: CabangMappingOrderByWithRelationInput | CabangMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CabangMappings.
+     */
+    cursor?: CabangMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabangMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabangMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CabangMappings.
+     */
+    distinct?: CabangMappingScalarFieldEnum | CabangMappingScalarFieldEnum[]
+  }
+
+  /**
+   * CabangMapping findFirstOrThrow
+   */
+  export type CabangMappingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter, which CabangMapping to fetch.
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabangMappings to fetch.
+     */
+    orderBy?: CabangMappingOrderByWithRelationInput | CabangMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CabangMappings.
+     */
+    cursor?: CabangMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabangMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabangMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CabangMappings.
+     */
+    distinct?: CabangMappingScalarFieldEnum | CabangMappingScalarFieldEnum[]
+  }
+
+  /**
+   * CabangMapping findMany
+   */
+  export type CabangMappingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter, which CabangMappings to fetch.
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabangMappings to fetch.
+     */
+    orderBy?: CabangMappingOrderByWithRelationInput | CabangMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CabangMappings.
+     */
+    cursor?: CabangMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabangMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabangMappings.
+     */
+    skip?: number
+    distinct?: CabangMappingScalarFieldEnum | CabangMappingScalarFieldEnum[]
+  }
+
+  /**
+   * CabangMapping create
+   */
+  export type CabangMappingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CabangMapping.
+     */
+    data: XOR<CabangMappingCreateInput, CabangMappingUncheckedCreateInput>
+  }
+
+  /**
+   * CabangMapping createMany
+   */
+  export type CabangMappingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CabangMappings.
+     */
+    data: CabangMappingCreateManyInput | CabangMappingCreateManyInput[]
+  }
+
+  /**
+   * CabangMapping update
+   */
+  export type CabangMappingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CabangMapping.
+     */
+    data: XOR<CabangMappingUpdateInput, CabangMappingUncheckedUpdateInput>
+    /**
+     * Choose, which CabangMapping to update.
+     */
+    where: CabangMappingWhereUniqueInput
+  }
+
+  /**
+   * CabangMapping updateMany
+   */
+  export type CabangMappingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CabangMappings.
+     */
+    data: XOR<CabangMappingUpdateManyMutationInput, CabangMappingUncheckedUpdateManyInput>
+    /**
+     * Filter which CabangMappings to update
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * Limit how many CabangMappings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CabangMapping upsert
+   */
+  export type CabangMappingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CabangMapping to update in case it exists.
+     */
+    where: CabangMappingWhereUniqueInput
+    /**
+     * In case the CabangMapping found by the `where` argument doesn't exist, create a new CabangMapping with this data.
+     */
+    create: XOR<CabangMappingCreateInput, CabangMappingUncheckedCreateInput>
+    /**
+     * In case the CabangMapping was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CabangMappingUpdateInput, CabangMappingUncheckedUpdateInput>
+  }
+
+  /**
+   * CabangMapping delete
+   */
+  export type CabangMappingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+    /**
+     * Filter which CabangMapping to delete.
+     */
+    where: CabangMappingWhereUniqueInput
+  }
+
+  /**
+   * CabangMapping deleteMany
+   */
+  export type CabangMappingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CabangMappings to delete
+     */
+    where?: CabangMappingWhereInput
+    /**
+     * Limit how many CabangMappings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CabangMapping without action
+   */
+  export type CabangMappingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabangMapping
+     */
+    select?: CabangMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabangMapping
+     */
+    omit?: CabangMappingOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1793,7 +2779,7 @@ export namespace Prisma {
   export const MappingProdukMasKemenkesScalarFieldEnum: {
     id: 'id',
     KodeMas: 'KodeMas',
-    NamaProduk: 'NamaProduk',
+    NamaProdukKemenkes: 'NamaProdukKemenkes',
     KodeCabang: 'KodeCabang',
     NamaCabang: 'NamaCabang',
     IdProdukKemenkes: 'IdProdukKemenkes',
@@ -1802,6 +2788,19 @@ export namespace Prisma {
   };
 
   export type MappingProdukMasKemenkesScalarFieldEnum = (typeof MappingProdukMasKemenkesScalarFieldEnum)[keyof typeof MappingProdukMasKemenkesScalarFieldEnum]
+
+
+  export const CabangMappingScalarFieldEnum: {
+    id: 'id',
+    CabangSumber: 'CabangSumber',
+    NamaCabangSumber: 'NamaCabangSumber',
+    CabangTarget: 'CabangTarget',
+    NamaCabangTarget: 'NamaCabangTarget',
+    KodeUpline: 'KodeUpline',
+    NamaUpline: 'NamaUpline'
+  };
+
+  export type CabangMappingScalarFieldEnum = (typeof CabangMappingScalarFieldEnum)[keyof typeof CabangMappingScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -1855,7 +2854,7 @@ export namespace Prisma {
     NOT?: MappingProdukMasKemenkesWhereInput | MappingProdukMasKemenkesWhereInput[]
     id?: StringFilter<"MappingProdukMasKemenkes"> | string
     KodeMas?: StringFilter<"MappingProdukMasKemenkes"> | string
-    NamaProduk?: StringFilter<"MappingProdukMasKemenkes"> | string
+    NamaProdukKemenkes?: StringFilter<"MappingProdukMasKemenkes"> | string
     KodeCabang?: StringFilter<"MappingProdukMasKemenkes"> | string
     NamaCabang?: StringNullableFilter<"MappingProdukMasKemenkes"> | string | null
     IdProdukKemenkes?: StringNullableFilter<"MappingProdukMasKemenkes"> | string | null
@@ -1866,7 +2865,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesOrderByWithRelationInput = {
     id?: SortOrder
     KodeMas?: SortOrder
-    NamaProduk?: SortOrder
+    NamaProdukKemenkes?: SortOrder
     KodeCabang?: SortOrder
     NamaCabang?: SortOrderInput | SortOrder
     IdProdukKemenkes?: SortOrderInput | SortOrder
@@ -1880,7 +2879,7 @@ export namespace Prisma {
     OR?: MappingProdukMasKemenkesWhereInput[]
     NOT?: MappingProdukMasKemenkesWhereInput | MappingProdukMasKemenkesWhereInput[]
     KodeMas?: StringFilter<"MappingProdukMasKemenkes"> | string
-    NamaProduk?: StringFilter<"MappingProdukMasKemenkes"> | string
+    NamaProdukKemenkes?: StringFilter<"MappingProdukMasKemenkes"> | string
     KodeCabang?: StringFilter<"MappingProdukMasKemenkes"> | string
     NamaCabang?: StringNullableFilter<"MappingProdukMasKemenkes"> | string | null
     IdProdukKemenkes?: StringNullableFilter<"MappingProdukMasKemenkes"> | string | null
@@ -1891,7 +2890,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesOrderByWithAggregationInput = {
     id?: SortOrder
     KodeMas?: SortOrder
-    NamaProduk?: SortOrder
+    NamaProdukKemenkes?: SortOrder
     KodeCabang?: SortOrder
     NamaCabang?: SortOrderInput | SortOrder
     IdProdukKemenkes?: SortOrderInput | SortOrder
@@ -1908,7 +2907,7 @@ export namespace Prisma {
     NOT?: MappingProdukMasKemenkesScalarWhereWithAggregatesInput | MappingProdukMasKemenkesScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MappingProdukMasKemenkes"> | string
     KodeMas?: StringWithAggregatesFilter<"MappingProdukMasKemenkes"> | string
-    NamaProduk?: StringWithAggregatesFilter<"MappingProdukMasKemenkes"> | string
+    NamaProdukKemenkes?: StringWithAggregatesFilter<"MappingProdukMasKemenkes"> | string
     KodeCabang?: StringWithAggregatesFilter<"MappingProdukMasKemenkes"> | string
     NamaCabang?: StringNullableWithAggregatesFilter<"MappingProdukMasKemenkes"> | string | null
     IdProdukKemenkes?: StringNullableWithAggregatesFilter<"MappingProdukMasKemenkes"> | string | null
@@ -1916,10 +2915,73 @@ export namespace Prisma {
     UpdatedAt?: DateTimeNullableWithAggregatesFilter<"MappingProdukMasKemenkes"> | Date | string | null
   }
 
+  export type CabangMappingWhereInput = {
+    AND?: CabangMappingWhereInput | CabangMappingWhereInput[]
+    OR?: CabangMappingWhereInput[]
+    NOT?: CabangMappingWhereInput | CabangMappingWhereInput[]
+    id?: StringFilter<"CabangMapping"> | string
+    CabangSumber?: StringFilter<"CabangMapping"> | string
+    NamaCabangSumber?: StringFilter<"CabangMapping"> | string
+    CabangTarget?: StringFilter<"CabangMapping"> | string
+    NamaCabangTarget?: StringFilter<"CabangMapping"> | string
+    KodeUpline?: StringNullableFilter<"CabangMapping"> | string | null
+    NamaUpline?: StringNullableFilter<"CabangMapping"> | string | null
+  }
+
+  export type CabangMappingOrderByWithRelationInput = {
+    id?: SortOrder
+    CabangSumber?: SortOrder
+    NamaCabangSumber?: SortOrder
+    CabangTarget?: SortOrder
+    NamaCabangTarget?: SortOrder
+    KodeUpline?: SortOrderInput | SortOrder
+    NamaUpline?: SortOrderInput | SortOrder
+  }
+
+  export type CabangMappingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    CabangSumber_CabangTarget?: CabangMappingCabangSumberCabangTargetCompoundUniqueInput
+    AND?: CabangMappingWhereInput | CabangMappingWhereInput[]
+    OR?: CabangMappingWhereInput[]
+    NOT?: CabangMappingWhereInput | CabangMappingWhereInput[]
+    CabangSumber?: StringFilter<"CabangMapping"> | string
+    NamaCabangSumber?: StringFilter<"CabangMapping"> | string
+    CabangTarget?: StringFilter<"CabangMapping"> | string
+    NamaCabangTarget?: StringFilter<"CabangMapping"> | string
+    KodeUpline?: StringNullableFilter<"CabangMapping"> | string | null
+    NamaUpline?: StringNullableFilter<"CabangMapping"> | string | null
+  }, "id" | "CabangSumber_CabangTarget">
+
+  export type CabangMappingOrderByWithAggregationInput = {
+    id?: SortOrder
+    CabangSumber?: SortOrder
+    NamaCabangSumber?: SortOrder
+    CabangTarget?: SortOrder
+    NamaCabangTarget?: SortOrder
+    KodeUpline?: SortOrderInput | SortOrder
+    NamaUpline?: SortOrderInput | SortOrder
+    _count?: CabangMappingCountOrderByAggregateInput
+    _max?: CabangMappingMaxOrderByAggregateInput
+    _min?: CabangMappingMinOrderByAggregateInput
+  }
+
+  export type CabangMappingScalarWhereWithAggregatesInput = {
+    AND?: CabangMappingScalarWhereWithAggregatesInput | CabangMappingScalarWhereWithAggregatesInput[]
+    OR?: CabangMappingScalarWhereWithAggregatesInput[]
+    NOT?: CabangMappingScalarWhereWithAggregatesInput | CabangMappingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CabangMapping"> | string
+    CabangSumber?: StringWithAggregatesFilter<"CabangMapping"> | string
+    NamaCabangSumber?: StringWithAggregatesFilter<"CabangMapping"> | string
+    CabangTarget?: StringWithAggregatesFilter<"CabangMapping"> | string
+    NamaCabangTarget?: StringWithAggregatesFilter<"CabangMapping"> | string
+    KodeUpline?: StringNullableWithAggregatesFilter<"CabangMapping"> | string | null
+    NamaUpline?: StringNullableWithAggregatesFilter<"CabangMapping"> | string | null
+  }
+
   export type MappingProdukMasKemenkesCreateInput = {
     id?: string
     KodeMas: string
-    NamaProduk: string
+    NamaProdukKemenkes: string
     KodeCabang: string
     NamaCabang?: string | null
     IdProdukKemenkes?: string | null
@@ -1930,7 +2992,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesUncheckedCreateInput = {
     id?: string
     KodeMas: string
-    NamaProduk: string
+    NamaProdukKemenkes: string
     KodeCabang: string
     NamaCabang?: string | null
     IdProdukKemenkes?: string | null
@@ -1941,7 +3003,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     KodeMas?: StringFieldUpdateOperationsInput | string
-    NamaProduk?: StringFieldUpdateOperationsInput | string
+    NamaProdukKemenkes?: StringFieldUpdateOperationsInput | string
     KodeCabang?: StringFieldUpdateOperationsInput | string
     NamaCabang?: NullableStringFieldUpdateOperationsInput | string | null
     IdProdukKemenkes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -1952,7 +3014,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     KodeMas?: StringFieldUpdateOperationsInput | string
-    NamaProduk?: StringFieldUpdateOperationsInput | string
+    NamaProdukKemenkes?: StringFieldUpdateOperationsInput | string
     KodeCabang?: StringFieldUpdateOperationsInput | string
     NamaCabang?: NullableStringFieldUpdateOperationsInput | string | null
     IdProdukKemenkes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -1963,7 +3025,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesCreateManyInput = {
     id?: string
     KodeMas: string
-    NamaProduk: string
+    NamaProdukKemenkes: string
     KodeCabang: string
     NamaCabang?: string | null
     IdProdukKemenkes?: string | null
@@ -1974,7 +3036,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     KodeMas?: StringFieldUpdateOperationsInput | string
-    NamaProduk?: StringFieldUpdateOperationsInput | string
+    NamaProdukKemenkes?: StringFieldUpdateOperationsInput | string
     KodeCabang?: StringFieldUpdateOperationsInput | string
     NamaCabang?: NullableStringFieldUpdateOperationsInput | string | null
     IdProdukKemenkes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -1985,12 +3047,82 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     KodeMas?: StringFieldUpdateOperationsInput | string
-    NamaProduk?: StringFieldUpdateOperationsInput | string
+    NamaProdukKemenkes?: StringFieldUpdateOperationsInput | string
     KodeCabang?: StringFieldUpdateOperationsInput | string
     NamaCabang?: NullableStringFieldUpdateOperationsInput | string | null
     IdProdukKemenkes?: NullableStringFieldUpdateOperationsInput | string | null
     CreatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     UpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CabangMappingCreateInput = {
+    id?: string
+    CabangSumber: string
+    NamaCabangSumber: string
+    CabangTarget: string
+    NamaCabangTarget: string
+    KodeUpline?: string | null
+    NamaUpline?: string | null
+  }
+
+  export type CabangMappingUncheckedCreateInput = {
+    id?: string
+    CabangSumber: string
+    NamaCabangSumber: string
+    CabangTarget: string
+    NamaCabangTarget: string
+    KodeUpline?: string | null
+    NamaUpline?: string | null
+  }
+
+  export type CabangMappingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    CabangSumber?: StringFieldUpdateOperationsInput | string
+    NamaCabangSumber?: StringFieldUpdateOperationsInput | string
+    CabangTarget?: StringFieldUpdateOperationsInput | string
+    NamaCabangTarget?: StringFieldUpdateOperationsInput | string
+    KodeUpline?: NullableStringFieldUpdateOperationsInput | string | null
+    NamaUpline?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CabangMappingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    CabangSumber?: StringFieldUpdateOperationsInput | string
+    NamaCabangSumber?: StringFieldUpdateOperationsInput | string
+    CabangTarget?: StringFieldUpdateOperationsInput | string
+    NamaCabangTarget?: StringFieldUpdateOperationsInput | string
+    KodeUpline?: NullableStringFieldUpdateOperationsInput | string | null
+    NamaUpline?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CabangMappingCreateManyInput = {
+    id?: string
+    CabangSumber: string
+    NamaCabangSumber: string
+    CabangTarget: string
+    NamaCabangTarget: string
+    KodeUpline?: string | null
+    NamaUpline?: string | null
+  }
+
+  export type CabangMappingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    CabangSumber?: StringFieldUpdateOperationsInput | string
+    NamaCabangSumber?: StringFieldUpdateOperationsInput | string
+    CabangTarget?: StringFieldUpdateOperationsInput | string
+    NamaCabangTarget?: StringFieldUpdateOperationsInput | string
+    KodeUpline?: NullableStringFieldUpdateOperationsInput | string | null
+    NamaUpline?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CabangMappingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    CabangSumber?: StringFieldUpdateOperationsInput | string
+    NamaCabangSumber?: StringFieldUpdateOperationsInput | string
+    CabangTarget?: StringFieldUpdateOperationsInput | string
+    NamaCabangTarget?: StringFieldUpdateOperationsInput | string
+    KodeUpline?: NullableStringFieldUpdateOperationsInput | string | null
+    NamaUpline?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2051,7 +3183,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesCountOrderByAggregateInput = {
     id?: SortOrder
     KodeMas?: SortOrder
-    NamaProduk?: SortOrder
+    NamaProdukKemenkes?: SortOrder
     KodeCabang?: SortOrder
     NamaCabang?: SortOrder
     IdProdukKemenkes?: SortOrder
@@ -2062,7 +3194,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMaxOrderByAggregateInput = {
     id?: SortOrder
     KodeMas?: SortOrder
-    NamaProduk?: SortOrder
+    NamaProdukKemenkes?: SortOrder
     KodeCabang?: SortOrder
     NamaCabang?: SortOrder
     IdProdukKemenkes?: SortOrder
@@ -2073,7 +3205,7 @@ export namespace Prisma {
   export type MappingProdukMasKemenkesMinOrderByAggregateInput = {
     id?: SortOrder
     KodeMas?: SortOrder
-    NamaProduk?: SortOrder
+    NamaProdukKemenkes?: SortOrder
     KodeCabang?: SortOrder
     NamaCabang?: SortOrder
     IdProdukKemenkes?: SortOrder
@@ -2141,6 +3273,41 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type CabangMappingCabangSumberCabangTargetCompoundUniqueInput = {
+    CabangSumber: string
+    CabangTarget: string
+  }
+
+  export type CabangMappingCountOrderByAggregateInput = {
+    id?: SortOrder
+    CabangSumber?: SortOrder
+    NamaCabangSumber?: SortOrder
+    CabangTarget?: SortOrder
+    NamaCabangTarget?: SortOrder
+    KodeUpline?: SortOrder
+    NamaUpline?: SortOrder
+  }
+
+  export type CabangMappingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    CabangSumber?: SortOrder
+    NamaCabangSumber?: SortOrder
+    CabangTarget?: SortOrder
+    NamaCabangTarget?: SortOrder
+    KodeUpline?: SortOrder
+    NamaUpline?: SortOrder
+  }
+
+  export type CabangMappingMinOrderByAggregateInput = {
+    id?: SortOrder
+    CabangSumber?: SortOrder
+    NamaCabangSumber?: SortOrder
+    CabangTarget?: SortOrder
+    NamaCabangTarget?: SortOrder
+    KodeUpline?: SortOrder
+    NamaUpline?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {

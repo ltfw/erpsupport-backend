@@ -14,6 +14,7 @@ const alkesRoutes = require('./routes/reports/alkes');
 const reportfarmasiRoutes = require('./routes/reports/reportfarmasi');
 const konfirmasiHutangRoutes = require('./routes/hutang/konfirmasihutang');
 const masteralkesRoutes = require('./routes/master/alkes');
+const cabangAlkesRoutes = require('./routes/master/cabangalkes');
 const authenticateToken = require('./middleware/auth');
 
 const adminNavigationRoutes = require('./routes/admin/navigation'); // Import admin navigation routes
@@ -66,6 +67,7 @@ app.use('/alkes', authenticateToken, alkesRoutes);
 app.use('/farmasi/', authenticateToken, reportfarmasiRoutes);
 app.use('/hutang/konfirmasihutang', authenticateToken, konfirmasiHutangRoutes);
 app.use('/master/alkes', authenticateToken, masteralkesRoutes);
+app.use('/master/cabangalkes', authenticateToken, cabangAlkesRoutes);
 
 app.use('/others', lainLainRoutes);
 

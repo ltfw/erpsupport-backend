@@ -139,7 +139,9 @@ router.get("/saluranmasuk", async (req, res) => {
     const offsetClause = pageSize > 0 ? Prisma.sql`OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY` : Prisma.sql``;
     const whereClause = Prisma.sql`bnt.TanggalTransaksi between ${startDate + ' 00:00:00'} and ${endDate + ' 23:59:59'}`;
 
-    const [data, totalResult] = await Promise.all([
+    let [data, totalResult] = [[], 0];
+
+    [data, totalResult] = await Promise.all([
       prisma.$queryRaw`
         select
         w.KodeDept as KodeCabang,
@@ -157,8 +159,45 @@ router.get("/saluranmasuk", async (req, res) => {
         it.KodeSumber,
         it.GdgTarget,
         v.NamaLgn,
-        v.NomorLgnKemenkes,
-        v.NamaLgnKemenkes
+        case when d.isHeadOffice = 1 then v.NomorLgnKemenkes 
+        when it.KodeSumber = 'IN' then cm.KodeUpline
+        else '' end as IdPartner,
+        case when d.isHeadOffice = 1 then v.NamaLgnKemenkes 
+        when it.KodeSumber = 'IN' then cm.NamaUpline 
+        else '' end as NamaPartner
+        from
+          BatchNumberTransactions bnt 
+        join InventoryStocks is2 on
+          bnt.InventoryStockId = is2.InventoryStockId
+        join Inventories i on
+          is2.InventoryId = i.InventoryId
+        join InventoryCategories ic on
+          ic.KodeKategory = i.KodeKategory 
+        join Warehouses w on
+          is2.KodeGudang = w.KodeGudang 
+        join Departments d on
+          w.KodeDept = d.KodeDept
+        join InventoryTransactions it on
+          bnt.ParentTransaction = it.parenttransaction
+        left join vendors v on
+          it.kodelgnguid = v.vendorid
+        left join ERPSupport.dbo.CabangMapping cm on
+	        cm.CabangTarget  = w.KodeDept
+        where 
+          ${whereClause}
+          ${cabangArray.length > 0
+          ? Prisma.sql`AND w.KodeDept IN (${Prisma.join(cabangArray)})`
+          : Prisma.sql``}
+          and ic.ParentCategory in ('CLSPKR','CLSALK') 
+          and bnt.TypeTrn = 'In'
+          and bnt.KodeSumber <> 'PKL'
+          and bnt.InventoryTransactionType in ('B','G','X')
+        order by
+          bnt.ParentTransaction,bnt.TanggalTransaksi
+        ${offsetClause}
+      `,
+      prisma.$queryRaw`
+        SELECT count(1) as total
         from
           BatchNumberTransactions bnt 
         join InventoryStocks is2 on
@@ -184,39 +223,11 @@ router.get("/saluranmasuk", async (req, res) => {
           and bnt.TypeTrn = 'In'
           and bnt.KodeSumber <> 'PKL'
           and bnt.InventoryTransactionType in ('B','G','X')
-        order by
-          bnt.ParentTransaction,bnt.TanggalTransaksi
-        ${offsetClause}
-      `,
-      prisma.$queryRaw`
-        SELECT count(*) as total
-        from
-          BatchNumberTransactions bnt 
-        join InventoryStocks is2 on
-          bnt.InventoryStockId = is2.InventoryStockId
-        join Inventories i on
-          is2.InventoryId = i.InventoryId
-        join InventoryCategories ic on
-          ic.KodeKategory = i.KodeKategory 
-        join Warehouses w on
-          is2.KodeGudang = w.KodeGudang 
-        join InventoryTransactions it on
-          bnt.ParentTransaction = it.parenttransaction
-        left join vendors v on
-          it.kodelgnguid = v.vendorid
-        where 
-          ${whereClause}
-          ${cabangArray.length > 0
-          ? Prisma.sql`AND w.KodeDept IN (${Prisma.join(cabangArray)})`
-          : Prisma.sql``}
-          and ic.ParentCategory in ('CLSPKR','CLSALK') 
-          and bnt.TypeTrn = 'Out'
-          and bnt.KodeSumber <> 'PKL'
-          and bnt.InventoryTransactionType in ('B','G','X')
       `
     ]);
 
     const total = Number(totalResult[0]?.total || 0);
+    // res.json({data, total});
 
     res.json({
       data: data,

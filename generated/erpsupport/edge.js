@@ -96,12 +96,22 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.MappingProdukMasKemenkesScalarFieldEnum = {
   id: 'id',
   KodeMas: 'KodeMas',
-  NamaProduk: 'NamaProduk',
+  NamaProdukKemenkes: 'NamaProdukKemenkes',
   KodeCabang: 'KodeCabang',
   NamaCabang: 'NamaCabang',
   IdProdukKemenkes: 'IdProdukKemenkes',
   CreatedAt: 'CreatedAt',
   UpdatedAt: 'UpdatedAt'
+};
+
+exports.Prisma.CabangMappingScalarFieldEnum = {
+  id: 'id',
+  CabangSumber: 'CabangSumber',
+  NamaCabangSumber: 'NamaCabangSumber',
+  CabangTarget: 'CabangTarget',
+  NamaCabangTarget: 'NamaCabangTarget',
+  KodeUpline: 'KodeUpline',
+  NamaUpline: 'NamaUpline'
 };
 
 exports.Prisma.SortOrder = {
@@ -116,7 +126,8 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  MappingProdukMasKemenkes: 'MappingProdukMasKemenkes'
+  MappingProdukMasKemenkes: 'MappingProdukMasKemenkes',
+  CabangMapping: 'CabangMapping'
 };
 /**
  * Create the Client
@@ -155,7 +166,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
@@ -174,13 +185,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/erpsupport\"\n  binaryTargets = [\"native\", \"windows\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"sqlserver\"\n  url      = env(\"DATABASE_ERPSUPPORT_URL\")\n}\n\nmodel MappingProdukMasKemenkes {\n  id               String    @id(map: \"PK__MappingP__3213E83F8DD6B954\") @default(dbgenerated(\"newid()\"), map: \"DF__MappingProdu__id__37A5467C\") @db.UniqueIdentifier\n  KodeMas          String    @db.VarChar(10)\n  NamaProduk       String    @db.VarChar(200)\n  KodeCabang       String    @db.VarChar(2)\n  NamaCabang       String?   @db.VarChar(30)\n  IdProdukKemenkes String?   @db.VarChar(30)\n  CreatedAt        DateTime  @default(now(), map: \"DF__MappingPr__Creat__38996AB5\")\n  UpdatedAt        DateTime?\n}\n",
-  "inlineSchemaHash": "4afe956f54aa9c0aa6efbbfaefbc126fdeb37fbd565be69914b917659c812402",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/erpsupport\"\n  binaryTargets = [\"native\", \"windows\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"sqlserver\"\n  url      = env(\"DATABASE_ERPSUPPORT_URL\")\n}\n\nmodel MappingProdukMasKemenkes {\n  id                 String    @id(map: \"PK__MappingP__3213E83F8DD6B954\") @default(dbgenerated(\"newid()\"), map: \"DF__MappingProdu__id__37A5467C\") @db.UniqueIdentifier\n  KodeMas            String    @db.VarChar(10)\n  NamaProdukKemenkes String    @db.VarChar(200)\n  KodeCabang         String    @db.VarChar(2)\n  NamaCabang         String?   @db.VarChar(30)\n  IdProdukKemenkes   String?   @db.VarChar(30)\n  CreatedAt          DateTime  @default(now(), map: \"DF__MappingPr__Creat__38996AB5\")\n  UpdatedAt          DateTime?\n}\n\nmodel CabangMapping {\n  id               String  @id(map: \"PK__CabangMa__3213E83F17A04DA8\") @default(dbgenerated(\"newid()\"), map: \"DF_CabangMapping_id\") @db.UniqueIdentifier\n  CabangSumber     String  @db.VarChar(2)\n  NamaCabangSumber String  @db.VarChar(20)\n  CabangTarget     String  @db.VarChar(2)\n  NamaCabangTarget String  @db.VarChar(20)\n  KodeUpline       String? @db.VarChar(50)\n  NamaUpline       String? @db.VarChar(100)\n\n  @@unique([CabangSumber, CabangTarget], map: \"UQ_CabangMapping_Source_Target\")\n  @@index([CabangSumber], map: \"IX_CabangMapping_CabangSumber\")\n  @@index([CabangTarget], map: \"IX_CabangMapping_CabangTarget\")\n}\n",
+  "inlineSchemaHash": "7ca8bc28cc268028a774ba0476e7e315f2504e5ca7bfd10d9a4dc2cb8c424a37",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"MappingProdukMasKemenkes\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":[\"UniqueIdentifier\",[]],\"default\":{\"name\":\"dbgenerated\",\"args\":[\"newid()\"]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"KodeMas\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"10\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaProduk\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"200\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"KodeCabang\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"2\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaCabang\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"30\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"IdProdukKemenkes\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"30\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"CreatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"UpdatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"MappingProdukMasKemenkes\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":[\"UniqueIdentifier\",[]],\"default\":{\"name\":\"dbgenerated\",\"args\":[\"newid()\"]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"KodeMas\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"10\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaProdukKemenkes\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"200\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"KodeCabang\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"2\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaCabang\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"30\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"IdProdukKemenkes\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"30\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"CreatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"nativeType\":null,\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"UpdatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"nativeType\":null,\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},\"CabangMapping\":{\"dbName\":null,\"schema\":null,\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"nativeType\":[\"UniqueIdentifier\",[]],\"default\":{\"name\":\"dbgenerated\",\"args\":[\"newid()\"]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"CabangSumber\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"2\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaCabangSumber\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"20\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"CabangTarget\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"2\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaCabangTarget\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"20\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"KodeUpline\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"50\"]],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"NamaUpline\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":false,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"nativeType\":[\"VarChar\",[\"100\"]],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[[\"CabangSumber\",\"CabangTarget\"]],\"uniqueIndexes\":[{\"name\":null,\"fields\":[\"CabangSumber\",\"CabangTarget\"]}],\"isGenerated\":false}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = undefined
 config.compilerWasm = undefined

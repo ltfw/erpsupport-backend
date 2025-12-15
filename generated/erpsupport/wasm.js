@@ -124,12 +124,22 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.MappingProdukMasKemenkesScalarFieldEnum = {
   id: 'id',
   KodeMas: 'KodeMas',
-  NamaProduk: 'NamaProduk',
+  NamaProdukKemenkes: 'NamaProdukKemenkes',
   KodeCabang: 'KodeCabang',
   NamaCabang: 'NamaCabang',
   IdProdukKemenkes: 'IdProdukKemenkes',
   CreatedAt: 'CreatedAt',
   UpdatedAt: 'UpdatedAt'
+};
+
+exports.Prisma.CabangMappingScalarFieldEnum = {
+  id: 'id',
+  CabangSumber: 'CabangSumber',
+  NamaCabangSumber: 'NamaCabangSumber',
+  CabangTarget: 'CabangTarget',
+  NamaCabangTarget: 'NamaCabangTarget',
+  KodeUpline: 'KodeUpline',
+  NamaUpline: 'NamaUpline'
 };
 
 exports.Prisma.SortOrder = {
@@ -144,7 +154,8 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  MappingProdukMasKemenkes: 'MappingProdukMasKemenkes'
+  MappingProdukMasKemenkes: 'MappingProdukMasKemenkes',
+  CabangMapping: 'CabangMapping'
 };
 
 /**

@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
         where: {
           OR: [
             { KodeMas: { contains: search } },
-            { NamaProduk: { contains: search } },
+            { NamaProdukKemenkes: { contains: search } },
             { KodeCabang: { contains: search } },
             { NamaCabang: { contains: search } },
             { IdProdukKemenkes: { contains: search } },
@@ -28,14 +28,14 @@ router.get("/", async (req, res) => {
         skip,
         take: pageSize,
         orderBy: {
-          NamaProduk: 'asc',
+          NamaProdukKemenkes: 'asc',
         },
       }),
       prisma.MappingProdukMasKemenkes.count({
         where: {
           OR: [
             { KodeMas: { contains: search } },
-            { NamaProduk: { contains: search } },
+            { NamaProdukKemenkes: { contains: search } },
             { KodeCabang: { contains: search } },
             { NamaCabang: { contains: search } },
             { IdProdukKemenkes: { contains: search } },

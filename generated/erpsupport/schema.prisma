@@ -10,12 +10,26 @@ datasource db {
 }
 
 model MappingProdukMasKemenkes {
-  id               String    @id(map: "PK__MappingP__3213E83F8DD6B954") @default(dbgenerated("newid()"), map: "DF__MappingProdu__id__37A5467C") @db.UniqueIdentifier
-  KodeMas          String    @db.VarChar(10)
-  NamaProduk       String    @db.VarChar(200)
-  KodeCabang       String    @db.VarChar(2)
-  NamaCabang       String?   @db.VarChar(30)
-  IdProdukKemenkes String?   @db.VarChar(30)
-  CreatedAt        DateTime  @default(now(), map: "DF__MappingPr__Creat__38996AB5")
-  UpdatedAt        DateTime?
+  id                 String    @id(map: "PK__MappingP__3213E83F8DD6B954") @default(dbgenerated("newid()"), map: "DF__MappingProdu__id__37A5467C") @db.UniqueIdentifier
+  KodeMas            String    @db.VarChar(10)
+  NamaProdukKemenkes String    @db.VarChar(200)
+  KodeCabang         String    @db.VarChar(2)
+  NamaCabang         String?   @db.VarChar(30)
+  IdProdukKemenkes   String?   @db.VarChar(30)
+  CreatedAt          DateTime  @default(now(), map: "DF__MappingPr__Creat__38996AB5")
+  UpdatedAt          DateTime?
+}
+
+model CabangMapping {
+  id               String  @id(map: "PK__CabangMa__3213E83F17A04DA8") @default(dbgenerated("newid()"), map: "DF_CabangMapping_id") @db.UniqueIdentifier
+  CabangSumber     String  @db.VarChar(2)
+  NamaCabangSumber String  @db.VarChar(20)
+  CabangTarget     String  @db.VarChar(2)
+  NamaCabangTarget String  @db.VarChar(20)
+  KodeUpline       String? @db.VarChar(50)
+  NamaUpline       String? @db.VarChar(100)
+
+  @@unique([CabangSumber, CabangTarget], map: "UQ_CabangMapping_Source_Target")
+  @@index([CabangSumber], map: "IX_CabangMapping_CabangSumber")
+  @@index([CabangTarget], map: "IX_CabangMapping_CabangTarget")
 }
