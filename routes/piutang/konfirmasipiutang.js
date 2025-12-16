@@ -187,12 +187,21 @@ router.get("/detail/:id", async (req, res) => {
       data.map(async (v) => {
         const q = await prisma.$queryRaw`
           select
-            case when ati.typetrn = 'C' then 'DPP' when ati.typetrn = 'F' then 'PPN' else '' end as Nama,
+            case
+              when ati.typetrn = 'C' then 'DPP'
+              when ati.typetrn = 'F' then 'PPN'
+              else ''
+            end as Nama,
             ati.JumlahTrn
           from
             artransactionitems ati
+          join Customers c on
+            ati.CustomerId = c.CustomerId
+          join CustomerGroups cg on
+            cg.CustomerGroupId = c.CustomerGroupId
           where
             ati.ParentTransaction = ${v.ParentTransaction}
+            and cg.CustomerGroupCode in ('PEM', 'PEN', 'PKM', 'RSP', 'RST')
             order by ati.typetrn
         `;
         return q;
