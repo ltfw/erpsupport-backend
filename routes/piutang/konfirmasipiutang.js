@@ -182,9 +182,29 @@ router.get("/detail/:id", async (req, res) => {
         ati.CustomerId = ${req.params.id}
       order by
         ati.TglTrnFaktur;
-      `      
+      `
+    const dataDetail = await Promise.all(
+      data.map(async (v) => {
+        const q = await prisma.$queryRaw`
+          select
+            case when ati.typetrn = 'C' then 'DPP' when ati.typetrn = 'F' then 'PPN' else '' end as Nama,
+            ati.JumlahTrn
+          from
+            artransactionitems ati
+          where
+            ati.ParentTransaction = ${v.ParentTransaction}
+            order by ati.typetrn
+        `;
+        return q;
+      })
+    );
 
-    res.json(data);
+    const detailedData = data.map((v, i) => ({
+      ...v,
+      dataDetail: dataDetail[i]
+    }));
+
+    res.json(detailedData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch Detail" });
