@@ -6,6 +6,7 @@ const prisma = new PrismaClient({ log: ['warn', 'error'] });
 const { sql } = Prisma;
 
 router.get("/", async (req, res) => {
+
   console.log("data user", req.user.role, req.user.username, req.user.cabang);
 
   try {
