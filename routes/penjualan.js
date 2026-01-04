@@ -507,6 +507,8 @@ router.get("/outstandingdt", async (req, res) => {
   }
 });
 
+
+
 // Get customer by ID
 router.get("/:id", async (req, res) => {
   try {
