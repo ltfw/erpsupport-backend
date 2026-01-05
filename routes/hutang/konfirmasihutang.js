@@ -15,12 +15,13 @@ router.get("/", async (req, res) => {
     const skip = (page - 1) * pageSize;
     const rawVendorId = req.query.vendor?.trim() || '';
     // get startDate and endDate
-    const startDate = req.query.start_date?.trim() || '';
+    // const startDate = req.query.start_date?.trim() || '';
     const endDate = req.query.end_date?.trim() || '';
 
-    const dateFilter = startDate && endDate
+    const searchTerm = req.query.search?.trim() || '';
+
+    const dateFilter = endDate
       ? sql`
-      AND ati2.TglJthTmp >= ${startDate}
       AND ati2.TglJthTmp <  DATEADD(day, 1, ${endDate})
     `
       : sql``;
@@ -34,6 +35,16 @@ router.get("/", async (req, res) => {
     const vendorFilter = vendorIds.length > 0
       ? sql` AND v.KodeLgn IN (${Prisma.join(vendorIds)})`
       : sql``;
+
+    const searchFilter = searchTerm
+      ? sql`
+        AND (
+          v.NamaLgn LIKE ${'%' + searchTerm + '%'}
+          OR ati.NoFaktur LIKE ${'%' + searchTerm + '%'}
+          OR ath.NoFakturSupplier LIKE ${'%' + searchTerm + '%'}
+        )
+      `
+      : sql``;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
     const [hutang, totalResult] = await Promise.all([
@@ -41,10 +52,10 @@ router.get("/", async (req, res) => {
         SELECT
           v.NamaLgn,
           ati.NoFaktur,
-          ath.NoFakturSupplier,
-          FORMAT(ath.TglTrn, 'yyyy-MM-dd') AS TglTrn,
+          case when ath.NoFakturSupplier is null then ati2.nobukti else ath.NoFakturSupplier end as NoFakturSupplier,
+          case when ath.TglTrn is null then FORMAT(ati2.TglTrn, 'dd/MM/yyyy') else FORMAT(ath.TglTrn, 'dd/MM/yyyy') end AS TglTrn,
           ati.Nominal,
-          FORMAT(ati2.TglJthTmp, 'yyyy-MM-dd') AS TglJthTmp,
+          FORMAT(ati2.TglJthTmp, 'dd/MM/yyyy') AS TglJthTmp,
           DATEDIFF(DAY, ati2.TglJthTmp, GETDATE()) AS UmurHutang
         FROM
           (
@@ -61,14 +72,15 @@ router.get("/", async (req, res) => {
             SUM(ati.JumlahTrn) > 1
           ) as ati
         join ApTransactionItems as ati2 on 
-          ati.NoFaktur = ati2.ParentTransaction
+          ati.NoFaktur = ati2.ParentTransaction and ati2.TypeTrn in ('A','C')
         JOIN Vendors v ON
           ati.vendorId = v.VendorId
-        JOIN ApTransactionHeaders ath ON
+        left JOIN ApTransactionHeaders ath ON
           ati.NoFaktur = ath.NoBukti
         WHERE 1 = 1
         ${vendorFilter}
         ${dateFilter}
+        ${searchFilter}
         ORDER BY
           UmurHutang DESC,
           Nominal DESC
@@ -80,10 +92,10 @@ router.get("/", async (req, res) => {
           SELECT
             v.NamaLgn,
             ati.NoFaktur,
-            ath.NoFakturSupplier,
-            FORMAT(ath.TglTrn, 'yyyy-MM-dd') AS TglTrn,
+            case when ath.NoFakturSupplier is null then ati2.nobukti else ath.NoFakturSupplier end as NoFakturSupplier,
+            case when ath.TglTrn is null then FORMAT(ati2.TglTrn, 'dd/MM/yyyy') else FORMAT(ath.TglTrn, 'dd/MM/yyyy') end AS TglTrn,
             ati.Nominal,
-            FORMAT(ati2.TglJthTmp, 'yyyy-MM-dd') AS TglJthTmp,
+            FORMAT(ati2.TglJthTmp, 'dd/MM/yyyy') AS TglJthTmp,
             DATEDIFF(DAY, ati2.TglJthTmp, GETDATE()) AS UmurHutang
           FROM
             (
@@ -100,14 +112,15 @@ router.get("/", async (req, res) => {
               SUM(ati.JumlahTrn) > 1
             ) as ati
           join ApTransactionItems as ati2 on 
-            ati.NoFaktur = ati2.ParentTransaction
+            ati.NoFaktur = ati2.ParentTransaction and ati2.TypeTrn in ('A','C')
           JOIN Vendors v ON
             ati.vendorId = v.VendorId
-          JOIN ApTransactionHeaders ath ON
+          left JOIN ApTransactionHeaders ath ON
             ati.NoFaktur = ath.NoBukti
           WHERE 1 = 1
-            ${vendorFilter}
-            ${dateFilter}
+          ${vendorFilter}
+          ${dateFilter}
+          ${searchFilter}
         ) AS grouped_results
       `
     ]);
