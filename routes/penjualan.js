@@ -65,6 +65,7 @@ router.get("/", async (req, res) => {
         i.NamaBarang,
         is3.NamaLgn AS NamaSupplier,
         bc.BusinessCentreName,
+        ispbd.SalesPrice as BasePrice,
         -- Prefer Hna if > 0, otherwise HargaJual
         CASE 
             WHEN sii.Hna = 0 THEN sii.HargaJual
@@ -173,7 +174,13 @@ router.get("/", async (req, res) => {
     JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
     JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
     LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      WHERE cast(sih.TglFaktur as date) BETWEEN ${startDate} AND ${endDate}
+    join InventorySalesPriceByDates ispbd on i.InventoryId = ispbd.InventoryId 
+    	and ispbd.StartingDate <= sih.TglFaktur
+    	AND (
+	        sih.TglFaktur <= ispbd.EndDate
+	        OR ispbd.EndDate IS NULL
+	    )
+      WHERE sih.TglFaktur >= ${startDate + ' 00:00:00'} and sih.TglFaktur <= ${endDate + ' 23:59:59'}
         ${cabangArray.length > 0
           ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
           : Prisma.sql``}
