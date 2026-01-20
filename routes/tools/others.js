@@ -8,17 +8,19 @@ const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'] });
 
 router.post("/importcoretax", async (req, res) => {
   try {
-    const { tipe, data } = req.body;
+    const { tipe, data, generation } = req.body;
 
     if (!Array.isArray(data)) {
       return res.status(400).json({ error: "Data must be an array." });
     }
 
+    const prismaBase = generation === "2026" ? prisma2026 : prisma;
+
     let updatedCount = 0
 
     if (tipe === "penjualan") {
       const updatePromises = data.map(item =>
-        prisma.$executeRaw`
+        prismaBase.$executeRaw`
         UPDATE SalesInvoiceHeaders
         SET NoFakturP = ${item.TaxInvoiceNumber}
         WHERE Nobukti = ${item.TaxReference}
@@ -28,7 +30,7 @@ router.post("/importcoretax", async (req, res) => {
       updatedCount = results.reduce((sum, r) => sum + r, 0);
     } else if (tipe === "retur") {
       const updatePromises = data.map(item =>
-        prisma.$executeRaw`
+        prismaBase.$executeRaw`
           UPDATE sih
           SET sih.NoFakturP = ${item.TaxReturNumber}
           FROM SalesInvoiceHeaders sih
@@ -40,7 +42,7 @@ router.post("/importcoretax", async (req, res) => {
       updatedCount = results.reduce((sum, r) => sum + r, 0);
     }else if (tipe === "pembelian") {
       const updatePromises = data.map(item =>
-        prisma.$executeRaw`
+        prismaBase.$executeRaw`
         UPDATE PurchaseBills
         SET NoFakturP = ${item.TaxInvoiceNumber}
         WHERE NoFakturSupplier = ${item.TaxReference}

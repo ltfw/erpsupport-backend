@@ -1,9 +1,10 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans");
-const { PrismaClient2026, Prisma2026 } = require("../generated/dbtrans2026");
+const { PrismaClient: PrismaClient2026, Prisma: Prisma2026 } = require("../generated/dbtrans2026");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
+const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 
@@ -68,6 +69,17 @@ function buildSalesQuery(dbName, {
       END AS Qty,
 
       sii.SatuanNs,
+
+      ispbd.SalesPrice * 
+      (CASE
+        WHEN SUBSTRING(
+          sih.NoBukti COLLATE Latin1_General_CI_AS,
+          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
+          2
+        ) = 'RS'
+        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+      END) AS ValueBasePrice,
 
       (CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
       (CASE
@@ -152,7 +164,7 @@ function buildSalesQuery(dbName, {
       END AS TipeJual,
 
       sih.PoLanggan,
-      sii.PromotionCode,
+      p.PromotionCode,
       p.PromotionName
 
     FROM ${Prisma.raw(dbName)}.dbo.SalesInvoiceHeaders sih
@@ -235,7 +247,7 @@ function buildSalesQuery(dbName, {
 }
 
 
-router.get("/", async (req, res) => {
+router.get("/back", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
@@ -249,6 +261,12 @@ router.get("/", async (req, res) => {
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: "Start date and end date are required" });
+    }
+
+    const startYear = new Date(startDate).getFullYear();
+    const endYear = new Date(endDate).getFullYear();
+    if (startYear !== endYear) {
+      return res.status(400).json({ error: "Start date and end date must be in the same year" });
     }
 
     const cabangArray = req.query.cabang?.split(',').map(s => s.trim()).filter(Boolean) || [];
@@ -292,7 +310,7 @@ router.get("/", async (req, res) => {
       FROM (
         ${Prisma.join(unionQueries, Prisma.sql` UNION ALL `)}
       ) x
-      ORDER BY NoBukti
+      ORDER BY NoBukti COLLATE Latin1_General_CI_AS
       OFFSET ${skip} ROWS
       FETCH NEXT ${pageSize} ROWS ONLY
     `;
@@ -324,7 +342,7 @@ router.get("/", async (req, res) => {
 });
 
 
-router.get("/backup", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 10;
@@ -348,6 +366,15 @@ router.get("/backup", async (req, res) => {
       return res.status(400).json({ error: "Start date and end date are required" });
     }
 
+    const startYear = new Date(startDate).getFullYear();
+    const endYear = new Date(endDate).getFullYear();
+    if (startYear !== endYear) {
+      return res.status(400).json({ error: "Start date and end date must be in the same year" });
+    }
+
+    const prismaBase = new Date(startDate).getFullYear() === 2026 ? prisma2026 : prisma;
+    const PrismaWhere = new Date(startDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
+
     // Apply user role logic for default filters
     if (userRole != 'ADM') {
       if (cabangArray.length === 0 && userCabang) { // Ensure userCabang is valid
@@ -363,7 +390,7 @@ router.get("/backup", async (req, res) => {
 
     // --- Main Data Query ---
     // Using the Prisma.sql`` and Prisma.join approach from your original working file
-    const sales = await prisma.$queryRaw`
+    const sales = await prismaBase.$queryRaw`
       SELECT
         DISTINCT
         d.NamaDept,
@@ -500,14 +527,14 @@ router.get("/backup", async (req, res) => {
 	    )
       WHERE sih.TglFaktur >= ${startDate + ' 00:00:00'} and sih.TglFaktur <= ${endDate + ' 23:59:59'}
         ${cabangArray.length > 0
-        ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND sih.KodeCc IN (${PrismaWhere.join(cabangArray)})`
+        : PrismaWhere.sql``}
         ${barangArray.length > 0
-        ? Prisma.sql`AND i.KodeItem IN (${Prisma.join(barangArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND i.KodeItem IN (${PrismaWhere.join(barangArray)})`
+        : PrismaWhere.sql``}
         ${vendorArray.length > 0
-        ? Prisma.sql`AND is3.KodeLgn IN (${Prisma.join(vendorArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND is3.KodeLgn IN (${PrismaWhere.join(vendorArray)})`
+        : PrismaWhere.sql``}
         AND (
             c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
             OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
@@ -523,7 +550,7 @@ router.get("/backup", async (req, res) => {
 
     // --- Count Query ---
     // Also using the reliable Prisma.sql`` and Prisma.join approach
-    const totalResult = await prisma.$queryRaw`
+    const totalResult = await prismaBase.$queryRaw`
       SELECT COUNT(*) as total
       FROM SalesInvoiceHeaders sih
       JOIN SalesInvoiceItems sii 
@@ -541,19 +568,19 @@ router.get("/backup", async (req, res) => {
       JOIN Rayons r ON rd.RayonCode = r.RayonCode
       JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
       JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId and is3.IsForSalesInvoice = 1
       JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
       LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
       WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
         ${cabangArray.length > 0
-        ? Prisma.sql`AND sih.KodeCc IN (${Prisma.join(cabangArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND sih.KodeCc IN (${PrismaWhere.join(cabangArray)})`
+        : PrismaWhere.sql``}
         ${barangArray.length > 0
-        ? Prisma.sql`AND i.KodeItem IN (${Prisma.join(barangArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND i.KodeItem IN (${PrismaWhere.join(barangArray)})`
+        : PrismaWhere.sql``}
         ${vendorArray.length > 0
-        ? Prisma.sql`AND is3.KodeLgn IN (${Prisma.join(vendorArray)})`
-        : Prisma.sql``}
+        ? PrismaWhere.sql`AND is3.KodeLgn IN (${PrismaWhere.join(vendorArray)})`
+        : PrismaWhere.sql``}
         AND (
             c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
             OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
