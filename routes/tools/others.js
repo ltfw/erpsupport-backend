@@ -1,8 +1,10 @@
 const express = require("express");
 const { PrismaClient } = require("../../generated/dbtrans");
+const { PrismaClient: PrismaClient2026 } = require("../../generated/dbtrans2026");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'] });
+const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'] });
 
 router.post("/importcoretax", async (req, res) => {
   try {
@@ -68,8 +70,18 @@ router.post("/importva", async (req, res) => {
 
     let updatedCount = 0
 
+    // Check if all customers exist
+    for (const item of data) {
+      const customer = await prisma2026.$queryRaw`
+        SELECT * FROM customers WHERE KodeLgn = ${item.kodelgn}
+      `;
+      if (!customer || customer.length === 0) {
+        return res.status(404).json({ error: "Customer not found", kodelgn: item.kodelgn });
+      }
+    }
+
     const updatePromises = data.map(item =>
-      prisma.$executeRaw`
+      prisma2026.$executeRaw`
           UPDATE customers
           SET NoVaLama = ${item.noVA}
           WHERE KodeLgn = ${item.kodelgn};

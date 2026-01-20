@@ -1,5 +1,6 @@
 const express = require("express");
-const { PrismaClient, Prisma } = require("../generated/dbtrans");
+// const { PrismaClient, Prisma } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { generateRunningNumber } = require("../utils/GenerateRunningNumber");
 
 const router = express.Router();

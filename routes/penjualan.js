@@ -188,7 +188,8 @@ function buildSalesQuery(dbName, {
     JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
 
     JOIN InventorySuppliers is3
-      ON is3.InventoryId = i.InventoryId
+      ON is3.InventoryId = i.InventoryId 
+     AND is3.IsForSalesInvoice = 1
 
     JOIN BusinessCentres bc
       ON bc.BusinessCentreCode COLLATE Latin1_General_CI_AS
