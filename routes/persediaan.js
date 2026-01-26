@@ -1,5 +1,5 @@
 const express = require("express");
-const { PrismaClient, Prisma } = require("../generated/dbtrans");
+const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
 
 const router = express.Router();
