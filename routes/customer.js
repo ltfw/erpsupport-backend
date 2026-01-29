@@ -17,8 +17,10 @@ router.get("/export", async (req, res) => {
     let whereClause = '';
     const params = [];
 
-    if (userRole !== 'ADM' && userRole !== 'FAS') {
-      whereClause = 'WHERE c.KodeDept = @P1';
+    const privilegedRoles = ['ADM', 'FAS', 'QMS'];
+
+    if (!privilegedRoles.includes(userRole)) {
+      whereClause += ' AND c.KodeDept = @P3';
       params.push(userCabang);
     }
 
@@ -114,9 +116,11 @@ router.get("/", async (req, res) => {
     let whereClause = `(c.KodeLgn LIKE @P1 OR c.NamaLgn LIKE @P2)`;
     const params = [`%${search}%`, `%${search}%`]; // P1 and P2
 
-    if (userRole !== 'ADM' && userRole !== 'FAS') {
-      whereClause += ` AND c.KodeDept = @P3`;
-      params.push(userCabang); // P3
+    const privilegedRoles = ['ADM', 'FAS', 'QMS'];
+
+    if (!privilegedRoles.includes(userRole)) {
+      whereClause += ' AND c.KodeDept = @P3';
+      params.push(userCabang);
     }
 
     const [customers, totalResult] = await Promise.all([
