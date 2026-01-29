@@ -8,340 +8,6 @@ const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'], });
 // const currentMonth = (new Date()).getMonth() + 1;
 const currentMonth = 3;
 
-function getDbByYear(year) {
-  const map = {
-    2025: 'sdldb001',
-    2026: 'sdldb002',
-    2027: 'sdldb003',
-  };
-  return map[year];
-}
-
-function getYearsInRange(startDate, endDate) {
-  const startYear = new Date(startDate).getFullYear();
-  const endYear = new Date(endDate).getFullYear();
-
-  const years = [];
-  for (let y = startYear; y <= endYear; y++) {
-    years.push(y);
-  }
-  return years;
-}
-
-function buildSalesQuery(dbName, {
-  startDate,
-  endDate,
-  cabangArray,
-  barangArray,
-  vendorArray,
-  searchQuery
-}) {
-  return Prisma.sql`
-    SELECT DISTINCT
-      d.NamaDept,
-      d.KepalaCabang,
-      sih.KodeWil,
-      s.NamaSales,
-      s2.NamaSales AS NamaSpv,
-      r.RayonName,
-      FORMAT(sih.TglFaktur, 'dd/MM/yyyy') AS TglFaktur,
-      sih.NoBukti,
-      cg.CustomerGroupName,
-      be.BusinessEntityName,
-      c.KodeLgn,
-      c.NamaLgn,
-      c.Alamat1,
-      i.KodeItem,
-      i.NamaBarang,
-      is3.NamaLgn AS NamaSupplier,
-      bc.BusinessCentreName,
-      ispbd.SalesPrice AS BasePrice,
-      CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END AS Hna,
-
-      CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END AS Qty,
-
-      sii.SatuanNs,
-
-      ispbd.SalesPrice * 
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) AS ValueBasePrice,
-
-      (CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) AS ValueHNA,
-
-      ((CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END))
-      -
-      ((CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) * sii.ItemDisPsn / 100) AS ValueNett,
-
-      ((CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) * sii.ItemDisPsn / 100) AS TotalValueDisc,
-
-      ((CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) * sii.DiscountDistributorPsn / 100) AS ValueDiscDist,
-
-      ((CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END) *
-      (CASE
-        WHEN SUBSTRING(
-          sih.NoBukti COLLATE Latin1_General_CI_AS,
-          CHARINDEX('/', sih.NoBukti COLLATE Latin1_General_CI_AS) + 1,
-          2
-        ) = 'RS'
-        THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-        ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
-      END) * sii.DiscountPrinciplePsn / 100) AS ValueDiscPrinc,
-
-      sii.ItemDisPsn AS TotalDiscPsn,
-      sii.DiscountDistributorPsn AS DiscDistPsn,
-      sii.DiscountPrinciplePsn AS DiscPrincPsn,
-      bnt.BatchNumber,
-      FORMAT(bnt.TglExpired, 'dd/MM/yyyy') AS TglExpired,
-      c.Province,
-      c.Regency,
-      c.District,
-      c.Village,
-
-      CASE
-        WHEN sih.TipeJual = 'E' THEN 'E-Katalog'
-        WHEN sih.TipeJual = 'R' THEN 'Non E-Katalong'
-        ELSE ''
-      END AS TipeJual,
-
-      sih.PoLanggan,
-      p.PromotionCode,
-      p.PromotionName
-
-    FROM ${Prisma.raw(dbName)}.dbo.SalesInvoiceHeaders sih
-    JOIN ${Prisma.raw(dbName)}.dbo.SalesInvoiceItems sii
-      ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-    JOIN ${Prisma.raw(dbName)}.dbo.BatchNumberTransactions bnt
-      ON bnt.InventoryStockId = sii.InventoryStockId
-     AND (
-       bnt.ParentTransaction COLLATE Latin1_General_CI_AS
-       = sih.AllNoSj COLLATE Latin1_General_CI_AS
-       OR bnt.ParentTransactionId = sih.SalesInvoiceHeaderId
-     )
-
-    JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
-    JOIN Inventories i ON is2.InventoryId = i.InventoryId
-
-    JOIN Departments d
-      ON d.KodeDept COLLATE Latin1_General_CI_AS
-       = sih.KodeCc COLLATE Latin1_General_CI_AS
-
-    JOIN Salesmen s
-      ON s.KodeSales COLLATE Latin1_General_CI_AS
-       = sih.KodeSales COLLATE Latin1_General_CI_AS
-
-    JOIN Salesmen s2
-      ON s2.KodeSales COLLATE Latin1_General_CI_AS
-       = s.KodeSalesSupport COLLATE Latin1_General_CI_AS
-
-    JOIN Customers c ON c.CustomerId = sih.CustomerId
-    JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
-    JOIN Rayons r ON rd.RayonCode = r.RayonCode
-    JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
-    JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-
-    JOIN InventorySuppliers is3
-      ON is3.InventoryId = i.InventoryId 
-     AND is3.IsForSalesInvoice = 1
-
-    JOIN BusinessCentres bc
-      ON bc.BusinessCentreCode COLLATE Latin1_General_CI_AS
-       = is3.BusinessCentreCode COLLATE Latin1_General_CI_AS
-
-    LEFT JOIN Promotions p
-      ON p.PromotionCode COLLATE Latin1_General_CI_AS
-       = sii.PromotionCode COLLATE Latin1_General_CI_AS
-
-    JOIN InventorySalesPriceByDates ispbd
-      ON i.InventoryId = ispbd.InventoryId
-     AND ispbd.StartingDate <= sih.TglFaktur
-     AND (sih.TglFaktur <= ispbd.EndDate OR ispbd.EndDate IS NULL)
-
-    WHERE sih.TglFaktur BETWEEN ${startDate + ' 00:00:00'} AND ${endDate + ' 23:59:59'}
-
-      ${cabangArray.length
-        ? Prisma.sql`AND sih.KodeCc COLLATE Latin1_General_CI_AS IN (${Prisma.join(cabangArray)})`
-        : Prisma.sql``}
-
-      ${barangArray.length
-        ? Prisma.sql`AND i.KodeItem COLLATE Latin1_General_CI_AS IN (${Prisma.join(barangArray)})`
-        : Prisma.sql``}
-
-      ${vendorArray.length
-        ? Prisma.sql`AND is3.KodeLgn COLLATE Latin1_General_CI_AS IN (${Prisma.join(vendorArray)})`
-        : Prisma.sql``}
-
-      AND (
-        c.KodeLgn COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR c.NamaLgn COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR i.KodeItem COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR i.NamaBarang COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR sih.NoBukti COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR sih.AllNoSj COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR sih.KodeWil COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR s.KodeSales COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR s2.KodeSales COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR sih.PoLanggan COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-        OR p.PromotionCode COLLATE Latin1_General_CI_AS LIKE ${searchQuery}
-      )
-  `;
-}
-
-
-router.get("/back", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 10;
-    const skip = (page - 1) * pageSize;
-
-    const search = req.query.search?.trim() || '';
-    const searchQuery = `%${search}%`;
-
-    const startDate = req.query.start_date;
-    const endDate = req.query.end_date;
-
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: "Start date and end date are required" });
-    }
-
-    const startYear = new Date(startDate).getFullYear();
-    const endYear = new Date(endDate).getFullYear();
-    if (startYear !== endYear) {
-      return res.status(400).json({ error: "Start date and end date must be in the same year" });
-    }
-
-    const cabangArray = req.query.cabang?.split(',').map(s => s.trim()).filter(Boolean) || [];
-    const vendorArray = req.query.vendor?.split(',').map(s => s.trim()).filter(Boolean) || [];
-    const barangArray = req.query.barang?.split(',').map(s => s.trim()).filter(Boolean) || [];
-
-    // role defaults (unchanged)
-    if (req.user.role !== 'ADM' && !cabangArray.length && req.user.cabang) {
-      cabangArray.push(req.user.cabang);
-    }
-    if (!vendorArray.length && req.user.vendor) {
-      vendorArray.push(req.user.vendor);
-    }
-
-    // 🔑 dynamic routing
-    const years = getYearsInRange(startDate, endDate);
-
-    const unionQueries = years
-      .map(year => {
-        const db = getDbByYear(year);
-        if (!db) return null;
-
-        return buildSalesQuery(db, {
-          startDate,
-          endDate,
-          cabangArray,
-          barangArray,
-          vendorArray,
-          searchQuery
-        });
-      })
-      .filter(Boolean);
-
-    if (!unionQueries.length) {
-      return res.json({ data: [], pagination: { page, pageSize, total: 0, totalPages: 0 } });
-    }
-
-    // main query
-    const sales = await prisma.$queryRaw`
-      SELECT *
-      FROM (
-        ${Prisma.join(unionQueries, Prisma.sql` UNION ALL `)}
-      ) x
-      ORDER BY NoBukti COLLATE Latin1_General_CI_AS
-      OFFSET ${skip} ROWS
-      FETCH NEXT ${pageSize} ROWS ONLY
-    `;
-
-    // count query
-    const totalResult = await prisma.$queryRaw`
-      SELECT COUNT(*) AS total
-      FROM (
-        ${Prisma.join(unionQueries, Prisma.sql` UNION ALL `)}
-      ) x
-    `;
-
-    const total = Number(totalResult[0]?.total || 0);
-
-    return res.json({
-      data: sales,
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
-      }
-    });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to fetch sales" });
-  }
-});
-
-
 router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -859,66 +525,102 @@ router.get("/outstandingdt", async (req, res) => {
   }
 });
 
-
-
-// Get customer by ID
-router.get("/:id", async (req, res) => {
+router.get("/dpl", async (req, res) => {
   try {
-    const customer = await prisma.$queryRaw`
-      select c.*,rd.RayonCode,cg.CustomerGroupName,be.BusinessEntityName,d.NamaDept from customers c 
-      join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
-      join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
-      join RayonDistricts rd on c.DistrictId = rd.DistrictId
-      join Departments d on c.KodeDept = d.KodeDept
-      where c.CustomerId=${req.params.id};
-    `
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.per_page) || -1;
+    const search = req.query.search?.trim() || '';
+    const skip = (page - 1) * pageSize;
+    const cabangParam = req.query.cabang || '';
+    const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()).filter(Boolean) : []; // Filter empty strings
+    const startDate = req.query.start_date || null;
+    const endDate = req.query.end_date || null;
+    const searchQuery = `%${search}%`;
+    const userRole = req.user.role;
+    const userCabang = req.user.cabang;
+    const userVendor = req.user.vendor;
 
-    const rayonCustomer = await prisma.$queryRaw`
-      select rd.* from rayondistricts rd
-      join customers c on rd.DistrictId = c.DistrictId
-      where c.CustomerId=${req.params.id};
-    `
-    const BusinessEntity = await prisma.$queryRaw`
-      select be.* from BusinessEntities be
-      join customers c on be.BusinessEntityId = c.BusinessEntityId
-      where c.CustomerId=${req.params.id};
-    `
-
-    const customerGroup = await prisma.$queryRaw`
-      select cg.* from customergroups cg
-      join customers c on cg.CustomerGroupId = c.CustomerGroupId
-      where c.CustomerId=${req.params.id};
-    `
-
-    const legalitasOutlet = await prisma.$queryRaw`
-      select 
-      cgmp.CustomerGroupMasterPermissionName,
-      cgp.PermissionTitleCode,
-      cgvp.PermissionValue,
-      cgvp.FilePath,
-      cgvp.Nomor,
-      isnull(format(cgvp.ExpiredDate,'yyyy-MM-dd'),'') as tglExpired 
-      from customers c
-      join customergrouppermissions cgp on c.CustomerGroupId = cgp.customergroupid
-      join CustomerGroupMasterPermissions cgmp on cgmp.customergroupmasterpermissioncode = cgp.customergroupmasterpermissioncode
-      left join CustomerGroupValuePermissions cgvp on cgp.customergroupmasterpermissioncode = cgvp.customergroupmasterpermissioncode and c.customerid = cgvp.customerid
-      where c.CustomerId=${req.params.id}
-      order by cgvp.PermissionTitleCode, cgvp.Nomor;
-    `;
-
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
+    if (!endDate) {
+      return res.status(400).json({ error: "end date are required" });
     }
+
+    // Apply user role logic for default filters
+    if (userRole != 'ADM' && userRole != 'FAS') {
+      if (cabangArray.length === 0 && userCabang) { // Ensure userCabang is valid
+        cabangArray.push(userCabang);
+      }
+    }
+
+    if (userVendor) {
+      if (cabangArray.length === 0 && userVendor) { // Ensure userVendor is valid
+        cabangArray.push(userVendor);
+      }
+    }
+    const pageSetup = pageSize > 0 ? Prisma2026.sql`OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY` : Prisma2026.sql``;
+
+    // --- Main Data Query ---
+    // Using the Prisma.sql`` and Prisma.join approach from your original working file
+    const sales = await prisma2026.$queryRaw`
+      select
+        d.NamaDept,
+        p.PromotionName,
+        FORMAT(p.StartDate, 'dd/MM/yyyy') as StartDate,
+        FORMAT(p.EndDate, 'dd/MM/yyyy') as EndDate,
+        c.KodeLgn,
+        c.NamaLgn
+      from Promotions p 
+      join customers c on p.CustomerId  = c.CustomerId
+      join Departments d on c.KodeDept = d.KodeDept
+      where
+        p.StartDate >= ${startDate + ' 00:00:00'} and p.EndDate <= ${endDate + ' 23:59:59'}
+        ${cabangArray.length > 0
+        ? Prisma2026.sql`AND c.KodeDept IN (${Prisma2026.join(cabangArray)})`
+        : Prisma2026.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+        )
+      order by d.NamaDept,p.EndDate
+      ${pageSetup};
+    `;
+    // --- End Main Data Query ---
+
+    // --- Count Query ---
+    // Also using the reliable Prisma2026.sql`` and Prisma2026.join approach
+    const totalResult = await prisma2026.$queryRaw`
+      select
+        count(*) as total
+      from Promotions p 
+      join customers c on p.CustomerId  = c.CustomerId
+      join Departments d on c.KodeDept = d.KodeDept
+      where
+        p.StartDate >= ${startDate + ' 00:00:00'} and p.EndDate <= ${endDate + ' 23:59:59'}
+        ${cabangArray.length > 0
+        ? Prisma2026.sql`AND c.KodeDept IN (${Prisma2026.join(cabangArray)})`
+        : Prisma2026.sql``}
+        AND (
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+        )
+    `;
+    // --- End Count Query ---
+
+    const total = Number(totalResult[0]?.total || 0);
+
     return res.json({
-      id: req.params.id,
-      customer: customer[0],
-      rayonCustomer: rayonCustomer[0],
-      customerGroup: customerGroup[0],
-      legalitasOutlet: legalitasOutlet,
-      businessEntity: BusinessEntity[0],
+      data: sales, // Match frontend expectation (check your frontend expects 'data' or 'sales')
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
     });
   } catch (error) {
-    return res.status(500).json({ error });
+    console.error("Failed to fetch sales:", error);
+    // Return a more detailed error message
+    return res.status(500).json({
+      error: "Failed to fetch sales",
+      details: error
+    });
   }
 });
 
