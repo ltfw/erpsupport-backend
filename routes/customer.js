@@ -14,13 +14,13 @@ router.get("/export", async (req, res) => {
     console.log("User Role:", userRole, "User Cabang:", userCabang);
 
     // Build WHERE clause and params
-    let whereClause = '';
+    let whereClause = 'WHERE 1=1';
     const params = [];
 
     const privilegedRoles = ['ADM', 'FAS', 'QMS'];
 
     if (!privilegedRoles.includes(userRole)) {
-      whereClause += ' AND c.KodeDept = @P3';
+      whereClause += ' AND c.KodeDept = @P1';
       params.push(userCabang);
     }
 

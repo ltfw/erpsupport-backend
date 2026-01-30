@@ -579,6 +579,7 @@ router.get("/dpl", async (req, res) => {
         AND (
             c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
         )
+        and p.IsActive = 1
       order by d.NamaDept,p.EndDate
       ${pageSetup};
     `;
@@ -600,6 +601,7 @@ router.get("/dpl", async (req, res) => {
         AND (
             c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
         )
+        and p.IsActive = 1
     `;
     // --- End Count Query ---
 
