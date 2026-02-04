@@ -76,6 +76,7 @@ router.get("/", async (req, res) => {
         i.NamaBarang,
         is3.NamaLgn AS NamaSupplier,
         bc.BusinessCentreName,
+        ISNULL(ispbd.SalesPrice / NULLIF(i.KonversiSatuanDasar, 0), 0) as BasePriceSatuanTerkecil,
         ispbd.SalesPrice as BasePrice,
         -- Prefer Hna if > 0, otherwise HargaJual
         CASE 
@@ -88,6 +89,11 @@ router.get("/", async (req, res) => {
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END AS Qty,
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) * i.KonversiSatuanDasar AS QtySatuanTerkecil,
         sii.SatuanNs,
         -- ValueHNA
         (CASE 
@@ -99,6 +105,12 @@ router.get("/", async (req, res) => {
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END) AS ValueHNA,
+        ispbd.SalesPrice *
+        (CASE 
+            WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
+                THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+            ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
+        END) AS ValueBasePrice,
         -- ValueNett
         ((CASE 
             WHEN sii.Hna = 0 THEN sii.HargaJual
