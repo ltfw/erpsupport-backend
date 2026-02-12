@@ -1,9 +1,12 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../../generated/dbtrans");
+const { PrismaClient: PrismaClient2026, Prisma: Prisma2026 } = require("../../generated/dbtrans2026");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'] });
-const { sql } = Prisma;
+const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'], });
+
+// const sqlTag = new Date(searchDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
 
 router.get("/", async (req, res) => {
   const userRole = req.user.role;
@@ -17,6 +20,10 @@ router.get("/", async (req, res) => {
     const cabang = req.query.cabang?.trim() || '';
     const vendor = req.query.vendor?.trim() || '';
     const barang = req.query.barang?.trim() || '';
+
+    const prismaBase = new Date(searchDate).getFullYear() === 2026 ? prisma2026 : prisma;
+    const PrismaWhere = new Date(searchDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
+    const { sql } = new Date(searchDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
 
     let cabangArray = [];
     let vendorArray = [];
@@ -46,7 +53,7 @@ router.get("/", async (req, res) => {
       barangArray = barang ? barang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     } else if (allowedRoles.includes(userRole) && !barang) {
       barangArray = [];
-    } else{
+    } else {
       barangArray = [];
     }
 
@@ -54,9 +61,21 @@ router.get("/", async (req, res) => {
 
     console.log("user roles:", userRole, "barang Array: ", barangArray, "barang: ", barang);
 
+    const cabangFilter = cabangArray.length > 0
+      ? sql`and w.KodeDept IN (${PrismaWhere.join(cabangArray)})`
+      : sql``;
+
+    const vendorFilter = vendorArray.length > 0
+      ? sql`and is3.KodeLgn IN (${PrismaWhere.join(vendorArray)})`
+      : sql``;
+
+    const barangFilter = barangArray.length > 0
+      ? sql`and i.KodeItem IN (${PrismaWhere.join(barangArray)})`
+      : sql``;
+
 
     const [data, totalResult] = await Promise.all([
-      prisma.$queryRaw`
+      prismaBase.$queryRaw`
         select
           is2.KodeGudang,
           w.NamaGudang,
@@ -69,8 +88,11 @@ router.get("/", async (req, res) => {
           sum(bnt.QtyBooking) as 'SumQtyBooking',
           boso.boso as 'SumQtyBoSO',
           sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
-          case when CONVERT(DATE, GETDATE()) = ${searchDate} then sum(bnt.Qty) - abs(boso.boso)
-          else sum(bnt.Qty) end as QtyShow,
+          case 
+            when CONVERT(DATE, GETDATE()) = cast(${searchDate} as date)
+            then sum(bnt.Qty) - abs(boso.boso)
+            else sum(bnt.Qty)
+          end as QtyShow,
           case when i.IsConsignmentIn = 1 then 'Konsinyasi'
           when i.isbonus = 1 then 'Bonus'
           else 'Reguler' end as Keterangan
@@ -90,10 +112,10 @@ router.get("/", async (req, res) => {
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
           (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '00-GUU-02' and is2.KodeGudang <> '03-GUU-03')
-          and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
-          ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
-          ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
-          ${barangArray.length > 0 ? sql`and i.KodeItem in (${Prisma.join(barangArray)})` : sql``}
+          and cast(bnt.tanggaltransaksi as date) <= cast(${searchDate} as date)
+          ${cabangFilter}
+          ${vendorFilter}
+          ${barangFilter}
         group by
           is2.KodeGudang,
           w.NamaGudang,
@@ -110,7 +132,7 @@ router.get("/", async (req, res) => {
           is2.KodeGudang,i.KodeItem
         OFFSET ${skip} ROWS FETCH NEXT ${pageSize} ROWS ONLY
       `,
-      prisma.$queryRaw`
+      prismaBase.$queryRaw`
         select
           count(*) as total
         from
@@ -126,8 +148,11 @@ router.get("/", async (req, res) => {
               sum(bnt.QtyBooking) as 'SumQtyBooking',
               boso.boso as 'SumQtyBoSO',
               sum(bnt.Qty) - abs(boso.boso) as 'SumQtyAvailable',
-              case when CONVERT(DATE, GETDATE()) = ${searchDate} then sum(bnt.Qty) - abs(boso.boso)
-              else sum(bnt.Qty) end as QtyShow,
+              case 
+                when CONVERT(DATE, GETDATE()) = cast(${searchDate} as date)
+                then sum(bnt.Qty) - abs(boso.boso)
+                else sum(bnt.Qty)
+              end as QtyShow,
               case when i.IsConsignmentIn = 1 then 'Konsinyasi'
               when i.isbonus = 1 then 'Bonus'
               else 'Reguler' end as Keterangan
@@ -147,10 +172,10 @@ router.get("/", async (req, res) => {
             ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
             where
               (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '00-GUU-02' and is2.KodeGudang <> '03-GUU-03')
-              and cast(bnt.tanggaltransaksi as date) <= ${searchDate}
-              ${cabangArray.length > 0 ? sql`and w.KodeDept in (${Prisma.join(cabangArray)})` : sql``}
-              ${vendorArray.length > 0 ? sql`and is3.KodeLgn in (${Prisma.join(vendorArray)})` : sql``}
-              ${barangArray.length > 0 ? sql`and i.KodeItem in (${Prisma.join(barangArray)})` : sql``}
+              and cast(bnt.tanggaltransaksi as date) <= cast(${searchDate} as date)
+              ${cabangFilter}
+              ${vendorFilter}
+              ${barangFilter}
             group by
               is2.KodeGudang,
               w.NamaGudang,
