@@ -112,7 +112,7 @@ router.get("/", async (req, res) => {
         ) as boso on is2.KodeGudang = boso.kodegudang and is2.inventoryid = boso.inventoryid
         where
           (is2.KodeGudang <> '00-GUU-03' and is2.KodeGudang <> '00-GUU-02' and is2.KodeGudang <> '03-GUU-03' 
-          and is2.KodeGudang <> '02-GUU-02' and is2.KodeGudang <> '02-GUU-03')
+          and is2.KodeGudang <> '02-GUU-02' and is2.KodeGudang <> '02-GUU-03' and is2.KodeGudang <> 'GDS-00-SMG')
           and cast(bnt.tanggaltransaksi as date) <= cast(${searchDate} as date)
           ${cabangFilter}
           ${vendorFilter}
