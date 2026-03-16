@@ -567,8 +567,15 @@ router.get("/dpl", async (req, res) => {
         FORMAT(p.StartDate, 'dd/MM/yyyy') as StartDate,
         FORMAT(p.EndDate, 'dd/MM/yyyy') as EndDate,
         c.KodeLgn,
-        c.NamaLgn
+        c.NamaLgn,
+        pi.KodeItem,
+        pi.NamaBarang as NamaItem,
+        pi.Hna as hna,
+        pi.DiscountPrinciple as discountprincipal,
+        pi.DiscountDistributor as discountdistributor,
+        pi.SupportDiscount as supportdiscount
       from Promotions p 
+      left join PromotionItems pi on p.PromotionId = pi.PromotionId
       join customers c on p.CustomerId  = c.CustomerId
       join Departments d on c.KodeDept = d.KodeDept
       where
@@ -584,12 +591,14 @@ router.get("/dpl", async (req, res) => {
     `;
     // --- End Main Data Query ---
 
+
     // --- Count Query ---
     // Also using the reliable Prisma2026.sql`` and Prisma2026.join approach
     const totalResult = await prisma2026.$queryRaw`
       select
         count(*) as total
       from Promotions p 
+      left join PromotionItems pi on p.PromotionId = pi.PromotionId
       join customers c on p.CustomerId  = c.CustomerId
       join Departments d on c.KodeDept = d.KodeDept
       where
@@ -605,8 +614,40 @@ router.get("/dpl", async (req, res) => {
 
     const total = Number(totalResult[0]?.total || 0);
 
+    const customersMap = new Map();
+    const itemsData = [];
+
+    sales.forEach(row => {
+      // Create a unique key for the customer row
+      const custKey = row.PromotionName + '_' + row.KodeLgn;
+      if (!customersMap.has(custKey)) {
+        customersMap.set(custKey, {
+          NamaDept: row.NamaDept,
+          PromotionName: row.PromotionName,
+          StartDate: row.StartDate,
+          EndDate: row.EndDate,
+          KodeLgn: row.KodeLgn,
+          NamaLgn: row.NamaLgn
+        });
+      }
+      
+      itemsData.push({
+        NamaDept: row.NamaDept,
+        PromotionName: row.PromotionName,
+        StartDate: row.StartDate,
+        EndDate: row.EndDate,
+        KodeItem: row.KodeItem,
+        NamaItem: row.NamaItem,
+        hna: row.hna,
+        discountprincipal: row.discountprincipal,
+        discountdistributor: row.discountdistributor,
+        supportdiscount: row.supportdiscount
+      });
+    });
+
     return res.json({
-      data: sales, // Match frontend expectation (check your frontend expects 'data' or 'sales')
+      data: itemsData,
+      customerData: Array.from(customersMap.values()),
       pagination: {
         page,
         pageSize,

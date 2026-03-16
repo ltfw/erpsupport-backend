@@ -1,0 +1,56 @@
+{
+  "mcpServers": {
+    "mssql-pwdat": {
+      "command": "mssql-mcp-server",
+      "args": [],
+      "env": {
+        "MSSQL_HOST": "10.252.198.65",
+        "MSSQL_PORT": "1433",
+        "MSSQL_USER": "sqladmin",
+        "MSSQL_PASSWORD": "sqladmin",
+        "MSSQL_DATABASE": "PwdatSatoria",
+        "MSSQL_ENCRYPT": "false",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
+    },
+    "mssql-dbtrans": {
+      "command": "mssql-mcp-server",
+      "args": [],
+      "env": {
+        "MSSQL_HOST": "10.252.198.65",
+        "MSSQL_PORT": "1433",
+        "MSSQL_USER": "sqladmin",
+        "MSSQL_PASSWORD": "sqladmin",
+        "MSSQL_DATABASE": "SDLdb001",
+        "MSSQL_ENCRYPT": "false",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
+    },
+    "mssql-erpsupport": {
+      "command": "mssql-mcp-server",
+      "args": [],
+      "env": {
+        "MSSQL_HOST": "10.252.198.65",
+        "MSSQL_PORT": "1433",
+        "MSSQL_USER": "sqladmin",
+        "MSSQL_PASSWORD": "sqladmin",
+        "MSSQL_DATABASE": "ERPSupport",
+        "MSSQL_ENCRYPT": "false",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
+    },
+    "mssql-dbtrans-2026": {
+      "command": "mssql-mcp-server",
+      "args": [],
+      "env": {
+        "MSSQL_HOST": "10.252.198.65",
+        "MSSQL_PORT": "1433",
+        "MSSQL_USER": "sqladmin",
+        "MSSQL_PASSWORD": "sqladmin",
+        "MSSQL_DATABASE": "SDLdb002",
+        "MSSQL_ENCRYPT": "false",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
+    }
+  }
+}
