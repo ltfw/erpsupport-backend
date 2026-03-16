@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
     let totalResult = 0;
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
-    if (isAdmin=='ADM') {
+    if (isAdmin=='ADM' || isAdmin=='DAT' ) {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
