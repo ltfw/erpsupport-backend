@@ -1,10 +1,11 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../../generated/dbtrans");
+const { PrismaClient: PrismaClient2026, Prisma: Prisma2026 } = require("../../generated/dbtrans2026");
 const { getCurrentDateFormatted, getDatetimeOfPreviousMonth } = require("../../utils/Date");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query', 'warn', 'error'] });
-const { sql } = Prisma;
+const prisma = new PrismaClient({ log: ['warn', 'error'] });
+const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'], });
 
 router.get("/report", async (req, res) => {
   const userRole = req.user.role;
@@ -18,6 +19,10 @@ router.get("/report", async (req, res) => {
     const endDate = req.query.end_date?.trim() || getCurrentDateFormatted();
     const cabang = req.query.cabang?.trim();
 
+    const prismaBase = new Date(startDate).getFullYear() === 2026 ? prisma2026 : prisma;
+    const PrismaWhere = new Date(startDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
+    const { sql } = new Date(startDate).getFullYear() === 2026 ? Prisma2026 : Prisma;
+
     let baseQuery = null;
 
     if(!cabang) {
@@ -25,7 +30,7 @@ router.get("/report", async (req, res) => {
     }else if (cabang == "00") {
       const lastDateTime = getDatetimeOfPreviousMonth(startDate);
       
-      baseQuery = Prisma.sql`
+      baseQuery = PrismaWhere.sql`
           EXEC sp_InventoryReportPharma_Pusat
           @ParentCategory = 'CLSPHA',
           @KodeDept = '00',
@@ -37,7 +42,7 @@ router.get("/report", async (req, res) => {
     } else {
       const lastDateTime = getDatetimeOfPreviousMonth(startDate);
       const gdgTarget = `${cabang}-GUU`;
-      baseQuery = Prisma.sql`
+      baseQuery = PrismaWhere.sql`
         exec sp_InventoryReportPharma_Cabang 
           @ParentCategory = 'CLSPHA',
           @EndInitialDate = ${lastDateTime},
@@ -51,7 +56,7 @@ router.get("/report", async (req, res) => {
         `;
     }
 
-    const data = await prisma.$queryRaw`${baseQuery}`;
+    const data = await prismaBase.$queryRaw`${baseQuery}`;
     const total = data.length > 0 ? data.length : 0;
 
     res.json({
