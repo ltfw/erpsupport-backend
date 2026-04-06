@@ -200,7 +200,7 @@ router.get("/", async (req, res) => {
     join InventorySalesPriceByDates ispbd on i.InventoryId = ispbd.InventoryId 
     	and ispbd.StartingDate <= sih.TglFaktur
     	AND (
-	        sih.TglFaktur <= ispbd.EndDate
+	        sih.TglFaktur < DATEADD(day, 1, CAST(ispbd.EndDate AS DATE))
 	        OR ispbd.EndDate IS NULL
 	    )
       WHERE sih.TglFaktur >= ${startDate + ' 00:00:00'} and sih.TglFaktur <= ${endDate + ' 23:59:59'}
