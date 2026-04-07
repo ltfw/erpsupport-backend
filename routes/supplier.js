@@ -10,11 +10,13 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || "";
     const isAdmin = req.user.role;
     const username = req.user.username;
+    const vendor = req.user.vendor;
+    console.log("data user", req.user.role, req.user.username, req.user.cabang, req.user.vendor);
 
     const searchQuery = `%${search}%`;
     const usernameQuery = isAdmin=='ADM' || isAdmin=='MKT-SANI' ? sql`` : sql` and us.UserName = ${username}`
-    const vendorQuery = isAdmin=='MKT-SANI' ? sql` and v.KodeLgn = ${req.user.vendor}` : sql``
-    console.log("User Role:", isAdmin, "Username:", username, "vendorQuery:", vendorQuery);
+    const vendorQuery = isAdmin=='MKT-SANI' || isAdmin=='MKT-SLF' ? sql` and v.KodeLgn = ${req.user.vendor}` : sql``
+    console.log("User Role:", isAdmin, "Username:", username, "vendorQuery:", req.user.vendor);
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 100;
@@ -45,8 +47,8 @@ router.get("/", async (req, res) => {
       [vendors, totalResult] = await Promise.all([
         prisma.$queryRaw`
         SELECT distinct v.VendorId, v.KodeLgn, v.NamaLgn
-        FROM PwdatBackup.dbo.UserSupplier us
-        JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
+        FROM PwdatSATORIA.dbo.UserSupplier us
+        JOIN SDLdb002.dbo.Vendors v ON us.VendorId = v.Kodelgn
         WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery})
         ${vendorQuery}
         ORDER BY v.KodeLgn
@@ -54,8 +56,8 @@ router.get("/", async (req, res) => {
       `,
         prisma.$queryRaw`
         SELECT COUNT(*) AS total
-        FROM PwdatBackup.dbo.UserSupplier us
-        JOIN SDUdb001.dbo.Vendors v ON us.VendorId = v.VendorId
+        FROM PwdatSATORIA.dbo.UserSupplier us
+        JOIN SDLdb002.dbo.Vendors v ON us.VendorId = v.Kodelgn
         WHERE (v.KodeLgn LIKE ${searchQuery} OR v.NamaLgn LIKE ${searchQuery})
         ${vendorQuery}
       `,

@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     let cabangArray = [];
     let vendorArray = [];
     let barangArray = [];
-    const allowedRoles = ['ADM', 'FAS', 'MKT-SANI'];
+    const allowedRoles = ['ADM', 'FAS', 'MKT-SANI', 'MKT-SLF'];
     if (allowedRoles.includes(userRole) && cabang) {
       cabangArray = cabang ? cabang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     } else if (allowedRoles.includes(userRole) && !cabang) {
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
     if (allowedRoles.includes(userRole) && vendor) {
       vendorArray = vendor ? vendor.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     } else if (allowedRoles.includes(userRole) && !vendor) {
-      if (userRole == 'MKT-SANI') {
+      if (userRole == 'MKT-SANI' || userRole == 'MKT-SLF') {
         vendorArray = [req.user.vendor];
       } else {
         vendorArray = [];

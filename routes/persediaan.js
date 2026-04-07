@@ -3,7 +3,7 @@ const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
 
 const router = express.Router();
-const prisma = new PrismaClient({ log: ['query','warn', 'error'], });
+const prisma = new PrismaClient({ log: ['warn', 'error'], });
 
 router.get("/perbatch", async (req, res) => {
   const endDate = req.query.date;
@@ -31,8 +31,9 @@ router.get("/perbatch", async (req, res) => {
     console.log("User Role:", userRole, "Cabang:", userCabang, "Vendor:", userVendor);
 
     const cabangArray = cabangParam ? cabangParam.split(',').map(s => s.trim()) : [];
-    const vendorArray = vendorParam ? vendorParam.split(',').map(v => v.trim()) : [];
+    const vendorArray = vendorParam ? vendorParam.split(',').map(v => v.trim()) : (userVendor ? [userVendor] : []);
     const barangArray = barangParam ? barangParam.split(',').map(b => b.trim()) : [];
+    console.log("Cabang Array:", cabangArray, "Vendor Array:", vendorArray, "Barang Array:", barangArray);
 
     const searchQuery = `%${search}%`;
 
@@ -45,8 +46,13 @@ router.get("/perbatch", async (req, res) => {
 
     // Cabang filter
     if (userRole !== 'ADM' || cabangArray.length > 0) {
-      const cabangList = cabangArray.length > 0 ? cabangArray : [userCabang];
-      whereFragments.push(Prisma.sql`w.KodeDept IN (${Prisma.join(cabangList)})`);
+      const cabangList = cabangArray.length > 0 ? cabangArray : [userCabang].filter(Boolean);
+      if (cabangList.length > 0) {
+        // 2. Gunakan Prisma.join untuk menggabungkan elemen array dengan koma
+        whereFragments.push(
+          Prisma.sql`w.KodeDept IN (${Prisma.join(cabangList)})`
+        );
+      }
     }
 
     // Vendor filter
@@ -78,6 +84,7 @@ router.get("/perbatch", async (req, res) => {
       });
       whereClause = Prisma.sql`WHERE ${combined}`;
     }
+    console.log("Constructed WHERE clause:", whereClause);
 
     // const query = Prisma.sql`
     //   SELECT
@@ -203,14 +210,39 @@ router.get("/", async (req, res) => {
     const pageSize = parseInt(req.query.per_page) || 200;
     const skip = (page - 1) * pageSize;
     const search = req.query.search?.trim() || ''
+    const vendorParam = req.query.vendor || req.user.vendor || '';
+    console.log("User Vendor:", req.user.vendor, "Vendor Param:", vendorParam);
 
     const searchQuery = `%${search}%`
     const isKonsinyasiSearch = search.toLowerCase().includes('kon')
     const isRegulerSearch = search.toLowerCase().includes('reg')
     const isBonusSearch = search.toLowerCase().includes('bon')
 
+    let whereClause = Prisma.sql``;
+
+    const searchConditions = [];
+    searchConditions.push(Prisma.sql`i.KodeItem like ${searchQuery}`);
+    searchConditions.push(Prisma.sql`i.NamaBarang like ${searchQuery}`);
+    
+    if (isKonsinyasiSearch) searchConditions.push(Prisma.sql`i.IsConsignmentIn = 1`);
+    if (isRegulerSearch) searchConditions.push(Prisma.sql`(i.IsConsignmentIn = 0 and i.isbonus = 0)`);
+    if (isBonusSearch) searchConditions.push(Prisma.sql`(i.isbonus = 1)`);
+    
+    // Build search conditions
+    let searchSection = searchConditions[0];
+    for (let i = 1; i < searchConditions.length; i++) {
+      searchSection = Prisma.sql`${searchSection} OR ${searchConditions[i]}`;
+    }
+
+    // Add vendor filter if provided
+    if (vendorParam) {
+      whereClause = Prisma.sql`WHERE (${searchSection}) AND is3.KodeLgn = ${vendorParam}`;
+    } else {
+      whereClause = Prisma.sql`WHERE (${searchSection})`;
+    }
+
     const [customers, totalResult] = await Promise.all([
-      prisma.$queryRawUnsafe(`
+      prisma.$queryRaw`
       select
         i.KodeItem,
         i.NamaBarang,
@@ -219,27 +251,18 @@ router.get("/", async (req, res) => {
         else 'Reguler' end as Keterangan
       from
         Inventories i
-      where
-        i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
-        and((i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
-        ${isKonsinyasiSearch ? 'or i.IsConsignmentIn = 1' : ''}
-        ${isRegulerSearch ? 'or (i.IsConsignmentIn = 0 and i.isbonus = 0)' : ''}
-        ${isBonusSearch ? 'or (i.isbonus = 1)' : ''}
-      )
+      join inventorysuppliers is3 on is3.InventoryId = i.InventoryId
+      ${whereClause}
       order by i.kodeitem,i.NamaBarang
       offset ${skip} rows
       fetch next ${pageSize} rows only;
-    `),
-      prisma.$queryRawUnsafe(`
+    `,
+      prisma.$queryRaw`
         select count(*) as total 
         from Inventories i
-        where i.VendorId = '75BC91F1-6D7B-487A-B659-8CA0A200ACB1'
-        and ((i.KodeItem like '${searchQuery}' or i.NamaBarang like '${searchQuery}')
-        ${isKonsinyasiSearch ? 'or i.IsConsignmentIn = 1' : ''}
-        ${isRegulerSearch ? 'or (i.IsConsignmentIn = 0 and i.isbonus = 0)' : ''}
-        ${isBonusSearch ? 'or (i.isbonus = 1)' : ''}
-      )
-      `),
+        join inventorysuppliers is3 on is3.InventoryId = i.InventoryId
+        ${whereClause}
+      `,
     ]);
 
     const total = Number(totalResult[0]?.total || 0)
@@ -254,7 +277,7 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch stocks" });
+    return res.status(500).json({ error});
   }
 });
 
