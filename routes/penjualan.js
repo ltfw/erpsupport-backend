@@ -596,7 +596,8 @@ router.get("/dpl", async (req, res) => {
         ? Prisma2026.sql`AND c.KodeDept IN (${Prisma2026.join(cabangArray)})`
         : Prisma2026.sql``}
         AND (
-            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
+            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery} 
+            OR p.PromotionName LIKE ${searchQuery}
         )
         and p.IsActive = 1
       order by d.NamaDept,p.EndDate
