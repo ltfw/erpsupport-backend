@@ -12,6 +12,7 @@ const daftarBarangRoutes = require('./routes/reports/daftarbarang');
 const konfirmasiPiutangRoutes = require('./routes/piutang/konfirmasipiutang');
 const alkesRoutes = require('./routes/reports/alkes');
 const reportfarmasiRoutes = require('./routes/reports/reportfarmasi');
+const reportpnlRoutes = require('./routes/reports/reportpnl');
 const konfirmasiHutangRoutes = require('./routes/hutang/konfirmasihutang');
 const masteralkesRoutes = require('./routes/master/alkes');
 const cabangAlkesRoutes = require('./routes/master/cabangalkes');
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 
 const allowedOrigins = [
   'http://localhost:3000', // For local development on the same machine
+  'http://localhost:3030', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
   'http://10.252.22.20',
   'http://localhost',
@@ -65,6 +67,7 @@ app.use('/report/daftarbarang', authenticateToken, daftarBarangRoutes);
 app.use('/piutang/konfirmasipiutang', authenticateToken, konfirmasiPiutangRoutes);
 app.use('/alkes', authenticateToken, alkesRoutes);
 app.use('/farmasi/', authenticateToken, reportfarmasiRoutes);
+app.use('/pnl/', authenticateToken, reportpnlRoutes);
 app.use('/hutang/konfirmasihutang', authenticateToken, konfirmasiHutangRoutes);
 app.use('/master/alkes', authenticateToken, masteralkesRoutes);
 app.use('/master/cabangalkes', authenticateToken, cabangAlkesRoutes);

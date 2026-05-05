@@ -15,8 +15,8 @@ router.get("/report", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.per_page) || 30;
     const skip = (page - 1) * pageSize;
-    const startDate = req.query.start_date?.trim() || getCurrentDateFormatted();
-    const endDate = req.query.end_date?.trim() || getCurrentDateFormatted();
+    const startDate = req.query.start_date?.trim();
+    const endDate = req.query.end_date?.trim();
     const cabang = req.query.cabang?.trim();
 
     const prismaBase = new Date(startDate).getFullYear() === 2026 ? prisma2026 : prisma;
