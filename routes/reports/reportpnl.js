@@ -142,116 +142,127 @@ router.get("/report", async (req, res) => {
           FROM Calc
       ),
       FinalReport AS (
-          -- ── Data rows from Pivoted ──────────────────────────────────────
-          SELECT KodeGl, NamaGl, TahunIni, TahunLalu,
-              CASE KodeGl
-                  WHEN '410101'               THEN 1
-                  WHEN '420102-01'            THEN 2
-                  WHEN '420102-02'            THEN 4
-                  WHEN '420201'               THEN 6
-                  WHEN '510101'               THEN 9
-                  WHEN '601099-602199'        THEN 12
-                  WHEN '710001'               THEN 15
-                  WHEN '720099-810099-820099' THEN 17
-                  WHEN '910002'               THEN 20
-                  ELSE 99
-              END as SortOrder
-          FROM Pivoted
+        -- ── Data rows from Pivoted ──────────────────────────────────────
+        SELECT KodeGl, NamaGl, TahunIni, TahunLalu,
+            CASE KodeGl
+                WHEN '410101'               THEN 1
+                WHEN '420102-01'            THEN 2
+                WHEN '420102-02'            THEN 5
+                WHEN '420201'               THEN 7
+                WHEN '510101'               THEN 10
+                WHEN '601099-602199'        THEN 13
+                WHEN '710001'               THEN 16
+                WHEN '720099-810099-820099' THEN 18
+                WHEN '910002'               THEN 21
+                ELSE 99
+            END as SortOrder
+        FROM Pivoted
 
-          UNION ALL
+        UNION ALL
 
-          -- % Disc Princ to Gross Sales
-          SELECT '', '% Disc Princ to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscPrinc_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscPrinc_Prev / GrossSales_Prev, 2) END,
-              3 FROM SubTotals
+        -- % Disc Princ to Gross Sales
+        SELECT '', '% Disc Princ to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscPrinc_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscPrinc_Prev / GrossSales_Prev, 2) END,
+            3 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % Disc Dist to Gross Sales
-          SELECT '', '% Disc Dist to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscDist_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscDist_Prev / GrossSales_Prev, 2) END,
-              5 FROM SubTotals
+        -- KLAIM DISKON
+        SELECT '', 'KLAIM DISKON', DiscPrinc_Now, DiscPrinc_Prev, 4 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % Retur to Gross Sales
-          SELECT '', '% Retur to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Retur_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Retur_Prev / GrossSales_Prev, 2) END,
-              7 FROM SubTotals
+        -- % Disc Dist to Gross Sales
+        SELECT '', '% Disc Dist to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscDist_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscDist_Prev / GrossSales_Prev, 2) END,
+            6 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- NET SALES
-          SELECT '', 'NET SALES', NetSales_Now, NetSales_Prev, 8 FROM SubTotals
+        -- % Retur to Gross Sales
+        SELECT '', '% Retur to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Retur_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Retur_Prev / GrossSales_Prev, 2) END,
+            8 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % HPP to Gross Sales
-          SELECT '', '% HPP to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(HPP_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(HPP_Prev / GrossSales_Prev, 2) END,
-              10 FROM SubTotals
+        -- NET SALES
+        SELECT '', 'NET SALES', NetSales_Now, NetSales_Prev, 9 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- GROSS PROFIT
-          SELECT '', 'GROSS PROFIT', GrossProfit_Now, GrossProfit_Prev, 11 FROM SubTotals
+        -- % HPP to Gross Sales
+        SELECT '', '% HPP to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(HPP_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(HPP_Prev / GrossSales_Prev, 2) END,
+            11 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % Expense to Gross Sales
-          SELECT '', '% Expense to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Expense_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Expense_Prev / GrossSales_Prev, 2) END,
-              13 FROM SubTotals
+        -- GROSS PROFIT
+        SELECT '', 'GROSS PROFIT', GrossProfit_Now, GrossProfit_Prev, 12 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- LABA OPERASIONAL
-          SELECT '', 'LABA OPERASIONAL', LabaOps_Now, LabaOps_Prev, 14 FROM SubTotals
+        -- % Expense to Gross Sales
+        SELECT '', '% Expense to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Expense_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Expense_Prev / GrossSales_Prev, 2) END,
+            14 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % Pendapatan Lain-lain to Gross Sales
-          SELECT '', '% Pendapatan Lain-lain to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLain_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLain_Prev / GrossSales_Prev, 2) END,
-              16 FROM SubTotals
+        -- LABA OPERASIONAL
+        SELECT '', 'LABA OPERASIONAL', LabaOps_Now, LabaOps_Prev, 15 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- % Total Beban Lain-lain to Gross Sales
-          SELECT '', '% Total Beban Lain-lain to Gross Sales',
-              CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(BebanLain_Now  / GrossSales_Now,  2) END,
-              CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(BebanLain_Prev / GrossSales_Prev, 2) END,
-              18 FROM SubTotals
+        -- % Pendapatan Lain-lain to Gross Sales
+        SELECT '', '% Pendapatan Lain-lain to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLain_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLain_Prev / GrossSales_Prev, 2) END,
+            17 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- LABA BERSIH SEBELUM PAJAK
-          SELECT '', 'LABA BERSIH SEBELUM PAJAK',
-              LabaSebelumPajak_Now, LabaSebelumPajak_Prev,
-              19 FROM SubTotals
+        -- % Total Beban Lain-lain to Gross Sales
+        SELECT '', '% Total Beban Lain-lain to Gross Sales',
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(BebanLain_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(BebanLain_Prev / GrossSales_Prev, 2) END,
+            19 FROM SubTotals
 
-          UNION ALL
+        UNION ALL
 
-          -- LABA BERSIH SESUDAH PAJAK
-          SELECT '', 'LABA BERSIH SESUDAH PAJAK',
-              LabaSesudahPajak_Now, LabaSesudahPajak_Prev,
-              21 FROM SubTotals
-      )
+        -- LABA BERSIH SEBELUM PAJAK
+        SELECT '', 'LABA BERSIH SEBELUM PAJAK',
+            LabaSebelumPajak_Now, LabaSebelumPajak_Prev,
+            20 FROM SubTotals
+
+        UNION ALL
+
+        -- LABA BERSIH SESUDAH PAJAK
+        SELECT '', 'LABA BERSIH SESUDAH PAJAK',
+            LabaSesudahPajak_Now, LabaSesudahPajak_Prev,
+            22 FROM SubTotals
+    )
       SELECT
           KodeGl,
           NamaGl,
-          FORMAT(TahunIni,  'N2') as TahunIni,
-          FORMAT(TahunLalu, 'N2') as TahunLalu,
-          CASE
-              WHEN TahunLalu = 0 THEN NULL
-              ELSE FORMAT((TahunIni - TahunLalu) / ABS(TahunLalu), 'P0')
-          END as Growth
+          CASE WHEN NamaGl = 'KLAIM DISKON'
+                THEN '(' + CAST(TahunIni  AS NVARCHAR) + ')'
+                ELSE CAST(TahunIni  AS NVARCHAR)
+            END as TahunIni,
+            CASE WHEN NamaGl = 'KLAIM DISKON'
+                THEN '(' + CAST(TahunLalu AS NVARCHAR) + ')'
+                ELSE CAST(TahunLalu AS NVARCHAR)
+            END as TahunLalu,
+            CASE
+                WHEN TahunLalu = 0 THEN NULL
+                ELSE FORMAT((TahunIni - TahunLalu) / ABS(TahunLalu), 'P0')
+            END as Growth
       FROM FinalReport
       ORDER BY SortOrder
     `;
