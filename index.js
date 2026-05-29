@@ -1,3 +1,7 @@
+BigInt.prototype.toJSON = function () {
+  return Number(this);
+};
+
 const express = require('express');
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
@@ -10,6 +14,7 @@ const navigationsRoutes = require('./routes/navigations');
 const rayoncabangRoutes = require('./routes/reports/rayoncabang');
 const daftarBarangRoutes = require('./routes/reports/daftarbarang');
 const konfirmasiPiutangRoutes = require('./routes/piutang/konfirmasipiutang');
+const umurPiutangRoutes = require('./routes/piutang/umurpiutang');
 const alkesRoutes = require('./routes/reports/alkes');
 const reportfarmasiRoutes = require('./routes/reports/reportfarmasi');
 const reportpnlRoutes = require('./routes/reports/reportpnl');
@@ -65,6 +70,7 @@ app.use('/navigations', authenticateToken, navigationsRoutes);
 app.use('/report/rayoncabang', authenticateToken, rayoncabangRoutes);
 app.use('/report/daftarbarang', authenticateToken, daftarBarangRoutes);
 app.use('/piutang/konfirmasipiutang', authenticateToken, konfirmasiPiutangRoutes);
+app.use('/piutang/umurpiutang', authenticateToken, umurPiutangRoutes);
 app.use('/alkes', authenticateToken, alkesRoutes);
 app.use('/farmasi/', authenticateToken, reportfarmasiRoutes);
 app.use('/pnl/', authenticateToken, reportpnlRoutes);
