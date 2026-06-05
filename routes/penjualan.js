@@ -206,7 +206,7 @@ router.get("/", async (req, res) => {
     JOIN Rayons r ON rd.RayonCode = r.RayonCode
     JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
     JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-    JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId
+    JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId and is3.IsForSalesInvoice = 1
     JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
     LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
     join InventorySalesPriceByDates ispbd on i.InventoryId = ispbd.InventoryId 
