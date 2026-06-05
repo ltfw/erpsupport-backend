@@ -183,7 +183,19 @@ router.get("/", async (req, res) => {
         ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
     JOIN BatchNumberTransactions bnt 
         ON bnt.InventoryStockId = sii.InventoryStockId
-      AND (bnt.ParentTransaction = sih.AllNoSj OR bnt.ParentTransactionId = sih.SalesInvoiceHeaderId)
+        AND (
+              -- Penjualan normal: match by AllNoSj
+              (
+                  SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) <> 'RS'
+                  AND bnt.ParentTransaction = sih.AllNoSj
+              )
+              OR
+              -- Retur: match by SalesInvoiceHeaderId
+              (
+                  SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS'
+                  AND bnt.ParentTransactionId = sih.SalesInvoiceHeaderId
+              )
+          ) 
     JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
     JOIN Inventories i ON is2.InventoryId = i.InventoryId
     JOIN Departments d ON d.KodeDept = sih.KodeCc
@@ -249,7 +261,7 @@ router.get("/", async (req, res) => {
       JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId and is3.IsForSalesInvoice = 1
       JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
       LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      WHERE sih.TglFaktur BETWEEN ${startDate} AND ${endDate}
+      WHERE (sih.TglFaktur >= ${startDate + ' 00:00:00'} and sih.TglFaktur <= ${endDate + ' 23:59:59'})
         ${cabangArray.length > 0
         ? PrismaWhere.sql`AND sih.KodeCc IN (${PrismaWhere.join(cabangArray)})`
         : PrismaWhere.sql``}
