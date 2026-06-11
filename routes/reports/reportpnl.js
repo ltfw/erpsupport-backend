@@ -21,6 +21,9 @@ router.get("/report", async (req, res) => {
     const prismaBase = yearNow === 2026 ? prisma2026 : prisma;
     const PrismaWhere = yearNow === 2026 ? Prisma2026 : Prisma;
 
+    const cabang = req.query.cabang || 'ALL';
+    const deptCondition = cabang !== 'ALL' ? PrismaWhere.sql`AND gti.KodeDept = ${cabang}` : PrismaWhere.sql``;
+
     const baseQuery = PrismaWhere.sql`
       DECLARE @bulan      INT = ${month}
       DECLARE @tahun_now  INT = ${yearNow}
@@ -42,6 +45,7 @@ router.get("/report", async (req, res) => {
               AND month(gti.TglTrn) = @bulan
               AND year(gti.TglTrn)  = @tahun_now
               AND g.KodeGl <> '710099'
+              ${deptCondition}
           GROUP BY g.KodeGl, g.NamaGl, year(gti.TglTrn), month(gti.TglTrn)
 
           UNION ALL
@@ -61,6 +65,7 @@ router.get("/report", async (req, res) => {
               AND month(gti.TglTrn) = @bulan
               AND year(gti.TglTrn)  = @tahun_prev
               AND g.KodeGl <> '710099'
+              ${deptCondition}
           GROUP BY g.KodeGl, g.NamaGl, year(gti.TglTrn), month(gti.TglTrn)
       ),
       Grouped AS (
