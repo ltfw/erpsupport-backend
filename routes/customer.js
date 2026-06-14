@@ -76,7 +76,7 @@ router.get("/export", async (req, res) => {
       JOIN Areas a ON
         c.KodeWil = a.KodeWil
       JOIN Departments d ON
-        a.KodeDept = d.KodeDept
+        c.KodeDept = d.KodeDept
       JOIN CustomerGroups cg ON
         c.CustomerGroupId = cg.CustomerGroupId
       JOIN RayonDistricts rd ON
