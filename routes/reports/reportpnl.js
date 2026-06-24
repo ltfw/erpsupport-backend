@@ -7,24 +7,24 @@ const prisma = new PrismaClient({ log: ['warn', 'error'] });
 const prisma2026 = new PrismaClient2026({ log: ['warn', 'error'], });
 
 router.get("/report", async (req, res) => {
-  const userRole = req.user.role;
-  console.log("data user", req.user.role, req.user.username);
+    const userRole = req.user.role;
+    console.log("data user", req.user.role, req.user.username);
 
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 30;
-    const skip = (page - 1) * pageSize;
-    const month = parseInt(req.query.bulan) || new Date().getMonth() + 1;
-    const yearNow = parseInt(req.query.tahun_now) || new Date().getFullYear();
-    const yearPrev = parseInt(req.query.tahun_prev) || yearNow - 1;
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.per_page) || 30;
+        const skip = (page - 1) * pageSize;
+        const month = parseInt(req.query.bulan) || new Date().getMonth() + 1;
+        const yearNow = parseInt(req.query.tahun_now) || new Date().getFullYear();
+        const yearPrev = parseInt(req.query.tahun_prev) || yearNow - 1;
 
-    const prismaBase = yearNow === 2026 ? prisma2026 : prisma;
-    const PrismaWhere = yearNow === 2026 ? Prisma2026 : Prisma;
+        const prismaBase = yearNow === 2026 ? prisma2026 : prisma;
+        const PrismaWhere = yearNow === 2026 ? Prisma2026 : Prisma;
 
-    const cabang = req.query.cabang || 'ALL';
-    const deptCondition = cabang !== 'ALL' ? PrismaWhere.sql`AND gti.KodeDept = ${cabang}` : PrismaWhere.sql``;
+        const cabang = req.query.cabang || 'ALL';
+        const deptCondition = cabang !== 'ALL' ? PrismaWhere.sql`AND gti.KodeDept = ${cabang}` : PrismaWhere.sql``;
 
-    const baseQuery = PrismaWhere.sql`
+        const baseQuery = PrismaWhere.sql`
       DECLARE @bulan      INT = ${month}
       DECLARE @tahun_now  INT = ${yearNow}
       DECLARE @tahun_prev INT = ${yearPrev}
@@ -71,15 +71,16 @@ router.get("/report", async (req, res) => {
       Grouped AS (
           SELECT
               CASE
-                  WHEN KodeGl LIKE '601%' OR KodeGl LIKE '602%'      THEN '601099-602199'
+                  WHEN KodeGl LIKE '601%' OR KodeGl LIKE '602%'         THEN '601099-602199'
                   WHEN KodeGl LIKE '720%' OR KodeGl LIKE '810%'
-                       OR KodeGl LIKE '820%'                          THEN '720099-810099-820099'
+                       OR KodeGl LIKE '820%'                            THEN '720099-810099-820099'
                   ELSE KodeGl
               END AS KodeGl,
               CASE
-                  WHEN KodeGl LIKE '601%' OR KodeGl LIKE '602%'      THEN 'ALL. EXPENSE'
+                  WHEN KodeGl = '410101'                                THEN 'Total Penjualan'
+                  WHEN KodeGl LIKE '601%' OR KodeGl LIKE '602%'         THEN 'Beban Operasional'
                   WHEN KodeGl LIKE '720%' OR KodeGl LIKE '810%'
-                       OR KodeGl LIKE '820%'                          THEN 'Total Beban Lain-lain'
+                       OR KodeGl LIKE '820%'                            THEN 'Total Beban Lain-lain'
                   ELSE NamaGl
               END AS NamaGl,
               tahun,
@@ -166,7 +167,7 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- % Disc Princ to Gross Sales
-        SELECT '', '% Disc Princ to Gross Sales',
+        SELECT '', '% Disc Princ to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscPrinc_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscPrinc_Prev / GrossSales_Prev, 2) END,
             3 FROM SubTotals
@@ -179,7 +180,7 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- % Disc Dist to Gross Sales
-        SELECT '', '% Disc Dist to Gross Sales',
+        SELECT '', '% Disc Dist to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(DiscDist_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscDist_Prev / GrossSales_Prev, 2) END,
             6 FROM SubTotals
@@ -187,7 +188,7 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- % Retur to Gross Sales
-        SELECT '', '% Retur to Gross Sales',
+        SELECT '', '% Retur to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Retur_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Retur_Prev / GrossSales_Prev, 2) END,
             8 FROM SubTotals
@@ -195,12 +196,12 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- NET SALES
-        SELECT '', 'NET SALES', NetSales_Now, NetSales_Prev, 9 FROM SubTotals
+        SELECT '', 'Penjualan Bersih', NetSales_Now, NetSales_Prev, 9 FROM SubTotals
 
         UNION ALL
 
         -- % HPP to Gross Sales
-        SELECT '', '% HPP to Gross Sales',
+        SELECT '', '% HPP Usaha to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(HPP_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(HPP_Prev / GrossSales_Prev, 2) END,
             11 FROM SubTotals
@@ -208,12 +209,12 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- GROSS PROFIT
-        SELECT '', 'GROSS PROFIT', GrossProfit_Now, GrossProfit_Prev, 12 FROM SubTotals
+        SELECT '', 'Laba Kotor', GrossProfit_Now, GrossProfit_Prev, 12 FROM SubTotals
 
         UNION ALL
 
         -- % Expense to Gross Sales
-        SELECT '', '% Expense to Gross Sales',
+        SELECT '', '% Beban Operasional to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(Expense_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Expense_Prev / GrossSales_Prev, 2) END,
             14 FROM SubTotals
@@ -226,7 +227,7 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- % Pendapatan Lain-lain to Gross Sales
-        SELECT '', '% Pendapatan Lain-lain to Gross Sales',
+        SELECT '', '% Pendapatan Lain-lain to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLain_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLain_Prev / GrossSales_Prev, 2) END,
             17 FROM SubTotals
@@ -234,7 +235,7 @@ router.get("/report", async (req, res) => {
         UNION ALL
 
         -- % Total Beban Lain-lain to Gross Sales
-        SELECT '', '% Total Beban Lain-lain to Gross Sales',
+        SELECT '', '% Total Beban Lain-lain to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(BebanLain_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(BebanLain_Prev / GrossSales_Prev, 2) END,
             19 FROM SubTotals
@@ -272,22 +273,22 @@ router.get("/report", async (req, res) => {
       ORDER BY SortOrder
     `;
 
-    const data = await prismaBase.$queryRaw`${baseQuery}`;
-    const total = data.length > 0 ? data.length : 0;
+        const data = await prismaBase.$queryRaw`${baseQuery}`;
+        const total = data.length > 0 ? data.length : 0;
 
-    res.json({
-      data: data,
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize),
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch data", errors: error });
-  }
+        res.json({
+            data: data,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                totalPages: Math.ceil(total / pageSize),
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data", errors: error });
+    }
 });
 
 module.exports = router;
