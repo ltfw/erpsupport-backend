@@ -17,7 +17,7 @@ router.get("/export", async (req, res) => {
     let whereClause = 'WHERE 1=1';
     const params = [];
 
-    const privilegedRoles = ['ADM', 'FAS', 'QMS', 'DATA', 'QMS', 'FAS', 'ADM', 'SUP', 'SPV'];
+    const privilegedRoles = ['ADM', 'FAS', 'QMS', 'DAT', 'QMS', 'FAS', 'ADM', 'SUP', 'SPV'];
 
     if (!privilegedRoles.includes(userRole)) {
       whereClause += ' AND c.KodeDept = @P1';
