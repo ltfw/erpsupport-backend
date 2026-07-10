@@ -17,7 +17,7 @@ router.get("/export", async (req, res) => {
     let whereClause = 'WHERE 1=1';
     const params = [];
 
-    const privilegedRoles = ['ADM', 'FAS', 'QMS', 'DAT', 'QMS', 'FAS', 'ADM', 'SUP', 'SPV'];
+    const privilegedRoles = ['ADM', 'FAS', 'QMS', 'DAT'];
 
     if (!privilegedRoles.includes(userRole)) {
       whereClause += ' AND c.KodeDept = @P1';
@@ -116,7 +116,7 @@ router.get("/", async (req, res) => {
     let whereClause = `(c.KodeLgn LIKE @P1 OR c.NamaLgn LIKE @P2)`;
     const params = [`%${search}%`, `%${search}%`]; // P1 and P2
 
-    const privilegedRoles = ['ADM', 'FAS', 'QMS'];
+    const privilegedRoles = ['ADM', 'FAS', 'QMS', 'DAT'];
 
     if (!privilegedRoles.includes(userRole)) {
       whereClause += ' AND c.KodeDept = @P3';
