@@ -51,8 +51,7 @@ router.get("/report", async (req, res) => {
           @KodeDept = ${cabang},
           @GdgTarget = ${gdgTarget},
           @ExcludedGudangs = '00-GUU-03,00-GUU-02,03-GUU-03',
-          @QtyThreshold = 0,
-          @KemasanNullFilter = 1
+          @QtyThreshold = 0
         `;
     }
 
