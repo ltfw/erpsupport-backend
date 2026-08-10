@@ -1,6 +1,7 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../../generated/dbtrans");
 const { PrismaClient: PrismaClient2026, Prisma: Prisma2026 } = require("../../generated/dbtrans2026");
+const { PNL_ADJUSTMENT_2025, PNL_ADJUSTMENT_YEAR } = require("./pnlAdjustment2025");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'] });
@@ -23,6 +24,26 @@ router.get("/report", async (req, res) => {
 
         const cabang = req.query.cabang || 'ALL';
         const deptCondition = cabang !== 'ALL' ? PrismaWhere.sql`AND gti.KodeDept = ${cabang}` : PrismaWhere.sql``;
+
+        // Jan-Feb 2025 Krian (00) & Semarang (02) tidak ada di database, dilengkapi manual
+        const adjustmentRows = yearPrev === PNL_ADJUSTMENT_YEAR
+            ? PNL_ADJUSTMENT_2025.filter((r) => cabang === 'ALL' || r.KodeDept === cabang)
+            : [];
+
+        const adjustmentSource = adjustmentRows.length > 0
+            ? PrismaWhere.sql`
+                SELECT CAST(v.KodeGl AS NVARCHAR(50))  COLLATE DATABASE_DEFAULT AS KodeGl,
+                       CAST(v.NamaGl AS NVARCHAR(255)) COLLATE DATABASE_DEFAULT AS NamaGl,
+                       v.bulan, CAST(v.total AS FLOAT) AS total
+                FROM (VALUES ${PrismaWhere.join(
+                    adjustmentRows.map((r) => PrismaWhere.sql`(${r.KodeGl}, ${r.NamaGl}, ${r.bulan}, ${r.total})`),
+                    ', '
+                )}) v(KodeGl, NamaGl, bulan, total)`
+            : PrismaWhere.sql`
+                SELECT CAST(NULL AS NVARCHAR(50))  AS KodeGl,
+                       CAST(NULL AS NVARCHAR(255)) AS NamaGl,
+                       CAST(NULL AS INT) AS bulan, CAST(NULL AS FLOAT) AS total
+                WHERE 1 = 0`;
 
         const baseQuery = PrismaWhere.sql`
       DECLARE @bulan      INT = ${month}
@@ -101,6 +122,29 @@ router.get("/report", async (req, res) => {
           FROM Grouped
           GROUP BY KodeGl, NamaGl
       ),
+      AdjPrev AS (
+          ${adjustmentSource}
+      ),
+      AdjAgg AS (
+          SELECT KodeGl,
+              MAX(NamaGl) as NamaGl,
+              SUM(CASE WHEN bulan =  @bulan THEN total ELSE 0 END) as Bulanan,
+              SUM(CASE WHEN bulan <= @bulan THEN total ELSE 0 END) as Ytd
+          FROM AdjPrev
+          GROUP BY KodeGl
+      ),
+      -- Nilai tahun lalu ditambah penyesuaian manual (Jan-Feb 2025 Krian & Semarang)
+      PivotedAdj AS (
+          SELECT
+              COALESCE(p.KodeGl, a.KodeGl)   as KodeGl,
+              COALESCE(p.NamaGl, a.NamaGl)   as NamaGl,
+              ISNULL(p.TahunIni,  0)                          as TahunIni,
+              ISNULL(p.TahunLalu, 0) + ISNULL(a.Bulanan, 0)   as TahunLalu,
+              ISNULL(p.YtdIni,    0)                          as YtdIni,
+              ISNULL(p.YtdLalu,   0) + ISNULL(a.Ytd,     0)   as YtdLalu
+          FROM Pivoted p
+          FULL OUTER JOIN AdjAgg a ON a.KodeGl = p.KodeGl
+      ),
       Calc AS (
           SELECT
               MAX(CASE WHEN KodeGl = '410101'               THEN TahunIni  ELSE 0 END) as GrossSales_Now,
@@ -140,7 +184,7 @@ router.get("/report", async (req, res) => {
               MAX(CASE WHEN KodeGl = '720099-810099-820099' THEN YtdLalu ELSE 0 END) as BebanLain_PrevYtd,
               MAX(CASE WHEN KodeGl = '910002'               THEN YtdIni  ELSE 0 END) as PPh_NowYtd,
               MAX(CASE WHEN KodeGl = '910002'               THEN YtdLalu ELSE 0 END) as PPh_PrevYtd
-          FROM Pivoted
+          FROM PivotedAdj
       ),
       SubTotals AS (
           SELECT
@@ -205,7 +249,7 @@ router.get("/report", async (req, res) => {
                 WHEN '910002'               THEN 21
                 ELSE 99
             END as SortOrder
-        FROM Pivoted
+        FROM PivotedAdj
 
         UNION ALL
 
