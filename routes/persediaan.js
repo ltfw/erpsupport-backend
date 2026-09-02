@@ -132,7 +132,8 @@ router.get("/perbatch", async (req, res) => {
         i.NamaBarang,
         sumBatchNumber.BatchNumber,
         FORMAT(sumBatchNumber.TglExpired, 'dd/MM/yyyy') AS TglExpired,
-        sumBatchNumber.Qty
+        sumBatchNumber.Qty,
+        i.KonversiSatuanDasar * sumBatchNumber.Qty AS SumQtySecondary
       FROM
         inventories i
       JOIN InventoryStocks is2 ON i.InventoryId = is2.InventoryId
