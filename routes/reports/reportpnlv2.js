@@ -34,7 +34,7 @@ router.get("/report", async (req, res) => {
             ? PrismaWhere.sql`
                 SELECT CAST(v.KodeGl AS NVARCHAR(50))  COLLATE DATABASE_DEFAULT AS KodeGl,
                        CAST(v.NamaGl AS NVARCHAR(255)) COLLATE DATABASE_DEFAULT AS NamaGl,
-                       v.bulan, CAST(v.total AS FLOAT) AS total
+                       v.bulan, CAST(v.total AS DECIMAL(25, 5)) AS total
                 FROM (VALUES ${PrismaWhere.join(
                     adjustmentRows.map((r) => PrismaWhere.sql`(${r.KodeGl}, ${r.NamaGl}, ${r.bulan}, ${r.total})`),
                     ', '
@@ -42,7 +42,7 @@ router.get("/report", async (req, res) => {
             : PrismaWhere.sql`
                 SELECT CAST(NULL AS NVARCHAR(50))  AS KodeGl,
                        CAST(NULL AS NVARCHAR(255)) AS NamaGl,
-                       CAST(NULL AS INT) AS bulan, CAST(NULL AS FLOAT) AS total
+                       CAST(NULL AS INT) AS bulan, CAST(NULL AS DECIMAL(25, 5)) AS total
                 WHERE 1 = 0`;
 
         const baseQuery = PrismaWhere.sql`
@@ -249,8 +249,8 @@ router.get("/report", async (req, res) => {
                 WHEN '510101'               THEN 10
                 WHEN '601099-602199'        THEN 13
                 WHEN '710001'               THEN 16
-                WHEN '720099-810099-820099' THEN 18
-                WHEN '910002'               THEN 21
+                WHEN '720099-810099-820099' THEN 19
+                WHEN '910002'               THEN 22
                 ELSE 99
             END as SortOrder
         FROM PivotedAdj
@@ -265,11 +265,6 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(DiscPrinc_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(DiscPrinc_PrevYtd / GrossSales_PrevYtd, 2) END,
             3 FROM SubTotals
-
-        UNION ALL
-
-        -- KLAIM DISKON (710099 - Pendapatan Lain-lain)
-        SELECT '710099', 'Pendapatan Lain-lain', Klaim_Now, Klaim_Prev, Klaim_NowYtd, Klaim_PrevYtd, 4 FROM SubTotals
 
         UNION ALL
 
@@ -328,13 +323,18 @@ router.get("/report", async (req, res) => {
 
         UNION ALL
 
+        -- KLAIM DISKON (710099 - Pendapatan Lain-lain)
+        SELECT '710099', 'Pendapatan Lain-lain', Klaim_Now, Klaim_Prev, Klaim_NowYtd, Klaim_PrevYtd, 17 FROM SubTotals
+
+        UNION ALL
+
         -- % Pendapatan Lain-lain to Gross Sales
         SELECT '', '% Pendapatan Lain-lain to Total Penjualan',
             CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLain_Now  / GrossSales_Now,  2) END,
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLain_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(PendLain_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(PendLain_PrevYtd / GrossSales_PrevYtd, 2) END,
-            17 FROM SubTotals
+            18 FROM SubTotals
 
         UNION ALL
 
@@ -344,7 +344,7 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(BebanLain_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(BebanLain_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(BebanLain_PrevYtd / GrossSales_PrevYtd, 2) END,
-            19 FROM SubTotals
+            20 FROM SubTotals
 
         UNION ALL
 
@@ -352,7 +352,7 @@ router.get("/report", async (req, res) => {
         SELECT '', 'LABA BERSIH SEBELUM PAJAK',
             LabaSebelumPajak_Now, LabaSebelumPajak_Prev,
             LabaSebelumPajak_NowYtd, LabaSebelumPajak_PrevYtd,
-            20 FROM SubTotals
+            21 FROM SubTotals
 
         UNION ALL
 
@@ -360,33 +360,23 @@ router.get("/report", async (req, res) => {
         SELECT '', 'LABA BERSIH SESUDAH PAJAK',
             LabaSesudahPajak_Now, LabaSesudahPajak_Prev,
             LabaSesudahPajak_NowYtd, LabaSesudahPajak_PrevYtd,
-            22 FROM SubTotals
+            23 FROM SubTotals
     )
       SELECT
           KodeGl,
           NamaGl,
-          CASE WHEN NamaGl = 'KLAIM DISKON'
-                THEN '(' + CAST(TahunIni  AS NVARCHAR) + ')'
-                ELSE CAST(TahunIni  AS NVARCHAR)
-            END as TahunIni,
-            CASE WHEN NamaGl = 'KLAIM DISKON'
-                THEN '(' + CAST(TahunLalu AS NVARCHAR) + ')'
-                ELSE CAST(TahunLalu AS NVARCHAR)
-            END as TahunLalu,
+            -- dikirim sebagai angka desimal 2 digit (bukan notasi ilmiah),
+            -- pemisah ribuan ditambahkan di sisi frontend
+            CAST(CAST(TahunIni  AS DECIMAL(25, 2)) AS NVARCHAR(50)) as TahunIni,
+            CAST(CAST(TahunLalu AS DECIMAL(25, 2)) AS NVARCHAR(50)) as TahunLalu,
             CASE
                 WHEN TahunLalu = 0 THEN NULL
                 ELSE FORMAT((TahunIni - TahunLalu) / ABS(TahunLalu), 'P0')
             END as Growth,
             -- YTD tahun berjalan (Januari s/d bulan terpilih)
-            CASE WHEN NamaGl = 'KLAIM DISKON'
-                THEN '(' + CAST(YtdIni AS NVARCHAR) + ')'
-                ELSE CAST(YtdIni AS NVARCHAR)
-            END as Ytd,
+            CAST(CAST(YtdIni  AS DECIMAL(25, 2)) AS NVARCHAR(50)) as Ytd,
             -- YTD tahun lalu (periode yang sama)
-            CASE WHEN NamaGl = 'KLAIM DISKON'
-                THEN '(' + CAST(YtdLalu AS NVARCHAR) + ')'
-                ELSE CAST(YtdLalu AS NVARCHAR)
-            END as YtdLalu,
+            CAST(CAST(YtdLalu AS DECIMAL(25, 2)) AS NVARCHAR(50)) as YtdLalu,
             -- Pertumbuhan YTD dibanding YTD periode yang sama tahun lalu
             CASE
                 WHEN YtdLalu = 0 THEN NULL
