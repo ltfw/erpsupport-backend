@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
     const tglAkhir = toDateOnly(req.query.tgl_akhir, range.akhir);
 
     let cabangArray = [];
-    const allowedRoles = ['ADM', 'FAS', 'MKT-SANI'];
+    const allowedRoles = ['ADM', 'FAS', 'MKT-SANI','DAT','MKT-SLF','QMS'];
     if (allowedRoles.includes(userRole) && cabang) {
       cabangArray = cabang.split(',').map((s) => s.trim()).filter(Boolean);
     } else if (allowedRoles.includes(userRole) && !cabang) {

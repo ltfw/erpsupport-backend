@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
     const cabang = req.query.cabang?.trim() || '';
 
     let cabangArray = [];
-    const allowedRoles = ['ADM', 'FAS','MKT-SANI','MKT-SLF','QMS'];
+    const allowedRoles = ['ADM', 'FAS','MKT-SANI','MKT-SLF','QMS','DAT'];
     if(allowedRoles.includes(userRole) && cabang) {
       cabangArray = cabang ? cabang.replaceAll(';', ',').split(',').map(s => s.trim()) : [];
     }else if(allowedRoles.includes(userRole) && !cabang) {
