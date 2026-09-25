@@ -17,6 +17,7 @@ const konfirmasiPiutangRoutes = require('./routes/piutang/konfirmasipiutang');
 const umurPiutangRoutes = require('./routes/piutang/umurpiutang');
 const evaluasiArRoutes = require('./routes/piutang/evaluasiar');
 const pelunasanPiutangRoutes = require('./routes/piutang/pelunasanpiutang');
+const agingArCollectionRoutes = require('./routes/piutang/agingarcollection');
 const alkesRoutes = require('./routes/reports/alkes');
 const reportfarmasiRoutes = require('./routes/reports/reportfarmasi');
 const reportpnlRoutes = require('./routes/reports/reportpnl');
@@ -76,6 +77,7 @@ app.use('/piutang/konfirmasipiutang', authenticateToken, konfirmasiPiutangRoutes
 app.use('/piutang/umurpiutang', authenticateToken, umurPiutangRoutes);
 app.use('/piutang/evaluasiar', authenticateToken, evaluasiArRoutes);
 app.use('/piutang/pelunasanpiutang', authenticateToken, pelunasanPiutangRoutes);
+app.use('/piutang/agingarcollection', authenticateToken, agingArCollectionRoutes);
 app.use('/alkes', authenticateToken, alkesRoutes);
 app.use('/farmasi/', authenticateToken, reportfarmasiRoutes);
 app.use('/pnl/', authenticateToken, reportpnlRoutes);
