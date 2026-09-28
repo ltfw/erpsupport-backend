@@ -1,6 +1,7 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
+const { pushStockPerBatch } = require("../services/stockPush");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
@@ -203,6 +204,29 @@ router.get("/perbatch", async (req, res) => {
   }
 });
 
+// Push stok per batch ke Stock API (manual trigger, jadwal otomatis ada di index.js)
+router.post("/perbatch/push", async (req, res) => {
+  const allowedRoles = ['ADM', 'DAT'];
+  if (!allowedRoles.includes(req.user.role)) {
+    return res.status(403).json({ message: "Tidak memiliki akses untuk push stok" });
+  }
+
+  const stockDate = req.body?.date || getCurrentDateFormatted();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(stockDate) || stockDate > getCurrentDateFormatted()) {
+    return res.status(400).json({ message: "Date is not valid" });
+  }
+
+  try {
+    const result = await pushStockPerBatch(stockDate, `manual:${req.user.username}`);
+    return res.json({ message: "Push stok berhasil", ...result });
+  } catch (error) {
+    console.error("Error in /perbatch/push:", error.message, error.response || "");
+    return res.status(error.status === 409 ? 409 : error.response ? 502 : 500).json({
+      message: error.message || "Gagal push stok",
+      details: error.response,
+    });
+  }
+});
 
 // Get all customers using pagination
 router.get("/", async (req, res) => {
