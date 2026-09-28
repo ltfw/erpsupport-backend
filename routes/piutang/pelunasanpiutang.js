@@ -73,14 +73,26 @@ router.get("/", async (req, res) => {
                  i.KodeCc                AS kode_cabang,
                  i.ParentTransaction     AS no_faktur,
                  MAX(i.TglTrn)           AS tgl_pelunasan,
-                 -- Pembayaran tunai + giro (nilai disimpan negatif, dibalik jadi positif)
-                 SUM(CASE WHEN i.TypeTrn IN ('K', 'M')           THEN -i.JumlahTrn ELSE 0 END) AS nilai_pembayaran,
-                 -- Pembayaran via SSP
+                 -- Kas riil yang diterima. Baris K/M mencatat nilai faktur PENUH, lalu porsi
+                 -- SSP yang dipotong customer dikembalikan ke piutang lewat nota debit
+                 -- (TypeTrn 'D' + IsArSsp = 1) pada bukti yang sama, jadi harus dikurangkan.
+                 -- Pelunasan retur (nota kredit customer) ikut dihitung sebagai nilai minus:
+                 -- kredit retur itu piutang negatif, jadi menghapusnya menaikkan piutang bersih.
+                 -- Syarat ParentTransaction <> NoBukti memisahkannya dari nota debit uang muka
+                 -- yang menunjuk ke bukti kasnya sendiri (68 baris di 2026) dan tidak boleh ikut.
+                 SUM(CASE WHEN i.TypeTrn IN ('K', 'M')           THEN -i.JumlahTrn ELSE 0 END)
+                   - SUM(CASE WHEN i.TypeTrn = 'D' AND i.IsArSsp = 1 THEN i.JumlahTrn ELSE 0 END)
+                   - SUM(CASE WHEN i.TypeTrn = 'D' AND i.IsArSsp = 0
+                                 AND i.ParentTransaction <> i.NoBukti THEN i.JumlahTrn ELSE 0 END) AS nilai_pembayaran,
+                 -- Pembayaran via SSP yang sudah diterima
                  SUM(CASE WHEN i.TypeTrn = 'O' AND i.IsArSsp = 1 THEN -i.JumlahTrn ELSE 0 END) AS ssp
           FROM dbo.ArTransactionItems i
           CROSS JOIN periode p
           WHERE i.TglTrn BETWEEN p.tgl_awal AND p.tgl_akhir
-            AND (i.TypeTrn IN ('K', 'M') OR (i.TypeTrn = 'O' AND i.IsArSsp = 1))
+            AND (i.TypeTrn IN ('K', 'M')
+                 OR (i.TypeTrn = 'D' AND i.IsArSsp = 1)
+                 OR (i.TypeTrn = 'D' AND i.IsArSsp = 0 AND i.ParentTransaction <> i.NoBukti)
+                 OR (i.TypeTrn = 'O' AND i.IsArSsp = 1))
             ${cabangClause}
           GROUP BY i.CustomerId, i.KodeCc, i.ParentTransaction
       )
