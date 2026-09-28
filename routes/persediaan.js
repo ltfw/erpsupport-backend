@@ -1,7 +1,7 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
-const { pushStockPerBatch } = require("../services/stockPush");
+const { pushStockPerBatch, getDefaultStockDate } = require("../services/stockPush");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
@@ -211,7 +211,7 @@ router.post("/perbatch/push", async (req, res) => {
     return res.status(403).json({ message: "Tidak memiliki akses untuk push stok" });
   }
 
-  const stockDate = req.body?.date || getCurrentDateFormatted();
+  const stockDate = req.body?.date || getDefaultStockDate();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(stockDate) || stockDate > getCurrentDateFormatted()) {
     return res.status(400).json({ message: "Date is not valid" });
   }

@@ -125,7 +125,13 @@ async function doPush(stockDate, trigger) {
 }
 
 // Mencegah dua push berjalan bersamaan (cron + manual)
-async function pushStockPerBatch(stockDate = moment().tz(TZ).format("YYYY-MM-DD"), trigger = "manual") {
+// Tanggal stok default: H-1, kecuali hari Senin ambil data hari Sabtu
+function getDefaultStockDate(now = moment().tz(TZ)) {
+  const daysBack = now.isoWeekday() === 1 ? 2 : 1;
+  return now.clone().subtract(daysBack, "day").format("YYYY-MM-DD");
+}
+
+async function pushStockPerBatch(stockDate = getDefaultStockDate(), trigger = "manual") {
   if (running) {
     const error = new Error("Push stok sedang berjalan, coba lagi nanti");
     error.status = 409;
@@ -139,4 +145,4 @@ async function pushStockPerBatch(stockDate = moment().tz(TZ).format("YYYY-MM-DD"
   }
 }
 
-module.exports = { pushStockPerBatch, TZ };
+module.exports = { pushStockPerBatch, getDefaultStockDate, TZ };

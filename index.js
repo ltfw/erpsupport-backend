@@ -30,6 +30,7 @@ const authenticateToken = require('./middleware/auth');
 const adminNavigationRoutes = require('./routes/admin/navigation'); // Import admin navigation routes
 const cors = require('cors');
 const { getCurrentDateFormatted } = require('./utils/Date');
+const moment = require('moment-timezone');
 const { scheduleDaily } = require('./utils/Scheduler');
 const { pushStockPerBatch, TZ } = require('./services/stockPush');
 require('dotenv').config();
@@ -111,8 +112,14 @@ const port = process.env.PORT || 5000;
 const host = process.env.HOST || '0.0.0.0'; 
 
 app.listen(port, host, () => {
-  // Push stok per batch ke Stock API setiap hari jam 09:00 WIB
-  scheduleDaily('push-stock-perbatch', 9, 0, TZ, () => pushStockPerBatch(undefined, 'cron'));
+  // Push stok per batch ke Stock API setiap hari jam 09:00 WIB, kecuali hari Minggu
+  scheduleDaily('push-stock-perbatch', 9, 0, TZ, () => {
+    if (moment().tz(TZ).isoWeekday() === 7) {
+      console.log('[stockPush] hari Minggu, push dilewati');
+      return;
+    }
+    return pushStockPerBatch(undefined, 'cron');
+  });
 
   console.log(`Express server running at http://${host}:${port}`);
   if (host === '0.0.0.0') {
