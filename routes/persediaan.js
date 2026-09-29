@@ -205,6 +205,11 @@ router.get("/perbatch", async (req, res) => {
 });
 
 // Push stok per batch ke Stock API (manual trigger, jadwal otomatis ada di index.js)
+// Tanggal stok default untuk push (H-1, Senin ambil Sabtu)
+router.get("/perbatch/push-date", (req, res) => {
+  return res.json({ date: getDefaultStockDate() });
+});
+
 router.post("/perbatch/push", async (req, res) => {
   const allowedRoles = ['ADM', 'DAT'];
   if (!allowedRoles.includes(req.user.role)) {
