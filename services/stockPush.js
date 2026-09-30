@@ -34,7 +34,8 @@ async function fetchStockPerBatch(stockDate) {
       FROM
         BatchNumberTransactions bnt
       WHERE
-        CAST(bnt.tanggaltransaksi AS DATE) <= ${stockDate}
+        -- sampai akhir hari stock_date (s.d. 23:59:59)
+        bnt.tanggaltransaksi < DATEADD(day, 1, CAST(${stockDate} AS DATE))
       GROUP BY
         bnt.InventoryStockId,
         bnt.BatchNumber,
