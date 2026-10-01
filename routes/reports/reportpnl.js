@@ -409,4 +409,96 @@ router.get("/report", async (req, res) => {
     }
 });
 
+// Ringkasan PNL per bulan (Januari - Desember) untuk satu tahun:
+// Sales = Total Penjualan, Biaya = Beban Operasional + Beban 720xxx, Laba = Laba Bersih Sesudah Pajak
+router.get("/summary", async (req, res) => {
+    try {
+        const year = parseInt(req.query.tahun) || new Date().getFullYear();
+
+        // data 2026 ada di SDLdb002, tahun sebelumnya di SDLdb001
+        const prismaBase = year >= 2026 ? prisma2026 : prisma;
+        const PrismaWhere = year >= 2026 ? Prisma2026 : Prisma;
+        const dbName = PrismaWhere.raw(year >= 2026 ? 'SDLdb002' : 'SDLdb001');
+
+        const cabang = req.query.cabang || 'ALL';
+        const deptCondition = cabang !== 'ALL' ? PrismaWhere.sql`AND gti.KodeDept = ${cabang}` : PrismaWhere.sql``;
+
+        // Jan-Feb 2025 Krian (00) & Semarang (02) tidak ada di database, dilengkapi manual
+        const adjustmentRows = year === PNL_ADJUSTMENT_YEAR
+            ? PNL_ADJUSTMENT_2025.filter((r) => cabang === 'ALL' || r.KodeDept === cabang)
+            : [];
+
+        const adjustmentSource = adjustmentRows.length > 0
+            ? PrismaWhere.sql`
+                UNION ALL
+                SELECT CAST(v.KodeGl AS NVARCHAR(50)) COLLATE DATABASE_DEFAULT AS KodeGl,
+                       v.bulan, CAST(v.total AS FLOAT) AS total
+                FROM (VALUES ${PrismaWhere.join(
+                    adjustmentRows.map((r) => PrismaWhere.sql`(${r.KodeGl}, ${r.bulan}, ${r.total})`),
+                    ', '
+                )}) v(KodeGl, bulan, total)`
+            : PrismaWhere.sql``;
+
+        const rows = await prismaBase.$queryRaw`
+      DECLARE @tahun INT = ${year}
+
+      ;WITH AllData AS (
+          SELECT
+              g.KodeGl COLLATE DATABASE_DEFAULT AS KodeGl,
+              month(gti.TglTrn) as bulan,
+              CAST(case when g.KodeGl = '410101' or g.kodegl='710001' then abs(sum(gti.JlhDebit)-sum(gti.JlhKredit))
+              else (sum(gti.JlhDebit)-sum(gti.JlhKredit)) end AS FLOAT) as total
+          FROM ${dbName}.dbo.GLAccountTransactionItems gti
+          JOIN ${dbName}.dbo.GLAccounts g ON gti.GeneralLedgerId = g.GeneralLedgerId
+          WHERE (g.KodeGl like '4%' OR g.KodeGl like '5%' OR g.KodeGl like '6%'
+              OR g.KodeGl like '7%' OR g.KodeGl like '8%' OR g.KodeGl like '9%')
+              AND year(gti.TglTrn) = @tahun
+              AND g.KodeGl <> '710099'
+              ${deptCondition}
+          GROUP BY g.KodeGl, month(gti.TglTrn)
+          ${adjustmentSource}
+      )
+      SELECT
+          bulan,
+          SUM(CASE WHEN KodeGl = '410101'    THEN total ELSE 0 END) as GrossSales,
+          SUM(CASE WHEN KodeGl = '420102-02' THEN total ELSE 0 END) as DiscDist,
+          SUM(CASE WHEN KodeGl = '420201'    THEN total ELSE 0 END) as Retur,
+          SUM(CASE WHEN KodeGl = '510101'    THEN total ELSE 0 END) as HPP,
+          SUM(CASE WHEN KodeGl LIKE '601%' OR KodeGl LIKE '602%' THEN total ELSE 0 END) as Expense,
+          -- akun 720xxx saja; kode gabungan penyesuaian 2025 juga berisi 810/820, jadi tidak ikut
+          SUM(CASE WHEN KodeGl LIKE '720%' AND KodeGl <> '720099-810099-820099' THEN total ELSE 0 END) as Beban720,
+          SUM(CASE WHEN KodeGl = '710001'    THEN total ELSE 0 END) as PendLain,
+          SUM(CASE WHEN KodeGl LIKE '720%' OR KodeGl LIKE '810%'
+                    OR KodeGl LIKE '820%'    THEN total ELSE 0 END) as BebanLain,
+          SUM(CASE WHEN KodeGl = '910002'    THEN total ELSE 0 END) as PPh
+      FROM AllData
+      GROUP BY bulan
+    `;
+
+        const data = Array.from({ length: 12 }, (_, i) => {
+            const r = rows.find((row) => Number(row.bulan) === i + 1) || {};
+            const n = (v) => Number(v) || 0;
+            const sales = n(r.GrossSales);
+            const biaya = n(r.Expense) + n(r.Beban720);
+            // sama dengan LABA BERSIH SESUDAH PAJAK di laporan PNL
+            const laba = sales - n(r.Retur) - n(r.DiscDist) - n(r.HPP) - n(r.Expense)
+                + n(r.PendLain) - n(r.BebanLain) - n(r.PPh);
+
+            return {
+                bulan: i + 1,
+                Sales: sales,
+                Biaya: biaya,
+                PersenBiaya: sales === 0 ? null : (biaya / sales) * 100,
+                Laba: laba,
+                PersenLaba: sales === 0 ? null : (laba / sales) * 100,
+            };
+        });
+
+        res.json({ data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data", errors: error });
+    }
+});
+
 module.exports = router;
