@@ -34,6 +34,11 @@ router.get("/", async (req, res) => {
     const search = req.query.search?.trim() || '';
     const searchQuery = `%${search}%`;
     const cabang = req.query.cabang?.trim() || '';
+    // Baris yang ParentTransaction-nya menunjuk ke bukti kasnya sendiri bukan pelunasan faktur,
+    // melainkan pasangan giro/nota debit yang saling membatalkan (saldo AR 0). Disembunyikan
+    // secara default; bisa ditampilkan untuk penelusuran.
+    const includeBuktiPelunasan =
+      req.query.include_bukti_pelunasan === '1' || req.query.include_bukti_pelunasan === 'true';
 
     const range = defaultRange();
     const tglAwal = toDateOnly(req.query.tgl_awal, range.awal);
@@ -51,7 +56,8 @@ router.get("/", async (req, res) => {
 
     console.log(
       "pelunasan piutang =>", "role:", userRole, "cabang:", cabangArray,
-      "periode:", tglAwal, "s/d", tglAkhir
+      "periode:", tglAwal, "s/d", tglAkhir,
+      "includeBuktiPelunasan:", includeBuktiPelunasan
     );
 
     // Filter cabang ditaruh di dalam CTE supaya baris dipangkas sebelum agregasi
@@ -60,6 +66,11 @@ router.get("/", async (req, res) => {
     const searchClause = search
       ? sql`AND (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})`
       : sql``;
+
+    // Buang baris hantu: no. bukti pelunasan yang masuk sebagai "faktur"
+    const buktiPelunasanClause = includeBuktiPelunasan
+      ? sql``
+      : sql`AND i.ParentTransaction <> i.NoBukti`;
 
     // CTE dipakai bersama oleh query data, query total baris, dan query grand total
     const baseCte = sql`
@@ -93,6 +104,7 @@ router.get("/", async (req, res) => {
                  OR (i.TypeTrn = 'D' AND i.IsArSsp = 1)
                  OR (i.TypeTrn = 'D' AND i.IsArSsp = 0 AND i.ParentTransaction <> i.NoBukti)
                  OR (i.TypeTrn = 'O' AND i.IsArSsp = 1))
+            ${buktiPelunasanClause}
             ${cabangClause}
           GROUP BY i.CustomerId, i.KodeCc, i.ParentTransaction
       )
@@ -159,6 +171,7 @@ router.get("/", async (req, res) => {
     res.json({
       data: rows,
       periode: { tgl_awal: tglAwal, tgl_akhir: tglAkhir },
+      includeBuktiPelunasan,
       summary: {
         NilaiPembayaran: Number(summary.NilaiPembayaran || 0),
         SSP: Number(summary.SSP || 0),
