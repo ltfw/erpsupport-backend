@@ -44,9 +44,10 @@ async function fetchStockPerBatch(stockDate) {
         SUM(bnt.Qty) > 0
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
     WHERE
-      is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
+      -- is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
       AND cr.StockNamaCabang IS NOT NULL
       AND t.KodeLgn = '1001'
+      -- and sumBatchNumber.TglExpired > CAST(GETDATE() AS DATE)
     GROUP BY
       cr.StockNamaCabang,
       i.NamaBarang,
