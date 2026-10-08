@@ -2,6 +2,7 @@ const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
 const { pushStockPerBatch, getDefaultStockDate } = require("../services/stockPush");
+const { listPushLogs } = require("../services/stockPushLog");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
@@ -205,6 +206,18 @@ router.get("/perbatch", async (req, res) => {
 });
 
 // Push stok per batch ke Stock API (manual trigger, jadwal otomatis ada di index.js)
+// Riwayat push stok ke Stock API
+router.get("/perbatch/push-logs", async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.per_page) || 10;
+  try {
+    return res.json(await listPushLogs(page, pageSize));
+  } catch (error) {
+    console.error("Error in /perbatch/push-logs:", error.message);
+    return res.status(500).json({ message: "Gagal mengambil log push stok", details: error.message });
+  }
+});
+
 // Tanggal stok default untuk push (H-1, Senin ambil Sabtu)
 router.get("/perbatch/push-date", (req, res) => {
   return res.json({ date: getDefaultStockDate() });

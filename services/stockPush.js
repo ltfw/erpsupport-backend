@@ -1,5 +1,6 @@
 const moment = require("moment-timezone");
 const { PrismaClient } = require("../generated/dbtrans2026");
+const { insertPushLog } = require("./stockPushLog");
 
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
 
@@ -45,7 +46,7 @@ async function fetchStockPerBatch(stockDate) {
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
     WHERE
       -- is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
-      AND cr.StockNamaCabang IS NOT NULL
+      cr.StockNamaCabang IS NOT NULL
       AND t.KodeLgn = '1001'
       -- and sumBatchNumber.TglExpired > CAST(GETDATE() AS DATE)
     GROUP BY
@@ -61,7 +62,7 @@ async function fetchStockPerBatch(stockDate) {
   `;
 }
 
-function buildPayload(rows, stockDate, now) {
+function buildPayload(rows, stockDate, requestId) {
   const branchMap = new Map();
   for (const row of rows) {
     if (!branchMap.has(row.StockNamaCabang)) {
@@ -77,53 +78,92 @@ function buildPayload(rows, stockDate, now) {
   }
 
   return {
-    request_id: `SDL-${now.format("YYYYMMDD")}-${now.format("HHmmss")}`,
+    request_id: requestId,
     stock_date: stockDate,
     branches: [...branchMap.values()],
   };
 }
 
+const formatTimestamp = (m) => m.format("YYYY-MM-DD HH:mm:ss");
+
 async function doPush(stockDate, trigger) {
-  const token = process.env.STOCK_API_TOKEN;
-  if (!token) throw new Error("STOCK_API_TOKEN belum di-set di environment");
+  const startedAt = moment().tz(TZ);
+  const requestId = `SDL-${startedAt.format("YYYYMMDD")}-${startedAt.format("HHmmss")}`;
+  const log = { requestId, trigger, stockDate, startedAt: formatTimestamp(startedAt) };
+  let branches;
+  let itemCount;
 
-  const now = moment().tz(TZ);
-  const rows = await fetchStockPerBatch(stockDate);
-  const payload = buildPayload(rows, stockDate, now);
-  const itemCount = payload.branches.reduce((n, b) => n + b.items.length, 0);
+  try {
+    const token = process.env.STOCK_API_TOKEN;
+    if (!token) throw new Error("STOCK_API_TOKEN belum di-set di environment");
 
-  console.log(`[stockPush] (${trigger}) push ${payload.request_id}: stock_date=${stockDate}, branches=${payload.branches.length}, items=${itemCount}`);
+    const rows = await fetchStockPerBatch(stockDate);
+    const payload = buildPayload(rows, stockDate, requestId);
+    branches = payload.branches.map(b => ({ distributor_code: b.distributor_code, items: b.items.length }));
+    itemCount = payload.branches.reduce((n, b) => n + b.items.length, 0);
 
-  const response = await fetch(process.env.STOCK_API_URL || DEFAULT_STOCK_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(120000),
-  });
+    console.log(`[stockPush] (${trigger}) push ${requestId}: stock_date=${stockDate}, branches=${branches.length}, items=${itemCount}`);
 
-  const text = await response.text();
-  let body;
-  try { body = JSON.parse(text); } catch { body = text; }
+    const response = await fetch(process.env.STOCK_API_URL || DEFAULT_STOCK_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(120000),
+    });
 
-  if (!response.ok) {
-    const error = new Error(`Stock API merespon ${response.status}`);
-    error.status = response.status;
-    error.response = body;
+    const text = await response.text();
+    let body;
+    try { body = JSON.parse(text); } catch { body = text; }
+
+    if (!response.ok) {
+      const error = new Error(`Stock API merespon ${response.status}`);
+      error.status = response.status;
+      error.response = body;
+      throw error;
+    }
+
+    console.log(`[stockPush] (${trigger}) sukses ${requestId}: ${response.status}`);
+    await insertPushLog({
+      ...log,
+      status: "SUCCESS",
+      totalItems: itemCount,
+      branches,
+      httpStatus: response.status,
+      response: body,
+      finishedAt: formatTimestamp(moment().tz(TZ)),
+    });
+
+    return {
+      request_id: requestId,
+      stock_date: stockDate,
+      branches,
+      total_items: itemCount,
+      response: body,
+    };
+  } catch (error) {
+    await insertPushLog({
+      ...log,
+      status: "FAILED",
+      totalItems: itemCount,
+      branches,
+      httpStatus: error.response !== undefined ? error.status : null,
+      message: error.message,
+      response: error.response,
+      finishedAt: formatTimestamp(moment().tz(TZ)),
+    });
     throw error;
   }
+}
 
-  console.log(`[stockPush] (${trigger}) sukses ${payload.request_id}: ${response.status}`);
-  return {
-    request_id: payload.request_id,
-    stock_date: stockDate,
-    branches: payload.branches.map(b => ({ distributor_code: b.distributor_code, items: b.items.length })),
-    total_items: itemCount,
-    response: body,
-  };
+// Catat push yang sengaja tidak dijalankan (mis. hari Minggu)
+async function logSkippedPush(trigger, message) {
+  const now = formatTimestamp(moment().tz(TZ));
+  console.log(`[stockPush] (${trigger}) ${message}`);
+  await insertPushLog({ trigger, status: "SKIPPED", message, startedAt: now, finishedAt: now });
 }
 
 // Mencegah dua push berjalan bersamaan (cron + manual)
@@ -147,4 +187,4 @@ async function pushStockPerBatch(stockDate = getDefaultStockDate(), trigger = "m
   }
 }
 
-module.exports = { pushStockPerBatch, getDefaultStockDate, TZ };
+module.exports = { pushStockPerBatch, getDefaultStockDate, logSkippedPush, TZ };

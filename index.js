@@ -32,7 +32,7 @@ const cors = require('cors');
 const { getCurrentDateFormatted } = require('./utils/Date');
 const moment = require('moment-timezone');
 const { scheduleDaily } = require('./utils/Scheduler');
-const { pushStockPerBatch, TZ } = require('./services/stockPush');
+const { pushStockPerBatch, logSkippedPush, TZ } = require('./services/stockPush');
 require('dotenv').config();
 
 const app = express();
@@ -115,8 +115,7 @@ app.listen(port, host, () => {
   // Push stok per batch ke Stock API setiap hari jam 09:00 WIB, kecuali hari Minggu
   scheduleDaily('push-stock-perbatch', 9, 0, TZ, () => {
     if (moment().tz(TZ).isoWeekday() === 7) {
-      console.log('[stockPush] hari Minggu, push dilewati');
-      return;
+      return logSkippedPush('cron', 'hari Minggu, push dilewati');
     }
     return pushStockPerBatch(undefined, 'cron');
   });
