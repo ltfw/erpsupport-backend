@@ -45,10 +45,16 @@ async function fetchStockPerBatch(stockDate) {
         SUM(bnt.Qty) > 0
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
     WHERE
-      -- is2.KodeGudang not in ('00-GUU-03','00-GUU-02','03-GUU-03')
-      cr.StockNamaCabang IS NOT NULL
+      is2.KodeGudang not in ('00-GUU-03','00-GUU-02','02-GUU-02','03-GUU-03','04-GUU-02')
+      -- exclude gudang karantina (GKR-*) dan reject (GRJ-* / IsReject)
+      AND w.KodeGudang NOT LIKE 'GKR-%'
+      AND w.KodeGudang NOT LIKE 'GRJ-%'
+      AND w.IsReject = 0
+      -- exclude barang bonus
+      AND i.IsBonus = 0
+      AND cr.StockNamaCabang IS NOT NULL
       AND t.KodeLgn = '1001'
-      -- and sumBatchNumber.TglExpired > CAST(GETDATE() AS DATE)
+      and sumBatchNumber.TglExpired > CAST(GETDATE() AS DATE)
     GROUP BY
       cr.StockNamaCabang,
       i.NamaBarang,
@@ -159,6 +165,12 @@ async function doPush(stockDate, trigger) {
   }
 }
 
+// Data yang akan di-push (skema payload Stock API) tanpa mengirimnya
+async function previewStockPerBatch(stockDate = getDefaultStockDate()) {
+  const rows = await fetchStockPerBatch(stockDate);
+  return buildPayload(rows, stockDate, null);
+}
+
 // Catat push yang sengaja tidak dijalankan (mis. hari Minggu)
 async function logSkippedPush(trigger, message) {
   const now = formatTimestamp(moment().tz(TZ));
@@ -187,4 +199,4 @@ async function pushStockPerBatch(stockDate = getDefaultStockDate(), trigger = "m
   }
 }
 
-module.exports = { pushStockPerBatch, getDefaultStockDate, logSkippedPush, TZ };
+module.exports = { pushStockPerBatch, previewStockPerBatch, getDefaultStockDate, logSkippedPush, TZ };

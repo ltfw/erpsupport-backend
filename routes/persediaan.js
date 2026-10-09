@@ -1,7 +1,7 @@
 const express = require("express");
 const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
-const { pushStockPerBatch, getDefaultStockDate } = require("../services/stockPush");
+const { pushStockPerBatch, previewStockPerBatch, getDefaultStockDate } = require("../services/stockPush");
 const { listPushLogs } = require("../services/stockPushLog");
 
 const router = express.Router();
@@ -221,6 +221,26 @@ router.get("/perbatch/push-logs", async (req, res) => {
 // Tanggal stok default untuk push (H-1, Senin ambil Sabtu)
 router.get("/perbatch/push-date", (req, res) => {
   return res.json({ date: getDefaultStockDate() });
+});
+
+// Data stok dengan skema payload push (untuk export Excel), tidak dikirim ke Stock API
+router.get("/perbatch/push-preview", async (req, res) => {
+  const allowedRoles = ['ADM', 'DAT'];
+  if (!allowedRoles.includes(req.user.role)) {
+    return res.status(403).json({ message: "Tidak memiliki akses untuk data push stok" });
+  }
+
+  const stockDate = req.query.date || getDefaultStockDate();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(stockDate) || stockDate > getCurrentDateFormatted()) {
+    return res.status(400).json({ message: "Date is not valid" });
+  }
+
+  try {
+    return res.json(await previewStockPerBatch(stockDate));
+  } catch (error) {
+    console.error("Error in /perbatch/push-preview:", error.message);
+    return res.status(500).json({ message: "Gagal mengambil data push stok", details: error.message });
+  }
 });
 
 router.post("/perbatch/push", async (req, res) => {
