@@ -45,11 +45,7 @@ async function fetchStockPerBatch(stockDate) {
         SUM(bnt.Qty) > 0
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
     WHERE
-      is2.KodeGudang not in ('00-GUU-03','00-GUU-02','02-GUU-02','03-GUU-03','04-GUU-02')
-      -- exclude gudang karantina (GKR-*) dan reject (GRJ-* / IsReject)
-      AND w.KodeGudang NOT LIKE 'GKR-%'
-      AND w.KodeGudang NOT LIKE 'GRJ-%'
-      AND w.IsReject = 0
+      is2.KodeGudang not in ('00-GUU','02-GUU','03-GUU','04-GUU')
       -- exclude barang bonus
       AND i.IsBonus = 0
       AND cr.StockNamaCabang IS NOT NULL
