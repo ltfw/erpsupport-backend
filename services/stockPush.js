@@ -45,7 +45,7 @@ async function fetchStockPerBatch(stockDate) {
         SUM(bnt.Qty) > 0
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
     WHERE
-      is2.KodeGudang not in ('00-GUU','02-GUU','03-GUU','04-GUU')
+      is2.KodeGudang in ('00-GUU','02-GUU','03-GUU','04-GUU')
       -- exclude barang bonus
       AND i.IsBonus = 0
       AND cr.StockNamaCabang IS NOT NULL
