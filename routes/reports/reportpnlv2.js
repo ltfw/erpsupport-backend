@@ -211,32 +211,41 @@ router.get("/report", async (req, res) => {
               Klaim_NowYtd,      Klaim_PrevYtd,
               BebanLain_NowYtd,  BebanLain_PrevYtd,
               PPh_NowYtd,        PPh_PrevYtd,
-              -- NET SALES = GrossSales - Retur - DiscDist
-              (GrossSales_Now  - Retur_Now  - DiscDist_Now)  as NetSales_Now,
-              (GrossSales_Prev - Retur_Prev - DiscDist_Prev) as NetSales_Prev,
-              (GrossSales_NowYtd  - Retur_NowYtd  - DiscDist_NowYtd)  as NetSales_NowYtd,
-              (GrossSales_PrevYtd - Retur_PrevYtd - DiscDist_PrevYtd) as NetSales_PrevYtd,
-              -- GROSS PROFIT = NetSales - HPP
-              (GrossSales_Now  - Retur_Now  - DiscDist_Now  - HPP_Now)  as GrossProfit_Now,
-              (GrossSales_Prev - Retur_Prev - DiscDist_Prev - HPP_Prev) as GrossProfit_Prev,
-              (GrossSales_NowYtd  - Retur_NowYtd  - DiscDist_NowYtd  - HPP_NowYtd)  as GrossProfit_NowYtd,
-              (GrossSales_PrevYtd - Retur_PrevYtd - DiscDist_PrevYtd - HPP_PrevYtd) as GrossProfit_PrevYtd,
-              -- LABA OPERASIONAL = GrossProfit - Expense
-              (GrossSales_Now  - Retur_Now  - DiscDist_Now  - HPP_Now  - Expense_Now)  as LabaOps_Now,
-              (GrossSales_Prev - Retur_Prev - DiscDist_Prev - HPP_Prev - Expense_Prev) as LabaOps_Prev,
-              (GrossSales_NowYtd  - Retur_NowYtd  - DiscDist_NowYtd  - HPP_NowYtd  - Expense_NowYtd)  as LabaOps_NowYtd,
-              (GrossSales_PrevYtd - Retur_PrevYtd - DiscDist_PrevYtd - HPP_PrevYtd - Expense_PrevYtd) as LabaOps_PrevYtd,
-              -- LABA SEBELUM PAJAK = LabaOps + PendLain - BebanLain
-              (GrossSales_Now  - Retur_Now  - DiscDist_Now  - HPP_Now  - Expense_Now  + PendLain_Now  - BebanLain_Now)  as LabaSebelumPajak_Now,
-              (GrossSales_Prev - Retur_Prev - DiscDist_Prev - HPP_Prev - Expense_Prev + PendLain_Prev - BebanLain_Prev) as LabaSebelumPajak_Prev,
-              (GrossSales_NowYtd  - Retur_NowYtd  - DiscDist_NowYtd  - HPP_NowYtd  - Expense_NowYtd  + PendLain_NowYtd  - BebanLain_NowYtd)  as LabaSebelumPajak_NowYtd,
-              (GrossSales_PrevYtd - Retur_PrevYtd - DiscDist_PrevYtd - HPP_PrevYtd - Expense_PrevYtd + PendLain_PrevYtd - BebanLain_PrevYtd) as LabaSebelumPajak_PrevYtd,
-              -- LABA SESUDAH PAJAK = LabaSebelumPajak - PPh
-              (GrossSales_Now  - Retur_Now  - DiscDist_Now  - HPP_Now  - Expense_Now  + PendLain_Now  - BebanLain_Now  - PPh_Now)  as LabaSesudahPajak_Now,
-              (GrossSales_Prev - Retur_Prev - DiscDist_Prev - HPP_Prev - Expense_Prev + PendLain_Prev - BebanLain_Prev - PPh_Prev) as LabaSesudahPajak_Prev,
-              (GrossSales_NowYtd  - Retur_NowYtd  - DiscDist_NowYtd  - HPP_NowYtd  - Expense_NowYtd  + PendLain_NowYtd  - BebanLain_NowYtd  - PPh_NowYtd)  as LabaSesudahPajak_NowYtd,
-              (GrossSales_PrevYtd - Retur_PrevYtd - DiscDist_PrevYtd - HPP_PrevYtd - Expense_PrevYtd + PendLain_PrevYtd - BebanLain_PrevYtd - PPh_PrevYtd) as LabaSesudahPajak_PrevYtd
+              -- PENDAPATAN LAIN = 710001 (Jasa Giro & Deposito) + 710099 (Pendapatan Lain-lain)
+              (PendLain_Now  + Klaim_Now)  as PendLainTotal_Now,
+              (PendLain_Prev + Klaim_Prev) as PendLainTotal_Prev,
+              (PendLain_NowYtd  + Klaim_NowYtd)  as PendLainTotal_NowYtd,
+              (PendLain_PrevYtd + Klaim_PrevYtd) as PendLainTotal_PrevYtd,
+              -- NET SALES = GrossSales - DiscPrinc - DiscDist - Retur
+              (GrossSales_Now  - DiscPrinc_Now  - DiscDist_Now  - Retur_Now)  as NetSales_Now,
+              (GrossSales_Prev - DiscPrinc_Prev - DiscDist_Prev - Retur_Prev) as NetSales_Prev,
+              (GrossSales_NowYtd  - DiscPrinc_NowYtd  - DiscDist_NowYtd  - Retur_NowYtd)  as NetSales_NowYtd,
+              (GrossSales_PrevYtd - DiscPrinc_PrevYtd - DiscDist_PrevYtd - Retur_PrevYtd) as NetSales_PrevYtd
           FROM Calc
+      ),
+      Profits AS (
+          SELECT *,
+              -- GROSS PROFIT = NetSales - HPP
+              (NetSales_Now  - HPP_Now)  as GrossProfit_Now,
+              (NetSales_Prev - HPP_Prev) as GrossProfit_Prev,
+              (NetSales_NowYtd  - HPP_NowYtd)  as GrossProfit_NowYtd,
+              (NetSales_PrevYtd - HPP_PrevYtd) as GrossProfit_PrevYtd,
+              -- LABA OPERASIONAL = GrossProfit - Expense
+              (NetSales_Now  - HPP_Now  - Expense_Now)  as LabaOps_Now,
+              (NetSales_Prev - HPP_Prev - Expense_Prev) as LabaOps_Prev,
+              (NetSales_NowYtd  - HPP_NowYtd  - Expense_NowYtd)  as LabaOps_NowYtd,
+              (NetSales_PrevYtd - HPP_PrevYtd - Expense_PrevYtd) as LabaOps_PrevYtd,
+              -- LABA SEBELUM PAJAK = LabaOps + PendLainTotal - BebanLain
+              (NetSales_Now  - HPP_Now  - Expense_Now  + PendLainTotal_Now  - BebanLain_Now)  as LabaSebelumPajak_Now,
+              (NetSales_Prev - HPP_Prev - Expense_Prev + PendLainTotal_Prev - BebanLain_Prev) as LabaSebelumPajak_Prev,
+              (NetSales_NowYtd  - HPP_NowYtd  - Expense_NowYtd  + PendLainTotal_NowYtd  - BebanLain_NowYtd)  as LabaSebelumPajak_NowYtd,
+              (NetSales_PrevYtd - HPP_PrevYtd - Expense_PrevYtd + PendLainTotal_PrevYtd - BebanLain_PrevYtd) as LabaSebelumPajak_PrevYtd,
+              -- LABA SESUDAH PAJAK = LabaSebelumPajak - PPh
+              (NetSales_Now  - HPP_Now  - Expense_Now  + PendLainTotal_Now  - BebanLain_Now  - PPh_Now)  as LabaSesudahPajak_Now,
+              (NetSales_Prev - HPP_Prev - Expense_Prev + PendLainTotal_Prev - BebanLain_Prev - PPh_Prev) as LabaSesudahPajak_Prev,
+              (NetSales_NowYtd  - HPP_NowYtd  - Expense_NowYtd  + PendLainTotal_NowYtd  - BebanLain_NowYtd  - PPh_NowYtd)  as LabaSesudahPajak_NowYtd,
+              (NetSales_PrevYtd - HPP_PrevYtd - Expense_PrevYtd + PendLainTotal_PrevYtd - BebanLain_PrevYtd - PPh_PrevYtd) as LabaSesudahPajak_PrevYtd
+          FROM SubTotals
       ),
       FinalReport AS (
         -- ── Data rows from Pivoted ──────────────────────────────────────
@@ -264,7 +273,7 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscPrinc_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(DiscPrinc_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(DiscPrinc_PrevYtd / GrossSales_PrevYtd, 2) END,
-            3 FROM SubTotals
+            3 FROM Profits
 
         UNION ALL
 
@@ -274,7 +283,7 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(DiscDist_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(DiscDist_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(DiscDist_PrevYtd / GrossSales_PrevYtd, 2) END,
-            6 FROM SubTotals
+            6 FROM Profits
 
         UNION ALL
 
@@ -284,12 +293,12 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Retur_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(Retur_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(Retur_PrevYtd / GrossSales_PrevYtd, 2) END,
-            8 FROM SubTotals
+            8 FROM Profits
 
         UNION ALL
 
         -- NET SALES
-        SELECT '', 'Penjualan Bersih', NetSales_Now, NetSales_Prev, NetSales_NowYtd, NetSales_PrevYtd, 9 FROM SubTotals
+        SELECT '', 'Penjualan Bersih', NetSales_Now, NetSales_Prev, NetSales_NowYtd, NetSales_PrevYtd, 9 FROM Profits
 
         UNION ALL
 
@@ -299,12 +308,12 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(HPP_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(HPP_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(HPP_PrevYtd / GrossSales_PrevYtd, 2) END,
-            11 FROM SubTotals
+            11 FROM Profits
 
         UNION ALL
 
         -- GROSS PROFIT
-        SELECT '', 'Laba Kotor', GrossProfit_Now, GrossProfit_Prev, GrossProfit_NowYtd, GrossProfit_PrevYtd, 12 FROM SubTotals
+        SELECT '', 'Laba Kotor', GrossProfit_Now, GrossProfit_Prev, GrossProfit_NowYtd, GrossProfit_PrevYtd, 12 FROM Profits
 
         UNION ALL
 
@@ -314,27 +323,27 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(Expense_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(Expense_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(Expense_PrevYtd / GrossSales_PrevYtd, 2) END,
-            14 FROM SubTotals
+            14 FROM Profits
 
         UNION ALL
 
         -- LABA OPERASIONAL
-        SELECT '', 'LABA OPERASIONAL', LabaOps_Now, LabaOps_Prev, LabaOps_NowYtd, LabaOps_PrevYtd, 15 FROM SubTotals
+        SELECT '', 'LABA OPERASIONAL', LabaOps_Now, LabaOps_Prev, LabaOps_NowYtd, LabaOps_PrevYtd, 15 FROM Profits
 
         UNION ALL
 
         -- KLAIM DISKON (710099 - Pendapatan Lain-lain)
-        SELECT '710099', 'Pendapatan Lain-lain', Klaim_Now, Klaim_Prev, Klaim_NowYtd, Klaim_PrevYtd, 17 FROM SubTotals
+        SELECT '710099', 'Pendapatan Lain-lain', Klaim_Now, Klaim_Prev, Klaim_NowYtd, Klaim_PrevYtd, 17 FROM Profits
 
         UNION ALL
 
         -- % Pendapatan Lain-lain to Gross Sales
         SELECT '', '% Pendapatan Lain-lain to Total Penjualan',
-            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLain_Now  / GrossSales_Now,  2) END,
-            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLain_Prev / GrossSales_Prev, 2) END,
-            CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(PendLain_NowYtd  / GrossSales_NowYtd,  2) END,
-            CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(PendLain_PrevYtd / GrossSales_PrevYtd, 2) END,
-            18 FROM SubTotals
+            CASE WHEN GrossSales_Now  = 0 THEN 0 ELSE ROUND(PendLainTotal_Now  / GrossSales_Now,  2) END,
+            CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(PendLainTotal_Prev / GrossSales_Prev, 2) END,
+            CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(PendLainTotal_NowYtd  / GrossSales_NowYtd,  2) END,
+            CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(PendLainTotal_PrevYtd / GrossSales_PrevYtd, 2) END,
+            18 FROM Profits
 
         UNION ALL
 
@@ -344,7 +353,7 @@ router.get("/report", async (req, res) => {
             CASE WHEN GrossSales_Prev = 0 THEN 0 ELSE ROUND(BebanLain_Prev / GrossSales_Prev, 2) END,
             CASE WHEN GrossSales_NowYtd  = 0 THEN 0 ELSE ROUND(BebanLain_NowYtd  / GrossSales_NowYtd,  2) END,
             CASE WHEN GrossSales_PrevYtd = 0 THEN 0 ELSE ROUND(BebanLain_PrevYtd / GrossSales_PrevYtd, 2) END,
-            20 FROM SubTotals
+            20 FROM Profits
 
         UNION ALL
 
@@ -352,7 +361,7 @@ router.get("/report", async (req, res) => {
         SELECT '', 'LABA BERSIH SEBELUM PAJAK',
             LabaSebelumPajak_Now, LabaSebelumPajak_Prev,
             LabaSebelumPajak_NowYtd, LabaSebelumPajak_PrevYtd,
-            21 FROM SubTotals
+            21 FROM Profits
 
         UNION ALL
 
@@ -360,7 +369,7 @@ router.get("/report", async (req, res) => {
         SELECT '', 'LABA BERSIH SESUDAH PAJAK',
             LabaSesudahPajak_Now, LabaSesudahPajak_Prev,
             LabaSesudahPajak_NowYtd, LabaSesudahPajak_PrevYtd,
-            23 FROM SubTotals
+            23 FROM Profits
     )
       SELECT
           KodeGl,
