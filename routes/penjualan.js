@@ -54,11 +54,9 @@ router.get("/", async (req, res) => {
       }
     }
 
-    // --- Main Data Query ---
-    // Using the Prisma.sql`` and Prisma.join approach from your original working file
-    const sales = await prismaBase.$queryRaw`
-      SELECT
-        DISTINCT
+    // Main data query and count query share the same columns and FROM/WHERE,
+    // so the total always matches the rows the user can page through.
+    const salesColumns = PrismaWhere.sql`
         d.NamaDept,
         d.KepalaCabang,
         sih.KodeWil,
@@ -178,10 +176,13 @@ router.get("/", async (req, res) => {
         sih.PoLanggan,
         sii.PromotionCode,
         p.PromotionName
+    `;
+
+    const salesFromWhere = PrismaWhere.sql`
     FROM SalesInvoiceHeaders sih
-    JOIN SalesInvoiceItems sii 
+    JOIN SalesInvoiceItems sii
         ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-    JOIN BatchNumberTransactions bnt 
+    JOIN BatchNumberTransactions bnt
         ON bnt.InventoryStockId = sii.InventoryStockId
         AND (
               -- Penjualan normal: match by AllNoSj
@@ -232,6 +233,12 @@ router.get("/", async (req, res) => {
             OR sih.KodeWil LIKE ${searchQuery} OR s.KodeSales LIKE ${searchQuery} OR s2.KodeSales LIKE ${searchQuery}
             OR sih.PoLanggan LIKE ${searchQuery} OR p.PromotionCode LIKE ${searchQuery}
         )
+    `;
+
+    // --- Main Data Query ---
+    const sales = await prismaBase.$queryRaw`
+      SELECT DISTINCT ${salesColumns}
+      ${salesFromWhere}
       ORDER BY sih.NoBukti
       OFFSET ${skip} ROWS
       FETCH NEXT ${pageSize} ROWS ONLY;
@@ -239,45 +246,12 @@ router.get("/", async (req, res) => {
     // --- End Main Data Query ---
 
     // --- Count Query ---
-    // Also using the reliable Prisma.sql`` and Prisma.join approach
     const totalResult = await prismaBase.$queryRaw`
       SELECT COUNT(*) as total
-      FROM SalesInvoiceHeaders sih
-      JOIN SalesInvoiceItems sii 
-          ON sih.SalesInvoiceHeaderId = sii.SalesInvoiceHeaderId
-      JOIN BatchNumberTransactions bnt 
-          ON bnt.InventoryStockId = sii.InventoryStockId
-        AND (bnt.ParentTransaction = sih.AllNoSj OR bnt.ParentTransactionId = sih.SalesInvoiceHeaderId)
-      JOIN InventoryStocks is2 ON bnt.InventoryStockId = is2.InventoryStockId
-      JOIN Inventories i ON is2.InventoryId = i.InventoryId
-      JOIN Departments d ON d.KodeDept = sih.KodeCc
-      JOIN Salesmen s ON s.KodeSales = sih.KodeSales
-      JOIN Salesmen s2 ON s2.KodeSales = s.KodeSalesSupport
-      JOIN Customers c ON c.CustomerId = sih.CustomerId
-      JOIN RayonDistricts rd ON c.DistrictId = rd.DistrictId
-      JOIN Rayons r ON rd.RayonCode = r.RayonCode
-      JOIN CustomerGroups cg ON c.CustomerGroupId = cg.CustomerGroupId
-      JOIN BusinessEntities be ON c.BusinessEntityId = be.BusinessEntityId
-      JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId and is3.IsForSalesInvoice = 1
-      JOIN BusinessCentres bc ON bc.BusinessCentreCode = is3.BusinessCentreCode
-      LEFT JOIN Promotions p ON p.PromotionCode = sii.PromotionCode
-      WHERE (sih.TglFaktur >= ${startDate + ' 00:00:00'} and sih.TglFaktur <= ${endDate + ' 23:59:59'})
-        ${cabangArray.length > 0
-        ? PrismaWhere.sql`AND sih.KodeCc IN (${PrismaWhere.join(cabangArray)})`
-        : PrismaWhere.sql``}
-        ${barangArray.length > 0
-        ? PrismaWhere.sql`AND i.KodeItem IN (${PrismaWhere.join(barangArray)})`
-        : PrismaWhere.sql``}
-        ${vendorArray.length > 0
-        ? PrismaWhere.sql`AND is3.KodeLgn IN (${PrismaWhere.join(vendorArray)})`
-        : PrismaWhere.sql``}
-        AND (
-            c.KodeLgn LIKE ${searchQuery} OR c.NamaLgn LIKE ${searchQuery}
-            OR i.KodeItem LIKE ${searchQuery} OR i.NamaBarang LIKE ${searchQuery}
-            OR sih.NoBukti LIKE ${searchQuery} OR sih.AllNoSj LIKE ${searchQuery}
-            OR sih.KodeWil LIKE ${searchQuery} OR s.KodeSales LIKE ${searchQuery} OR s2.KodeSales LIKE ${searchQuery}
-            OR sih.PoLanggan LIKE ${searchQuery} OR p.PromotionCode LIKE ${searchQuery}
-        )
+      FROM (
+        SELECT DISTINCT ${salesColumns}
+        ${salesFromWhere}
+      ) x
     `;
     // --- End Count Query ---
 
