@@ -27,10 +27,13 @@ async function fetchStockPerBatch(stockDate) {
     JOIN ERPSupport.dbo.CabangReportPBF cr
       ON cr.KodeDept COLLATE DATABASE_DEFAULT = w.KodeDept COLLATE DATABASE_DEFAULT
     JOIN (
+      -- Saldo dihitung per batch (bukan per batch + TglExpired), karena TglExpired
+      -- di transaksi keluar kadang berbeda dengan transaksi masuk untuk batch yang sama.
+      -- TglExpired diambil dari transaksi masuk.
       SELECT
         bnt.InventoryStockId,
         bnt.BatchNumber,
-        bnt.TglExpired,
+        COALESCE(MAX(CASE WHEN bnt.Qty > 0 THEN bnt.TglExpired END), MAX(bnt.TglExpired)) AS TglExpired,
         SUM(bnt.Qty) AS Qty
       FROM
         BatchNumberTransactions bnt
@@ -39,8 +42,7 @@ async function fetchStockPerBatch(stockDate) {
         bnt.tanggaltransaksi < DATEADD(day, 1, CAST(${stockDate} AS DATE))
       GROUP BY
         bnt.InventoryStockId,
-        bnt.BatchNumber,
-        bnt.TglExpired
+        bnt.BatchNumber
       HAVING
         SUM(bnt.Qty) > 0
     ) AS sumBatchNumber ON is2.InventoryStockId = sumBatchNumber.InventoryStockId
