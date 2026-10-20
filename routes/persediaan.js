@@ -3,6 +3,7 @@ const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { getCurrentDateFormatted } = require("../utils/Date");
 const { pushStockPerBatch, previewStockPerBatch, getDefaultStockDate } = require("../services/stockPush");
 const { listPushLogs } = require("../services/stockPushLog");
+const { listProducts } = require("./products");
 
 const router = express.Router();
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
@@ -266,144 +267,8 @@ router.post("/perbatch/push", async (req, res) => {
   }
 });
 
-// Get all customers using pagination
-router.get("/", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.per_page) || 200;
-    const skip = (page - 1) * pageSize;
-    const search = req.query.search?.trim() || ''
-    const vendorParam = req.query.vendor || req.user.vendor || '';
-    console.log("User Vendor:", req.user.vendor, "Vendor Param:", vendorParam);
-
-    const searchQuery = `%${search}%`
-    const isKonsinyasiSearch = search.toLowerCase().includes('kon')
-    const isRegulerSearch = search.toLowerCase().includes('reg')
-    const isBonusSearch = search.toLowerCase().includes('bon')
-
-    let whereClause = Prisma.sql``;
-
-    const searchConditions = [];
-    searchConditions.push(Prisma.sql`i.KodeItem like ${searchQuery}`);
-    searchConditions.push(Prisma.sql`i.NamaBarang like ${searchQuery}`);
-    
-    if (isKonsinyasiSearch) searchConditions.push(Prisma.sql`i.IsConsignmentIn = 1`);
-    if (isRegulerSearch) searchConditions.push(Prisma.sql`(i.IsConsignmentIn = 0 and i.isbonus = 0)`);
-    if (isBonusSearch) searchConditions.push(Prisma.sql`(i.isbonus = 1)`);
-    
-    // Build search conditions
-    let searchSection = searchConditions[0];
-    for (let i = 1; i < searchConditions.length; i++) {
-      searchSection = Prisma.sql`${searchSection} OR ${searchConditions[i]}`;
-    }
-
-    // Add vendor filter if provided
-    if (vendorParam) {
-      whereClause = Prisma.sql`WHERE (${searchSection}) AND is3.KodeLgn = ${vendorParam}`;
-    } else {
-      whereClause = Prisma.sql`WHERE (${searchSection})`;
-    }
-
-    const [customers, totalResult] = await Promise.all([
-      prisma.$queryRaw`
-      select
-        i.KodeItem,
-        i.NamaBarang,
-        case when i.IsConsignmentIn = 1 then 'Konsinyasi'
-        when i.isbonus = 1 then 'Bonus'
-        else 'Reguler' end as Keterangan
-      from
-        Inventories i
-      join inventorysuppliers is3 on is3.InventoryId = i.InventoryId
-      ${whereClause}
-      order by i.kodeitem,i.NamaBarang
-      offset ${skip} rows
-      fetch next ${pageSize} rows only;
-    `,
-      prisma.$queryRaw`
-        select count(*) as total 
-        from Inventories i
-        join inventorysuppliers is3 on is3.InventoryId = i.InventoryId
-        ${whereClause}
-      `,
-    ]);
-
-    const total = Number(totalResult[0]?.total || 0)
-
-    return res.json({
-      data: customers,
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize),
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({ error});
-  }
-});
-
-// Get customer by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const customer = await prisma.$queryRaw`
-      select c.*,rd.RayonCode,cg.CustomerGroupName,be.BusinessEntityName,d.NamaDept from customers c 
-      join CustomerGroups cg on c.CustomerGroupId = cg.CustomerGroupId
-      join BusinessEntities be on c.BusinessEntityId = be.BusinessEntityId
-      join RayonDistricts rd on c.DistrictId = rd.DistrictId
-      join Departments d on c.KodeDept = d.KodeDept
-      where c.CustomerId=${req.params.id};
-    `
-
-    const rayonCustomer = await prisma.$queryRaw`
-      select rd.* from rayondistricts rd
-      join customers c on rd.DistrictId = c.DistrictId
-      where c.CustomerId=${req.params.id};
-    `
-    const BusinessEntity = await prisma.$queryRaw`
-      select be.* from BusinessEntities be
-      join customers c on be.BusinessEntityId = c.BusinessEntityId
-      where c.CustomerId=${req.params.id};
-    `
-
-    const customerGroup = await prisma.$queryRaw`
-      select cg.* from customergroups cg
-      join customers c on cg.CustomerGroupId = c.CustomerGroupId
-      where c.CustomerId=${req.params.id};
-    `
-
-    const legalitasOutlet = await prisma.$queryRaw`
-      select 
-      cgmp.CustomerGroupMasterPermissionName,
-      cgp.PermissionTitleCode,
-      cgvp.PermissionValue,
-      cgvp.FilePath,
-      cgvp.Nomor,
-      isnull(format(cgvp.ExpiredDate,'yyyy-MM-dd'),'') as tglExpired 
-      from customers c
-      join customergrouppermissions cgp on c.CustomerGroupId = cgp.customergroupid
-      join CustomerGroupMasterPermissions cgmp on cgmp.customergroupmasterpermissioncode = cgp.customergroupmasterpermissioncode
-      left join CustomerGroupValuePermissions cgvp on cgp.customergroupmasterpermissioncode = cgvp.customergroupmasterpermissioncode and c.customerid = cgvp.customerid
-      where c.CustomerId=${req.params.id}
-      order by cgvp.PermissionTitleCode, cgvp.Nomor;
-    `;
-
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-    return res.json({
-      id: req.params.id,
-      customer: customer[0],
-      rayonCustomer: rayonCustomer[0],
-      customerGroup: customerGroup[0],
-      legalitasOutlet: legalitasOutlet,
-      businessEntity: BusinessEntity[0],
-    });
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-});
-
+// Daftar barang sudah pindah ke GET /products (routes/products.js).
+// GET /stocks dipertahankan sebagai alias agar client lama tetap jalan.
+router.get("/", listProducts);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const express = require('express');
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
 const persediaanRoutes = require('./routes/persediaan');
+const productsRoutes = require('./routes/products');
 const penjualanRoutes = require('./routes/penjualan');
 const departmentsRoutes = require('./routes/department');
 const supplierRoutes = require('./routes/supplier');
@@ -71,6 +72,7 @@ app.use('/auth', authRoutes);
 app.use('/customers',authenticateToken, customerRoutes)
 app.use('/sales', authenticateToken, penjualanRoutes);
 app.use('/stocks',authenticateToken, persediaanRoutes);
+app.use('/products', authenticateToken, productsRoutes);
 app.use('/departments',authenticateToken, departmentsRoutes);
 app.use('/suppliers', authenticateToken, supplierRoutes);
 app.use('/navigations', authenticateToken, navigationsRoutes);
