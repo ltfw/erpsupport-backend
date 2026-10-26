@@ -1,5 +1,5 @@
 const moment = require("moment-timezone");
-const { PrismaClient } = require("../generated/dbtrans2026");
+const { PrismaClient, Prisma } = require("../generated/dbtrans2026");
 const { insertPushLog } = require("./stockPushLog");
 
 const prisma = new PrismaClient({ log: ['warn', 'error'], });
@@ -9,11 +9,13 @@ const DEFAULT_STOCK_API_URL = "https://stock.satoriagroup.co.id/api/v1/stock";
 
 let running = null;
 
-// Stok per batch (logika sama dengan GET /stocks/perbatch), dikelompokkan per cabang PBF
-async function fetchStockPerBatch(stockDate) {
+// Saldo stok per cabang + item + batch (gudang utama)
+async function fetchStockBalances(stockDate) {
   return prisma.$queryRaw`
     SELECT
       cr.StockNamaCabang,
+      w.KodeDept,
+      i.InventoryId,
       i.NamaBarang,
       i.KodeSatuan,
       sumBatchNumber.BatchNumber,
@@ -55,15 +57,107 @@ async function fetchStockPerBatch(stockDate) {
       and sumBatchNumber.TglExpired > CAST(GETDATE() AS DATE)
     GROUP BY
       cr.StockNamaCabang,
+      w.KodeDept,
+      i.InventoryId,
       i.NamaBarang,
       i.KodeSatuan,
       sumBatchNumber.BatchNumber,
       sumBatchNumber.TglExpired
-    ORDER BY
-      cr.StockNamaCabang,
-      i.NamaBarang,
-      sumBatchNumber.BatchNumber
   `;
+}
+
+// Penerimaan per cabang + item + batch + tanggal (semua gudang cabang, s.d. stock_date):
+// HO dari BPB, cabang dari transfer in (IN-xxx)
+async function fetchReceipts(stockDate, inventoryIds) {
+  if (inventoryIds.length === 0) return [];
+  return prisma.$queryRaw`
+    SELECT
+      w.KodeDept,
+      is2.InventoryId,
+      b.BatchNumber,
+      FORMAT(CAST(b.TanggalTransaksi AS DATE), 'yyyy-MM-dd') AS TglTerima,
+      SUM(b.Qty) AS Qty
+    FROM
+      BatchNumberTransactions b
+    JOIN InventoryStocks is2 ON is2.InventoryStockId = b.InventoryStockId
+    JOIN Warehouses w ON w.KodeGudang = is2.KodeGudang
+    WHERE
+      b.Qty > 0
+      AND b.TanggalTransaksi < DATEADD(day, 1, CAST(${stockDate} AS DATE))
+      AND is2.InventoryId IN (${Prisma.join(inventoryIds)})
+      AND (
+        (w.KodeDept = '00' AND b.KodeSumber = 'BPB')
+        OR (w.KodeDept <> '00' AND b.KodeSumber = 'IN' AND b.InventoryTransactionType = 'X')
+      )
+    GROUP BY
+      w.KodeDept,
+      is2.InventoryId,
+      b.BatchNumber,
+      CAST(b.TanggalTransaksi AS DATE)
+  `;
+}
+
+const round2 = (n) => Math.round(n * 100) / 100;
+
+// Pecah saldo batch per tanggal penerimaan secara FIFO: barang keluar dianggap
+// mengambil dari penerimaan terlama, jadi sisa stok dialokasikan ke penerimaan terbaru dulu.
+// Sisa yang tidak tertutup penerimaan (mis. dari saldo awal) dikirim dengan TglTerima null.
+function splitByReceipt(balances, receipts) {
+  const receiptMap = new Map();
+  for (const r of receipts) {
+    const key = `${r.KodeDept}|${r.InventoryId}|${r.BatchNumber}`;
+    if (!receiptMap.has(key)) receiptMap.set(key, []);
+    receiptMap.get(key).push(r);
+  }
+
+  // Digabung per cabang + nama barang + satuan + batch + expired + tgl terima,
+  // karena payload hanya mengenali barang dari namanya
+  const merged = new Map();
+  const add = (row, tglTerima, qty) => {
+    const key = [row.StockNamaCabang, row.NamaBarang, row.KodeSatuan, row.BatchNumber, row.TglExpired, tglTerima].join("|");
+    if (merged.has(key)) {
+      merged.get(key).Qty += qty;
+    } else {
+      merged.set(key, {
+        StockNamaCabang: row.StockNamaCabang,
+        NamaBarang: row.NamaBarang,
+        KodeSatuan: row.KodeSatuan,
+        BatchNumber: row.BatchNumber,
+        TglExpired: row.TglExpired,
+        TglTerima: tglTerima,
+        Qty: qty,
+      });
+    }
+  };
+
+  for (const row of balances) {
+    const list = (receiptMap.get(`${row.KodeDept}|${row.InventoryId}|${row.BatchNumber}`) || [])
+      .sort((a, b) => b.TglTerima.localeCompare(a.TglTerima));
+    let remaining = Number(row.Qty);
+    for (const r of list) {
+      if (remaining <= 0) break;
+      const qty = Math.min(remaining, Number(r.Qty));
+      add(row, r.TglTerima, qty);
+      remaining = round2(remaining - qty);
+    }
+    if (remaining > 0) add(row, null, remaining);
+  }
+
+  return [...merged.values()]
+    .map(row => ({ ...row, Qty: round2(row.Qty) }))
+    .sort((a, b) =>
+      a.StockNamaCabang.localeCompare(b.StockNamaCabang) ||
+      a.NamaBarang.localeCompare(b.NamaBarang) ||
+      a.BatchNumber.localeCompare(b.BatchNumber) ||
+      (b.TglTerima || "").localeCompare(a.TglTerima || ""));
+}
+
+// Stok per batch per tanggal penerimaan, dikelompokkan per cabang PBF
+async function fetchStockPerBatch(stockDate) {
+  const balances = await fetchStockBalances(stockDate);
+  const inventoryIds = [...new Set(balances.map(row => row.InventoryId))];
+  const receipts = await fetchReceipts(stockDate, inventoryIds);
+  return splitByReceipt(balances, receipts);
 }
 
 function buildPayload(rows, stockDate, requestId) {
@@ -78,6 +172,7 @@ function buildPayload(rows, stockDate, requestId) {
       unit: row.KodeSatuan,
       batch_no: row.BatchNumber,
       expired_date: row.TglExpired,
+      received_date: row.TglTerima,
     });
   }
 
