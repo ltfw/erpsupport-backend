@@ -113,7 +113,12 @@ app.get('/health', (req, res) => res.json({ status: 'OK' }));
 const port = process.env.PORT || 5000;
 const host = process.env.HOST || '0.0.0.0'; 
 
-app.listen(port, host, () => {
+app.listen(port, host, (err) => {
+  if (err) {
+    console.error(`Failed to listen on ${host}:${port}:`, err.message);
+    process.exit(1);
+  }
+
   // Push stok per batch ke Stock API setiap hari jam 09:00 WIB, kecuali hari Minggu
   scheduleDaily('push-stock-perbatch', 9, 0, TZ, () => {
     if (moment().tz(TZ).isoWeekday() === 7) {

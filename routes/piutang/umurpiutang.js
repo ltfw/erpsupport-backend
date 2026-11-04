@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
     const skip = (page - 1) * pageSize;
     const searchQuery = `%${search}%`;
     const cabang = req.query.cabang?.trim() || '';
+    const endDate = req.query.endDate?.trim() || '';
 
     let cabangArray = [];
     const allowedRoles = ['ADM', 'FAS', 'MKT-SANI'];
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
       cabangArray = [req.user.cabang];
     }
 
-    console.log("user role:", userRole, "Cabang Array:", cabangArray, "ParentTransaction:", parentTransaction);
+    console.log("user role:", userRole, "Cabang Array:", cabangArray, "ParentTransaction:", parentTransaction, "Tgl Jatuh Tempo <=", endDate);
 
     const offsetClause = sql`OFFSET ${sql([skip])} ROWS FETCH NEXT ${sql([pageSize])} ROWS ONLY`;
 
@@ -90,6 +91,7 @@ router.get("/", async (req, res) => {
           ${parentTransaction ? sql`AND ati.ParentTransaction = ${parentTransaction}` : sql``}
           AND (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
           ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
+          ${endDate ? sql`AND CAST(ati.TglJtpFaktur AS date) <= ${endDate}` : sql``}
         GROUP BY
           d.NamaDept,
           c.KodeLgn,
@@ -156,6 +158,7 @@ router.get("/", async (req, res) => {
             ${parentTransaction ? sql`AND ati.ParentTransaction = ${parentTransaction}` : sql``}
             AND (c.NamaLgn LIKE ${searchQuery} OR c.KodeLgn LIKE ${searchQuery})
             ${cabangArray.length > 0 ? sql`AND c.KodeDept IN (${Prisma.join(cabangArray)})` : sql``}
+            ${endDate ? sql`AND CAST(ati.TglJtpFaktur AS date) <= ${endDate}` : sql``}
           GROUP BY
             d.NamaDept,
             c.KodeLgn,
