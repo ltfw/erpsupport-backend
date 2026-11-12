@@ -11,6 +11,7 @@ const penjualanRoutes = require('./routes/penjualan');
 const departmentsRoutes = require('./routes/department');
 const supplierRoutes = require('./routes/supplier');
 const lainLainRoutes = require('./routes/tools/others');
+const salesInvoiceRoutes = require('./routes/tools/salesinvoice');
 const navigationsRoutes = require('./routes/navigations');
 const rayoncabangRoutes = require('./routes/reports/rayoncabang');
 const daftarBarangRoutes = require('./routes/reports/daftarbarang');
@@ -48,6 +49,7 @@ const allowedOrigins = [
   'http://localhost:3000', // For local development on the same machine
   'http://localhost:3030', // For local development on the same machine
   'http://10.252.198.100:3000', // Your frontend's network IP and port
+  'http://10.252.88.177:3000',
   'http://10.252.22.20',
   'http://localhost',
   'https://erpsupport.sdlindonesia.com'
@@ -90,6 +92,7 @@ app.use('/pnlv2/', authenticateToken, reportpnlv2Routes);
 app.use('/hutang/konfirmasihutang', authenticateToken, konfirmasiHutangRoutes);
 app.use('/master/alkes', authenticateToken, masteralkesRoutes);
 app.use('/master/cabangalkes', authenticateToken, cabangAlkesRoutes);
+app.use('/tools/salesinvoice', authenticateToken, salesInvoiceRoutes);
 
 app.use('/others', lainLainRoutes);
 
