@@ -12,6 +12,7 @@ const departmentsRoutes = require('./routes/department');
 const supplierRoutes = require('./routes/supplier');
 const lainLainRoutes = require('./routes/tools/others');
 const salesInvoiceRoutes = require('./routes/tools/salesinvoice');
+const dashboardRoutes = require('./routes/dashboard');
 const navigationsRoutes = require('./routes/navigations');
 const rayoncabangRoutes = require('./routes/reports/rayoncabang');
 const daftarBarangRoutes = require('./routes/reports/daftarbarang');
@@ -93,6 +94,7 @@ app.use('/hutang/konfirmasihutang', authenticateToken, konfirmasiHutangRoutes);
 app.use('/master/alkes', authenticateToken, masteralkesRoutes);
 app.use('/master/cabangalkes', authenticateToken, cabangAlkesRoutes);
 app.use('/tools/salesinvoice', authenticateToken, salesInvoiceRoutes);
+app.use('/dashboard', authenticateToken, dashboardRoutes);
 
 app.use('/others', lainLainRoutes);
 
