@@ -76,11 +76,10 @@ router.get("/", async (req, res) => {
         bc.BusinessCentreName,
         ISNULL(ispbd.SalesPrice / NULLIF(i.KonversiSatuanDasar, 0), 0) as BasePriceSatuanTerkecil,
         ispbd.SalesPrice as BasePrice,
-        -- Prefer Hna if > 0, otherwise HargaJual
-        CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-        END AS Hna,
+        -- HargaJual is the price actually invoiced and posted to GL (410101), the same basis
+        -- MASERP's sales report uses. sii.Hna is a rounded copy (e.g. 13468 vs 13469) and
+        -- is 0 on discount claim invoices, so it is not used for values.
+        sii.HargaJual AS Hna,
         -- Qty: negative for RS, positive otherwise
         CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
@@ -94,10 +93,7 @@ router.get("/", async (req, res) => {
         END) * i.KonversiSatuanDasar AS QtySatuanTerkecil,
         sii.SatuanNs,
         -- ValueHNA
-        (CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-        END) *
+        (sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
@@ -110,50 +106,35 @@ router.get("/", async (req, res) => {
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END) AS ValueBasePrice,
         -- ValueNett
-        ((CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-          END) *
+        ((sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END))
         -
-        ((CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-          END) *
+        ((sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END) * sii.ItemDisPsn / 100) AS ValueNett,
         -- TotalValueDisc
-        ((CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-          END) *
+        ((sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END) * sii.ItemDisPsn / 100) AS TotalValueDisc,
         -- Distributor Discount
-        ((CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-          END) *
+        ((sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))
             ELSE ABS(COALESCE(bnt.Qty, sii.Qty, 0))
         END) * sii.DiscountDistributorPsn / 100) AS ValueDiscDist,
         -- Principle Discount
-        ((CASE 
-            WHEN sii.Hna = 0 THEN sii.HargaJual
-            ELSE sii.Hna
-          END) *
+        ((sii.HargaJual) *
         (CASE 
             WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' 
                 THEN -1 * ABS(COALESCE(bnt.Qty, sii.Qty, 0))

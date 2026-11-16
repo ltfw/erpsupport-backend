@@ -24,8 +24,13 @@ const resolveCabang = (user, requested) => {
   return user.cabang ? [user.cabang] : [];
 };
 
-// Item-level sales lines, valued the same way as the sales report's ValueNett:
-// HNA (or HargaJual when HNA is 0) x Qty x (1 - item discount), negative for returns (RS).
+// Item-level sales lines, valued to match the PNL report (GL):
+//   Penjualan = HargaJual x Qty of non-return invoices -> "Total Penjualan" (410101)
+//   Retur     = HargaJual x Qty of RS invoices         -> 420201
+//   Nett      = signed, less the distributor discount  -> "Penjualan Bersih"
+// The principal discount is borne by the principal, so the PNL never deducts it.
+// BB- items are distributor discount claim invoices (DSI) that post to 710099
+// Pendapatan Lain-lain, which the PNL excludes, so they are left out here too.
 const salesLines = (P, { start, end, cabang, vendor }) => P.sql`
   SELECT
     sih.SalesInvoiceHeaderId,
@@ -36,16 +41,20 @@ const salesLines = (P, { start, end, cabang, vendor }) => P.sql`
     i.KodeItem,
     i.NamaBarang,
     CASE WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' THEN 1 ELSE 0 END AS IsRetur,
+    CASE WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' THEN 0
+      ELSE ABS(sii.Qty) * sii.HargaJual END AS Penjualan,
+    CASE WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS'
+      THEN ABS(sii.Qty) * sii.HargaJual ELSE 0 END AS Retur,
     CASE WHEN SUBSTRING(sih.NoBukti, CHARINDEX('/', sih.NoBukti) + 1, 2) = 'RS' THEN -1 ELSE 1 END
-      * ABS(sii.Qty)
-      * (CASE WHEN sii.Hna = 0 THEN sii.HargaJual ELSE sii.Hna END)
-      * (1 - sii.ItemDisPsn / 100) AS Nett
+      * ABS(sii.Qty) * sii.HargaJual
+      * (1 - sii.DiscountDistributorPsn / 100) AS Nett
   FROM SalesInvoiceHeaders sih
   JOIN SalesInvoiceItems sii ON sii.SalesInvoiceHeaderId = sih.SalesInvoiceHeaderId
   JOIN InventoryStocks is2 ON is2.InventoryStockId = sii.InventoryStockId
   JOIN Inventories i ON i.InventoryId = is2.InventoryId
   ${vendor ? P.sql`JOIN InventorySuppliers is3 ON is3.InventoryId = i.InventoryId AND is3.IsForSalesInvoice = 1` : P.sql``}
   WHERE sih.TglFaktur >= ${start} AND sih.TglFaktur < ${end}
+    AND i.KodeItem NOT LIKE 'BB-%'
     ${cabang.length > 0 ? P.sql`AND sih.KodeCc IN (${P.join(cabang)})` : P.sql``}
     ${vendor ? P.sql`AND is3.KodeLgn = ${vendor}` : P.sql``}
 `;
@@ -60,8 +69,8 @@ const monthTotal = async (monthStart, cabang, vendor) => {
     cabang,
     vendor,
   });
-  const rows = await client.$queryRaw`SELECT SUM(l.Nett) AS Nett FROM (${lines}) l`;
-  return toNumber(rows[0]?.Nett);
+  const rows = await client.$queryRaw`SELECT SUM(l.Penjualan) AS Penjualan FROM (${lines}) l`;
+  return toNumber(rows[0]?.Penjualan);
 };
 
 router.get("/summary", async (req, res) => {
@@ -95,53 +104,53 @@ router.get("/summary", async (req, res) => {
       vendor,
     });
 
-    const [trend, kpi, byCabang, byGroup, topProducts, topCustomers, prevMonthNett] = await Promise.all([
+    const [trend, kpi, byCabang, byGroup, topProducts, topCustomers, prevMonthPenjualan] = await Promise.all([
       client.$queryRaw`
         SELECT MONTH(l.TglFaktur) AS Bulan,
-          SUM(CASE WHEN l.TipeJual = 'E' THEN l.Nett ELSE 0 END) AS EKatalog,
-          SUM(CASE WHEN l.TipeJual = 'E' THEN 0 ELSE l.Nett END) AS Reguler
+          SUM(CASE WHEN l.TipeJual = 'E' THEN l.Penjualan ELSE 0 END) AS EKatalog,
+          SUM(CASE WHEN l.TipeJual = 'E' THEN 0 ELSE l.Penjualan END) AS Reguler
         FROM (${yearLines}) l
         GROUP BY MONTH(l.TglFaktur)
         ORDER BY Bulan
       `,
       client.$queryRaw`
         SELECT
-          SUM(l.Nett) AS Nett,
-          SUM(CASE WHEN l.IsRetur = 1 THEN -l.Nett ELSE 0 END) AS Retur,
+          SUM(l.Penjualan) AS Penjualan,
+          SUM(l.Retur) AS Retur,
+          SUM(l.Penjualan) - SUM(l.Retur) - SUM(l.Nett) AS DiskonDistributor,
+          SUM(l.Nett) AS Bersih,
           COUNT(DISTINCT CASE WHEN l.IsRetur = 0 THEN l.SalesInvoiceHeaderId END) AS Faktur,
           COUNT(DISTINCT CASE WHEN l.IsRetur = 0 THEN l.CustomerId END) AS Pelanggan
         FROM (${monthLines}) l
       `,
       client.$queryRaw`
-        SELECT l.KodeCc, d.NamaDept, SUM(l.Nett) AS Nett
+        SELECT l.KodeCc, d.NamaDept, SUM(l.Penjualan) AS Penjualan
         FROM (${monthLines}) l
         LEFT JOIN Departments d ON d.KodeDept = l.KodeCc
         GROUP BY l.KodeCc, d.NamaDept
-        ORDER BY Nett DESC
+        ORDER BY Penjualan DESC
       `,
       client.$queryRaw`
-        SELECT cg.CustomerGroupName AS Grup, SUM(l.Nett) AS Nett, COUNT(DISTINCT l.CustomerId) AS Pelanggan
+        SELECT cg.CustomerGroupName AS Grup, SUM(l.Penjualan) AS Penjualan, COUNT(DISTINCT l.CustomerId) AS Pelanggan
         FROM (${monthLines}) l
         JOIN Customers c ON c.CustomerId = l.CustomerId
         JOIN CustomerGroups cg ON cg.CustomerGroupId = c.CustomerGroupId
         GROUP BY cg.CustomerGroupName
-        ORDER BY Nett DESC
+        ORDER BY Penjualan DESC
       `,
-      // BB- items are distributor discount claims, not products
       client.$queryRaw`
-        SELECT TOP 10 l.KodeItem, l.NamaBarang, SUM(l.Nett) AS Nett
+        SELECT TOP 10 l.KodeItem, l.NamaBarang, SUM(l.Penjualan) AS Penjualan
         FROM (${monthLines}) l
-        WHERE l.KodeItem NOT LIKE 'BB-%'
         GROUP BY l.KodeItem, l.NamaBarang
-        ORDER BY Nett DESC
+        ORDER BY Penjualan DESC
       `,
       client.$queryRaw`
-        SELECT TOP 10 c.KodeLgn, c.NamaLgn, d.NamaDept, SUM(l.Nett) AS Nett
+        SELECT TOP 10 c.KodeLgn, c.NamaLgn, d.NamaDept, SUM(l.Penjualan) AS Penjualan
         FROM (${monthLines}) l
         JOIN Customers c ON c.CustomerId = l.CustomerId
         LEFT JOIN Departments d ON d.KodeDept = l.KodeCc
         GROUP BY c.KodeLgn, c.NamaLgn, d.NamaDept
-        ORDER BY Nett DESC
+        ORDER BY Penjualan DESC
       `,
       monthTotal(monthStart.clone().subtract(1, "month"), cabang, vendor),
     ]);
@@ -215,9 +224,12 @@ router.get("/summary", async (req, res) => {
       },
       scope: { cabang, vendor: Boolean(vendor), canChooseCabang: ALL_CABANG_ROLES.includes(req.user.role) },
       penjualan: {
-        nett: toNumber(k.Nett),
-        nettBulanLalu: prevMonthNett,
+        // "Total Penjualan" in the PNL; the next three reconcile it to "Penjualan Bersih"
+        penjualan: toNumber(k.Penjualan),
+        penjualanBulanLalu: prevMonthPenjualan,
         retur: toNumber(k.Retur),
+        diskonDistributor: toNumber(k.DiskonDistributor),
+        penjualanBersih: toNumber(k.Bersih),
         faktur: toNumber(k.Faktur),
         pelanggan: toNumber(k.Pelanggan),
         ytd,
@@ -225,14 +237,22 @@ router.get("/summary", async (req, res) => {
           const r = trendByMonth.get(idx + 1);
           return { bulan: idx + 1, eKatalog: toNumber(r?.EKatalog), reguler: toNumber(r?.Reguler) };
         }),
-        perCabang: byCabang.map((r) => ({ kode: r.KodeCc, nama: r.NamaDept || r.KodeCc, nett: toNumber(r.Nett) })),
-        perGrup: byGroup.map((r) => ({ grup: r.Grup, nett: toNumber(r.Nett), pelanggan: toNumber(r.Pelanggan) })),
-        topProduk: topProducts.map((r) => ({ kode: r.KodeItem, nama: r.NamaBarang, nett: toNumber(r.Nett) })),
+        perCabang: byCabang.map((r) => ({
+          kode: r.KodeCc,
+          nama: r.NamaDept || r.KodeCc,
+          penjualan: toNumber(r.Penjualan),
+        })),
+        perGrup: byGroup.map((r) => ({
+          grup: r.Grup,
+          penjualan: toNumber(r.Penjualan),
+          pelanggan: toNumber(r.Pelanggan),
+        })),
+        topProduk: topProducts.map((r) => ({ kode: r.KodeItem, nama: r.NamaBarang, penjualan: toNumber(r.Penjualan) })),
         topPelanggan: topCustomers.map((r) => ({
           kode: r.KodeLgn,
           nama: r.NamaLgn,
           cabang: r.NamaDept,
-          nett: toNumber(r.Nett),
+          penjualan: toNumber(r.Penjualan),
         })),
       },
       piutang,
