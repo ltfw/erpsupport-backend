@@ -1,0 +1,17 @@
+{
+  "keterangan": "Customer yang dihitung sebagai Head Office (00) di dashboard. Transaksi lain berkode cabang 00 dihitung sebagai Sidoarjo (01).",
+  "customers": [
+    { "kode": "C000953", "nama": "MAHANA PHARMA ABADI" },
+    { "kode": "C001593", "nama": "RIDHO ILAHI FARMA" },
+    { "kode": "C000968", "nama": "GLORY MAJESTY INDONESIA" },
+    { "kode": "C001977", "nama": "KERTHA UTAMA MEDIKA" },
+    { "kode": "C000395", "nama": "BALI WAHYU ABADI" },
+    { "kode": "C001143", "nama": "MATHIO JAYA FARMA" },
+    { "kode": "C001952", "nama": "LORAYA NISSI PANARMA" },
+    { "kode": "C001989", "nama": "PAPUA SUKSES ABADI" },
+    { "kode": "C000765", "nama": "RAJAWALI NUSINDO CAB. PADANG" },
+    { "kode": "C002297", "nama": "ARJUNA PHARMA TAMA" },
+    { "kode": "C000834", "nama": "IMAR KARYA TAMA" },
+    { "kode": "C002568", "nama": "MITRA INDO FARMA" }
+  ]
+}
